@@ -338,8 +338,8 @@ ContextControl.prototype.position = function () {
 	controlElement = this.controlElement;
 	mobileViewState = this.mobileViewState;
 	
-	windowWidth = window.innerWidth;
-	windowHeight = window.innerHeight;
+	windowWidth = 'innerWidth' in window ? window.innerWidth : document.documentElement.clientWidth;
+	windowHeight = 'innerHeight' in window ? window.innerHeight : document.documentElement.clientHeight;
 	dialogueWidth = mobileViewState ? mobileViewState.initialWidth : controlElement.offsetWidth;
 	dialogueHeight = mobileViewState ? mobileViewState.initialHeight : controlElement.offsetHeight;
 	
@@ -477,8 +477,7 @@ ContextControl.MobileViewState.prototype.setupMobileView = function () {
 	controlElement = this.controlElement;
 	controlStyle = controlElement.style;
 	
-	controlStyle.removeProperty('left');
-	controlStyle.removeProperty('top');
+	controlStyle.left = controlStyle.top = '0px';
 	
 	IE8Compatibility.addClass(controlElement, ContextControl.mobileViewClassName);
 	IE8Compatibility.addClass(document.body, ContextControl.mobileViewClassName);

@@ -26,11 +26,12 @@ var IE8Compatibility = {};
 
 
 /**
- * Cache of `EventListener`s registered via `attachEvent`.
+ * Cache of {@link IE8Compatibility.IE8EventHandler}s containing `EventListener`s registered via `attachEvent`.
  *
  * @private
+ * @type Array
  */
-IE8Compatibility.allRegisteredListeners = null;
+IE8Compatibility.allRegisteredHandlers = null;
 
 
 /**
@@ -51,7 +52,7 @@ IE8Compatibility.allRegisteredListeners = null;
 IE8Compatibility.addEventListener = function (target, type, listener, useCapture) {
 	'use strict';
 	
-	var nominalListener, allRegisteredListeners, nominalType;
+	var handlerFunction, allRegisteredHandlers, nominalType;
 	
 	if (target.addEventListener) {
 		target.addEventListener(type, listener, useCapture);
@@ -64,25 +65,25 @@ IE8Compatibility.addEventListener = function (target, type, listener, useCapture
 	
 	
 	if (listener && typeof listener.handleEvent === 'function') {
-		allRegisteredListeners = IE8Compatibility.allRegisteredListeners;
-		if (!allRegisteredListeners) {
-			allRegisteredListeners = IE8Compatibility.allRegisteredListeners = [];
+		allRegisteredHandlers = IE8Compatibility.allRegisteredHandlers;
+		if (!allRegisteredHandlers) {
+			allRegisteredHandlers = IE8Compatibility.allRegisteredHandlers = [];
 		}
 		
 		nominalType = type.toLowerCase();
-		if (IE8Compatibility.getListenerIndex(target, nominalType, listener) !== -1) {
+		if (IE8Compatibility.getHandlerIndex(target, nominalType, listener) !== -1) {
 			return;
 		}
 		
-		nominalListener = function (event) {
+		handlerFunction = function (event) {
 			listener.handleEvent(event)
 		};
-		allRegisteredListeners.push(new IE8Compatibility.IE8EventHandler(target, nominalType, nominalListener));
+		allRegisteredHandlers.push(new IE8Compatibility.IE8EventHandler(target, nominalType, listener, handlerFunction));
 	} else {
-		nominalListener = listener;
+		handlerFunction = listener;
 	}
 	
-	target.attachEvent('on' + type, nominalListener);
+	target.attachEvent('on' + type, handlerFunction);
 };
 
 /**
@@ -97,7 +98,7 @@ IE8Compatibility.addEventListener = function (target, type, listener, useCapture
 IE8Compatibility.removeEventListener = function (target, type, listener, useCapture) {
 	'use strict';
 	
-	var nominalListener, allRegisteredListeners, listenerIndex, nominalType, registeredListener;
+	var handlerFunction, allRegisteredHandlers, listenerIndex, nominalType, handler;
 	
 	if (target.removeEventListener) {
 		target.removeEventListener(target, type, listener, useCapture);
@@ -111,21 +112,21 @@ IE8Compatibility.removeEventListener = function (target, type, listener, useCapt
 	if (listener && typeof listener.handleEvent === 'function') {
 		nominalType = type.toLowerCase();
 		
-		allRegisteredListeners = IE8Compatibility.allRegisteredListeners;
-		if (!allRegisteredListeners || (listenerIndex = IE8Compatibility.getListenerIndex(target, nominalType, listener)) === -1) {
+		allRegisteredHandlers = IE8Compatibility.allRegisteredHandlers;
+		if (!allRegisteredHandlers || (listenerIndex = IE8Compatibility.getHandlerIndex(target, nominalType, listener)) === -1) {
 			return;
 		}
 		
-		registeredListener = allRegisteredListeners[listenerIndex];
-		nominalListener = registeredListener.srcListener;
+		handler = allRegisteredHandlers[listenerIndex];
+		handlerFunction = handler.handlerFunction;
 		
-		allRegisteredListeners.splice(listenerIndex, 1);
-		registeredListener.dispose();
+		allRegisteredHandlers.splice(listenerIndex, 1);
+		handler.dispose();
 	} else {
-		nominalListener = listener;
+		handlerFunction = listener;
 	}
 	
-	target.detachEvent('on' + type, nominalListener);
+	target.detachEvent('on' + type, handlerFunction);
 };
 
 /**
@@ -304,7 +305,7 @@ IE8Compatibility._getTextContent = function (nodeList) {
 
 /**
  * Finds the index of the corresponding {@link IE8Compatibility.IE8EventHandler} for the given `target`, `type` and `listener` in 
- * {@link IE8Compatibility.allRegisteredListeners}. Returns -1 if not found.
+ * {@link IE8Compatibility.allRegisteredHandlers}. Returns -1 if not found.
  *
  * @private
  * @param {EventTarget} target Target whose corresponding {@link IE8Compatibility.IE8EventHandler} is to be obtained.
@@ -314,15 +315,15 @@ IE8Compatibility._getTextContent = function (nodeList) {
  *   Index of the corresponding {@link IE8Compatibility.IE8EventHandler} for the given `target`, `type` and `listener`, or -1
  *   if no matching {@link IE8Compatibility.IE8EventHandler} could be found.
  */
-IE8Compatibility.getListenerIndex = function (target, type, listener) {
+IE8Compatibility.getHandlerIndex = function (target, type, listener) {
 	'use strict';
 	
-	var listeners, listener, i;
+	var handlers, handler, i;
 	
-	listeners = IE8Compatibility.allRegisteredListeners;
-	for (i = 0; i < listeners.length; ++i) {
-		listener = listeners[i];
-		if (listener.target === target && listener.type === type && listener.srcListener === listener) {
+	handlers = IE8Compatibility.allRegisteredHandlers;
+	for (i = 0; i < handlers.length; ++i) {
+		handler = handlers[i];
+		if (handler.target === target && handler.type === type && handler.listener === listener) {
 			return i;
 		}
 	}
@@ -339,24 +340,25 @@ IE8Compatibility.getListenerIndex = function (target, type, listener) {
  * @param {EventTarget} target `EventTarget` to which the given `listener` is registered.
  * @param {string} type Event type for which the given `listener` is registered.
  * @param {EventListener} listener `EventListener` registered on `target` for the given event `type`.
+ * @param {function} handlerFunction
  * @private
  * @extends Disposable
  * @classdesc
  *   Container object representing a registered `EventListener`. Holds the `EventTarget` upon which the `EventListener` is
  *   registered, as well as the type of event for which it listens.
  */
-IE8Compatibility.IE8EventHandler = function (target, type, srcListener) {
+IE8Compatibility.IE8EventHandler = function (target, type, listener, handlerFunction) {
 	'use strict';
 	
 	/**
-	 * `EventTarget` to which {@link IE8Compatibility.IE8EventHandler#srcListener} is registered.
+	 * `EventTarget` to which {@link IE8Compatibility.IE8EventHandler#listener} is registered.
 	 *
 	 * @type {EventTarget}
 	 */
 	this.target = target;
 	
 	/**
-	 * Event type for which {@link IE8Compatibility.IE8EventHandler#srcListener} is registered.
+	 * Event type for which {@link IE8Compatibility.IE8EventHandler#listener} is registered.
 	 *
 	 * @type {string}
 	 */
@@ -368,14 +370,18 @@ IE8Compatibility.IE8EventHandler = function (target, type, srcListener) {
 	 *
 	 * @type {EventListener}
 	 */
-	this.srcListener = srcListener;
+	this.listener = listener;
+	
+	/**
+	 * @type {function}
+	 */
+	this.handlerFunction = handlerFunction;
 };
 
 IE8Compatibility.IE8EventHandler.prototype.dispose = function () {
 	'use strict';
 	
-	delete this.target;
-	delete this.srcListener;
+	this.target = this.listener = this.handlerFunction = null;
 };
 
 
