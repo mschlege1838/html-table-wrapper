@@ -1,10 +1,25 @@
 
-function SimpleDataTableControl() {
+function SimpleDataTableControl(columnIndex, tableHeader, listener) {
 	'use strict';
 	
-	this.contextControl = new ContextControl();
+	var contextControl;
+	
+	this.contextControl = contextControl = new ContextControl();
+	this.columnIndex = columnIndex;
+	this.tableHeader = tableHeader;
+	this.listener = listener;
+	
+	
+	contextControl.addEventListener('create', this, false);
 }
 
+
+// Static Fields
+SimpleDataTableControl.controlClassName = 'data-table-column-options';
+
+SimpleDataTableControl.SORT_ORDER_NONE = 1;
+SimpleDataTableControl.SORT_ORDER_ASCENDING = 2;
+SimpleDataTableControl.SORT_ORDER_DESCENDING = 3;
 
 SimpleDataTableControl.i18nStrings = {
 	columnOptionsLabel: 'Column Options',
@@ -50,12 +65,312 @@ SimpleDataTableControl.i18nStrings = {
 };
 
 
+SimpleDataTableControl.idCounter = 0;
+
+
+// Static Methods
 SimpleDataTableControl.getIdBase = function () {
 	'use strict';
 	
-	return 'dataTable_' + Math.random() + '_';
+	return 'dataTable_' + SimpleDataTableControl.idCounter++ + '_';
 };
 
+SimpleDataTableControl.getSortOrder = function (str) {
+	'use strict';
+	
+	switch (str) {
+		case 'none':
+			return SimpleDataTableControl.SORT_ORDER_NONE;
+		case 'ascending':
+			return SimpleDataTableControl.SORT_ORDER_ASCENDING;
+		case 'descending':
+			return SimpleDataTableControl.SORT_ORDER_DESCENDING;
+	}
+	
+	throw new Error('Unrecognized sort order: ' + str);
+};
+
+SimpleDataTableControl.getOperator = function (str) {
+	'use strict';
+	
+	switch (str) {
+		case 'eq':
+			return SimpleDataTable.FILTER_OP_EQUALS;
+		case 'neq':
+			return SimpleDataTable.FILTER_OP_NOT_EQUALS;
+		case 'lt':
+			return SimpleDataTable.FILTER_OP_LESS_THAN;
+		case 'gt':
+			return SimpleDataTable.FILTER_OP_GREATER_THAN;
+		case 'lte':
+			return SimpleDataTable.FILTER_OP_LESS_THAN | SimpleDataTable.FILTER_OP_EQUALS;
+		case 'gte':
+			return SimpleDataTable.FILTER_OP_GREATER_THAN | SimpleDataTable.FILTER_OP_EQUALS;
+		case 'contains':
+			return SimpleDataTable.FILTER_OP_CONTAINS;
+	}
+	
+	throw new Error('Unrecognized operator: ' + str);
+};
+
+SimpleDataTableControl.getColumnType = function (str) {
+	'use strict';
+	
+	switch (str) {
+		case 'infer':
+			return SimpleDataTable.COLUMN_TYPE_INFER;
+		case 'text':
+			return SimpleDataTable.COLUMN_TYPE_TEXT;
+	}
+	
+	throw new Error('Unrecognized column type: ' + str);
+};
+
+SimpleDataTableControl.getChecked = function (inputs) {
+	'use strict';
+	
+	var i, input;
+	
+	for (i = 0; i < inputs.length; ++i) {
+		input = inputs[i];
+		if (input.checked) {
+			return input;
+		}
+	}
+	
+	return null;
+};
+
+SimpleDataTableControl.setChecked = function (inputs, name) {
+	'use strict';
+	
+	var i, input;
+	
+	for (i = 0; i < inputs.length; ++i) {
+		input = inputs[i];
+		input.checked = input.name === name;
+	}
+};
+
+// Default Instance Properties
+SimpleDataTableControl.prototype.filterDescriptor = null;
+
+SimpleDataTableControl.prototype.sortDescriptor = null;
+
+SimpleDataTableControl.prototype.sortOrder = SimpleDataTable.SORT_ORDER_NONE;
+
+// Instance Methods
+SimpleDataTableControl.prototype.dispose = function () {
+	'use strict';
+	
+	var contextControl, controlElement, clickTargets, i;
+	
+	contextControl = this.contextControl;
+	
+	controlElement = contextControl.getControlElement();
+	if (controlElement) {
+		controlElement.querySelector('input[name="filter-by-value-value"]').removeEventListener('keyup', this, false);
+		
+		clickTargets = controlElement.querySelectorAll('input[name="column-type"], input[name="sort-direction"], input[name=filter-by-value-option], input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"], input[data-column-index], .close-button');
+		for (i = 0; i < clickTargets.length; ++i) {
+			clickTargets[i].removeEventListener('click', this, false);
+		}
+	}
+	
+	contextControl.removeEventListener('click', this, false);
+};
+
+
+SimpleDataTableControl.prototype.handleEvent = function (event) {
+	'use strict';
+	
+	var target, sortOrder, operation, operatorInput, columnValues, value, checked, index;
+	
+	target = event.currentTarget;
+	
+	switch (event.type) {
+		case 'create':
+			this.defineContent(target.getControlElement());
+			this.setUpDescriptors();
+			break;
+		case 'click':
+			if (IE9Compatibility.hasClass(target, 'close-button')) {
+				this.contextControl.close();
+			} else {
+			
+				switch (target.name) {
+					case 'column-type':
+						this.filterDescriptor.valueFilter.columnType = this.sortDescriptor.columnType = SimpleDataTableControl.getColumnType(target.value);
+						
+						this.listener.processTable();
+						break;
+						
+					case 'sort-direction':
+						this.sortOrder = sortOrder = SimpleDataTableControl.getSortOrder(target.value);
+						this.sortDelegate.descending = sortOrder === SimpleDataTableControl.SORT_ORDER_DESCENDING;
+						
+						this.listener.processTable();
+						break;
+						
+					case 'filter-by-value-option':
+						operation = SimpleDataTableControl.getOperator(target.value);
+						if (this.contextControl.getControlElement().querySelector('input[name="filter-option-ignore-case"]').checked) {
+							operation |= SimpleDataTable.FILTER_OP_IGNORE_CASE;
+						}
+						this.filterDescriptor.valueFilter.operation = operation;
+						
+						this.listener.processTable();
+						break;
+						
+					case 'filter-option-ignore-case':
+						operatorInput = SimpleDataTableControl.getChecked(this.contextControl.getControlElement().querySelectorAll('input[name="filter-by-value-option"]'));
+						operation = operatorInput ? SimpleDataTableControl.getOperator(operatorInput.value) : SimpleDataTable.FILTER_OP_EQUALS;
+						if (target.checked) {
+							operation |= SimpleDataTable.FILTER_OP_IGNORE_CASE;
+						}
+						this.filterDescriptor.valueFilter.operation = operation;
+						
+						this.listener.processTable();
+						break;
+					
+					case 'clear-filter-button':
+						this.reset();
+						this.listener.processTable();
+						break;
+						
+					case 'column-value':
+						columnValues = this.filterDescriptor.columnValues;
+						value = target.value;
+						checked = target.checked;
+						
+						if (checked) {
+							if (columnValues.indexOf(value) === -1) {
+								columnValues.push(value);
+							}
+						} else {
+							if ((index = columnValues.indexOf(value)) !== -1) {
+								columnValues.splice(index, 1);
+							}
+						}
+						
+						this.listener.processTable();
+						break;
+						
+					case 'select-all-cell-values':
+						this.selectAllColumnValues(target.checked);
+						this.listener.processTable();
+						break;
+				}
+				
+			}
+			break;
+		
+		case 'keyup':
+			this.filterDescriptor.valueFilter.compareValue = target.value;
+			this.listener.processTable();
+			break;
+	}	
+};
+
+SimpleDataTableControl.prototype.open = function () {
+	'use strict';
+	
+	this.contextControl.open(this.tableHeader);
+};
+
+SimpleDataTableControl.prototype.close = function () {
+	'use strict';
+	
+	this.contextControl.close();
+};
+
+SimpleDataTableControl.prototype.reset = function () {
+	'use strict';
+	
+	var control, columnValueInputs, i;
+	
+	control = this.contextControl.getControlElement();
+	
+	columnValueInputs = control.querySelectorAll('input[name="column-value"]');
+	
+	SimpleDataTableControl.setChecked(control.querySelectorAll('input[name="column-type"]'), 'infer');
+	SimpleDataTableControl.setChecked(control.querySelectorAll('input[name="sort-direction"]'), 'none');
+	SimpleDataTableControl.setChecked(control.querySelectorAll('input[name="filter-by-value-option"]'), 'contains');
+	control.querySelector('input[name="filter-option-ignore-case"]').checked = true;
+	
+	for (i = 0; i < columnValueInputs.length; ++i) {
+		columnValueInputs[i].checked = true;
+	}
+	
+	this.setUpDescriptors();
+};
+
+SimpleDataTableControl.prototype.selectAllColumnValues = function (checked) {
+	'use strict';
+	
+	var columnValues, columnValueInputs, columnValueInput, i;
+	
+	columnValueInputs = this.contextControl.getControlElement().querySelectorAll('input[name="column-value"]');
+	columnValues = [];
+	
+
+	for (i = 0; i < columnValueInputs.length; ++i) {
+		columnValueInput = columnValueInputs[i];
+		columnValueInput.checked = checked;
+		if (checked) {
+			columnValues.push(columnValueInput.value)
+		}
+	}
+	
+	this.filterDescriptor.columnValues = columnValues;
+};
+
+
+SimpleDataTableControl.prototype.getFilterDescriptor = function () {
+	'use strict';
+	
+	return this.filterDescriptor;
+};
+
+SimpleDataTableControl.prototype.getSortDescriptor = function () {
+	'use strict';
+	
+	var sortOrder = this.sortOrder;
+	
+	return sortOrder === SimpleDataTableControl.SORT_ORDER_NONE ? null : this.sortDescriptor;
+};
+
+SimpleDataTableControl.prototype.setUpDescriptors = function () {
+	'use strict';
+	
+	var columnIndex, control, compareValue, operatorInput, operation, columnTypeInput, columnType, columnValues,
+		sortOrderInput, sortOrder;
+	
+	columnIndex = this.columnIndex;
+	control = this.contextControl.getControlElement();
+
+	
+	compareValue = control.querySelector('input[name="filter-by-value-value"]').value;
+	
+	operatorInput = SimpleDataTableControl.getChecked(control.querySelectorAll('input[name="filter-by-value-option"]'));
+	operation = operatorInput ? SimpleDataTableControl.getOperator(operatorInput.value) : SimpleDataTable.FILTER_OP_EQUALS;
+	if (control.querySelector('input[name="filter-option-ignore-case"]').checked) {
+		operation |= SimpleDataTable.FILTER_OP_IGNORE_CASE;
+	}
+	
+	columnTypeInput = SimpleDataTableControl.getChecked(control.querySelectorAll('input[name="column-type"]'));
+	columnType = columnTypeInput ? SimpleDataTableControl.getColumnType(columnTypeInput.value) : SimpleDataTable.COLUMN_TYPE_INFER;
+	
+	columnValues = this.listener.dataTable.getColumnValues(columnIndex);
+	
+	sortOrderInput = SimpleDataTableControl.getChecked(control.querySelectorAll('input[name="sort-direction"]'));
+	sortOrder = sortOrderInput ? SimpleDataTableControl.getSortOrder(sortOrderInput.value) : SimpleDataTableControl.SORT_ORDER_NONE;
+	
+	this.sortOrder = sortOrder;
+	this.sortDescriptor = new SimpleDataTable.ValueSort(this.columnIndex, sortOrder === SimpleDataTableControl.SORT_ORDER_DESCENDING, columnType);
+	this.filterDescriptor = new SimpleDataTableControl.ColumnValueFilter(columnIndex, compareValue, operation, columnType, columnValues);
+	
+};
 
 SimpleDataTableControl.prototype.defineContent = function (container) {
 	'use strict';
@@ -63,12 +378,13 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	var idBase, inferColumnTypeId, textOnlyColumnTypeId, i18nStrings, sortOptionAscendingId,
 		sortOptionDescendingId, filterOptionEq, filterOptionNeq, filterOptionLt, filterOptionGt,
 		filterOptionLte, filterOptionGte, filterOptionContains, filterOptionIgnoreCase, sortOptionNoneId,
-		filterByValueInputId, builder, selectAllCells, clickTargets, i;
+		filterByValueInputId, builder, selectAllCells, clickTargets, i, columnValues, columnValue, id, 
+		columnIndex;
 	
 	i18nStrings = SimpleDataTableControl.i18nStrings;
 	
 	// Generate IDs.
-	idBase = SimpleDataTableListener.getIdBase();
+	idBase = SimpleDataTableControl.getIdBase();
 	
 	inferColumnTypeId = idBase + 'inferColumnType';
 	textOnlyColumnTypeId = idBase + 'textOnly';
@@ -86,6 +402,10 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	filterByValueInputId = idBase + 'filterByValue';
 	selectAllCells = idBase + 'selectAllCells';
 	
+	columnIndex = this.columnIndex;
+	columnValues = this.listener.dataTable.getColumnValues(columnIndex);
+	
+	IE9Compatibility.addClass(container, SimpleDataTableControl.controlClassName)
 	
 	// Compose content.
 	builder = new XMLBuilder();
@@ -194,7 +514,19 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 			.startTag('input').attribute('type', 'checkbox').attribute('name', 'select-all-cell-values').attribute('id', selectAllCells).attribute('checked').closeTag()
 			.startTag('label').attribute('for', selectAllCells).content(i18nStrings.selectAll).closeTag()
 		.closeTag()
-		.startTag('ul').attribute('class', 'filter-by-cell-values').closeTag(true)
+		.startTag('ul').attribute('class', 'filter-by-cell-values');
+		
+		for (i = 0; i < columnValues.length; ++i) {
+			columnValue = columnValues[i];
+			id = idBase + 'columnValue_' + i;
+			
+			builder.startTag('li').attribute('class', 'field').attribute('data-column-index', columnIndex)
+				.startTag('input').attribute('type', 'checkbox').attribute('checked').attribute('value', columnValue).attribute('id', id).attribute('name', 'column-value').attribute('data-column-index', columnIndex).closeTag()
+				.startTag('label').attribute('for', id).content(columnValue).closeTag()
+			.closeTag();
+		}
+		
+		builder.closeTag(true)
 	.closeTag();
 	
 	// Define content.
@@ -203,13 +535,49 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	
 	
 	// Register events.
-	container.getElementsByClassName('close-button')[0].addEventListener('click', this, false);
-		
 	container.querySelector('input[name="filter-by-value-value"]').addEventListener('keyup', this, false);
 	
-	clickTargets = container.querySelectorAll('input[name="column-type"], input[name="sort-direction"], input[name=filter-by-value-option], input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"]');
+	clickTargets = container.querySelectorAll('input[name="column-type"], input[name="sort-direction"], input[name=filter-by-value-option], input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"], input[data-column-index], .close-button');
 	for (i = 0; i < clickTargets.length; ++i) {
 		clickTargets[i].addEventListener('click', this, false);
 	}
 	
 };
+
+
+
+
+
+SimpleDataTableControl.ColumnValueFilter = function (columnIndex, compareValue, operation, columnType, columnValues) {
+	'use strict';
+	
+	this.valueFilter = new SimpleDataTable.ValueFilter(columnIndex, compareValue, operation, columnType);
+	this.columnValues = columnValues;
+};
+
+
+SimpleDataTableControl.ColumnValueFilter.prototype.include = function (cell) {
+	'use strict';
+	
+	var columnValues, cellValues, i;
+	
+	if (!this.valueFilter.include(cell)) {
+		return false;
+	}
+	
+	columnValues = this.columnValues;
+	
+	cellValues = [];
+	SimpleDataTable.getCellValues(cell, cellValues);
+	
+	for (i = 0; i < cellValues.length; ++i) {
+		if (columnValues.indexOf(cellValues[i]) !== -1) {
+			return true;
+		}
+	}
+	
+	
+	return false;
+};
+
+

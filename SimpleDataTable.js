@@ -1,6 +1,7 @@
 
 
 // Virtual Interfaces
+
 // SortDescriptor
 /**
  *
@@ -32,7 +33,7 @@
  *		A value greater than 0 if cellA should be sorted below cellB, less than 0 for above, 0 for 
  *		no preference.
  */
-//
+
 
 // FilterDescriptor
 /**
@@ -54,9 +55,9 @@
  * @param {HTMLRowElement} row to which the cell being considered belongs.
  * @returns {boolean} false if this cell's row is to be filtered.
  */
-//
 
-////
+
+
 
 
 // Constructor
@@ -79,7 +80,7 @@ function SimpleDataTable(table) {
 	this.initialOrder = SimpleDataTable.copy(table.tBodies[0].rows);
 
 }
-////
+
 
 
 // Static Fields
@@ -111,7 +112,7 @@ SimpleDataTable.COLUMN_TYPE_TEXT = 1;
  * @member {number}
  */
 SimpleDataTable.COLUMN_TYPE_INFER = 2;
-////
+
 
 
 // Static methods
@@ -294,7 +295,7 @@ SimpleDataTable.isNumeric = function (val) {
 	
 	return /^\d+(?:\.\d*)?(?:[eE]\d*)?$/.test(val);
 };
-////
+
 
 
 // Instance methods
@@ -509,7 +510,6 @@ SimpleDataTable.prototype.getColumnValues = function (columnIndex) {
 	
 	return result;
 };
-////
 
 
 
@@ -535,21 +535,21 @@ SimpleDataTable.ValueSort = function (columnIndex, descending, columnType) {
 		this.descending = true;
 	}
 	if (columnType && columnType !== SimpleDataTable.COLUMN_TYPE_INFER) {
-		/**
-		 * How this column is to be sorted. If {@link SimpleDataTable.COLUMN_TYPE_INFER}, will attempt to convert values to
-		 * numbers prior to running the sort comparison; values that cannot be converted will be compared as strings,
-		 * and will be sorted under those successfully converted to numbers. If {@link SimpleDataTable.COLUMN_TYPE_TEXT}, all
-		 * values will be compared as strings only.
-		 *
-		 * @member {number}
-		 */
-		this.columnType = SimpleDataTable.COLUMN_TYPE_INFER;
+		this.columnType = columnType;
 	}
 };
 
 // Default Instance Properties
 SimpleDataTable.ValueSort.prototype.descending = false;
 
+/**
+ * How this column is to be sorted. If {@link SimpleDataTable.COLUMN_TYPE_INFER}, will attempt to convert values to
+ * numbers prior to running the sort comparison; values that cannot be converted will be compared as strings,
+ * and will be sorted under those successfully converted to numbers. If {@link SimpleDataTable.COLUMN_TYPE_TEXT}, all
+ * values will be compared as strings only.
+ *
+ * @member {number}
+ */
 SimpleDataTable.ValueSort.prototype.columnType = SimpleDataTable.COLUMN_TYPE_INFER;
 
 
@@ -587,7 +587,7 @@ SimpleDataTable.ValueSort.prototype.compare = function (cellA, cellB) {
 	}
 
 };
-//
+
 
 
 
@@ -746,6 +746,3 @@ SimpleDataTable.ValueFilter.prototype.includeValue = function (rawValue) {
 	// Default case (no matches).
 	return false;
 };
-//
-
-////
