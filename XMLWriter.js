@@ -23,15 +23,17 @@ XMLWriter.ESCAPE_CHARACTER_MAPPING = {
 XMLWriter.escape = function (val) {
 	'use strict';
 	
-	let re = /["&'<>]/g;
+	var re, index, match, result;
+	
+	re = /["&'<>]/g;
 	if (!re.test(val)) {
 		return val;
 	}
 	re.lastIndex = 0;
 	
-	let index = 0;
-	let match = null;
-	let result = '';
+	index = 0;
+	match = null;
+	result = '';
 	
 	while ((match = re.exec(val)) != null) {
 		result += val.substring(index, re.lastIndex - 1);
@@ -48,13 +50,15 @@ XMLWriter.escape = function (val) {
 XMLWriter.prototype.startTag = function (name) {
 	'use strict';
 	
+	var tag;
+	
 	if (this.state == XMLWriter.STATE_TAG) {
 		this.text += '>';
 	}
 	
-	let tag = XMLWriter.escape(name);
+	tag = XMLWriter.escape(name);
 	
-	this.text += `<${tag}`;
+	this.text += '<' + tag;
 	this.state = XMLWriter.STATE_TAG;
 	
 	this.stack.push(tag);
@@ -65,17 +69,19 @@ XMLWriter.prototype.startTag = function (name) {
 XMLWriter.prototype.attribute = function (name, value) {
 	'use strict';
 	
+	var attributeName, attributeValue;
+	
 	if (this.state != XMLWriter.STATE_TAG) {
 		throw new Error('Invalid state.');
 	}
 	
-	let attributeName = XMLWriter.escape(name);
+	attributeName = XMLWriter.escape(name);
 	
 	if (value) {
-		let attributeValue = XMLWriter.escape(value);
-		this.text += ` ${attributeName}="${attributeValue}"`;
+		attributeValue = XMLWriter.escape(value);
+		this.text += ' ' + attributeName + '="' + attributeValue + '"';
 	} else {
-		this.text += ` ${attributeName}`;
+		this.text += ' ' + attributeName;
 	}
 	
 	return this;
@@ -94,26 +100,46 @@ XMLWriter.prototype.content = function (value) {
 	return this;
 };
 
-XMLWriter.prototype.closeTag = function () {
+XMLWriter.prototype.closeTag = function (requiresBody) {
 	'use strict';
 	
-	let stack = this.stack;
+	var stack, name, state;
+	
+	stack = this.stack;
 	if (!stack.length) {
 		throw new Error('Invalid state.');
 	}
 	
-	let name = stack.pop();
+	name = stack.pop();
+	state = this.state;
 	
-	switch (this.state) {
-		case XMLWriter.STATE_TAG:
-			this.text += ' />';
-			break;
-		case XMLWriter.STATE_CONTENT:
-			this.text += `</${name}>`;
-			break;
+	
+	if (requiresBody) {
+		if (state === XMLWriter.STATE_TAG) {
+			this.text += '>';
+		}
+		this.text += '</' + name + '>';
+	} else if (state === XMLWriter.STATE_CONTENT) {
+		this.text += '</' + name + '>';
+	} else if (state === XMLWriter.STATE_TAG) {
+		this.text += ' />';
+	} else {
+		throw new Error('Invalid state.');
 	}
 	
 	this.state = stack.length ? XMLWriter.STATE_CONTENT : XMLWriter.STATE_INITIAL;
 	
 	return this;
+};
+
+XMLWriter.prototype.clear = function () {
+	'use strict';
+	
+	this.text = '';
+};
+
+XMLWriter.prototype.toString = function () {
+	'use strict';
+	
+	return this.text;
 };
