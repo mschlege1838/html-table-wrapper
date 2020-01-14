@@ -93,23 +93,64 @@ function SimpleDataTable(table) {
  */
 SimpleDataTable.filteredClassName = 'data-table-filtered';
 
+/**
+ * Bit flag indicating only cells containing a specified value should remain after a filtering operation.
+ *
+ * @member {number}
+ * @const
+ */
 SimpleDataTable.FILTER_OP_CONTAINS = 1;
+/**
+ * Bit flag indicating only cells with a value equal to a specified value should remain after a filtering operation.
+ *
+ * @member {number}
+ * @const
+ */
 SimpleDataTable.FILTER_OP_EQUALS = 1 << 1;
+/**
+ * Bit flag indicating only cells with a value less than a specified value should remain after a filtering operation.
+ *
+ * @member {number}
+ * @const
+ */
 SimpleDataTable.FILTER_OP_LESS_THAN = 1 << 2;
+/**
+ * Bit flag indicating only cells with a value greater than a specified value should remain after a filtering operation.
+ *
+ * @member {number}
+ * @const
+ */
 SimpleDataTable.FILTER_OP_GREATER_THAN = 1 << 3;
+/**
+ * Bit flag indicating string-type comparisons during a filtering operation should ignore case.
+ *
+ * @member {number}
+ * @const
+ */
 SimpleDataTable.FILTER_OP_IGNORE_CASE = 1 << 4;
+/**
+ * Bit flag indicating only cells with a value not equal to a specified value should remain after a filtering operation.
+ *
+ * @member {number}
+ * @const
+ */
 SimpleDataTable.FILTER_OP_NOT_EQUALS = 1 << 5;
 
 
 /**
+ * Indicates cells within a column should be considered to have text only for processing.
  *
  * @member {number}
+ * @const
  */
 SimpleDataTable.COLUMN_TYPE_TEXT = 1;
 
 /**
+ * Indicates values of cells within a column should attempt be inferred, and converted to appropriate underlying types
+ * prior to processing.
  *
  * @member {number}
+ * @const
  */
 SimpleDataTable.COLUMN_TYPE_INFER = 2;
 
@@ -160,7 +201,7 @@ SimpleDataTable.copy = function (src) {
  * as given if strict is false, or NaN is returned if strict is true.
  *
  * @package
- * @param {string|number} val Value to be converted to a number.
+ * @param {(string|number)} val Value to be converted to a number.
  * @param {boolean} [strict=false] Whether to return NaN if val is not a number, or simply to return val itself.
  */
 SimpleDataTable.getNumber = function (val, strict) {
@@ -596,6 +637,14 @@ SimpleDataTable.ValueSort.prototype.compare = function (cellA, cellB) {
 /**
  * @constructor
  * @implements FilterDescriptor
+ * @param {number} columnIndex Column index this FilterDescriptor describes.
+ * @param {*} compareValue Value to which cells are to be compared.
+ * @param {number} [operation={@link SimpleDataTable.FILTER_OP_EQUALS}] 
+ *		Bit field indicating the operation this filter is to perform. Must be a combination of the {@link SimpleDataTable}.FILTER_OP_* fields.
+ * @param {number} [columnType={@link SimpleDataTable.COLUMN_TYPE_INFER}] How the cells in this column are to be interpreted.
+ * @param {boolean} [ignoreListCells=false] 
+ *		Whether to indiscriminately treat each cell's value as its textContent, or to first inspect it for list elements as described
+ *		in {@link SimpleDataTable.getCellValues}.
  */
 SimpleDataTable.ValueFilter = function (columnIndex, compareValue, operation, columnType, ignoreListCells) {
 	'use strict';

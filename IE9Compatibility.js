@@ -4,6 +4,16 @@ function IE9Compatibility() {
 	'use strict';
 }
 
+(function (src, target) {
+	'use strict';
+	
+	var name;
+	
+	for (name in src) {
+		target[name] = src[name];
+	}
+})(IEGeneralCompatibility, IE9Compatibility);
+
 
 IE9Compatibility.addClass = function (el, className) {
 	'use strict';
@@ -49,3 +59,4 @@ IE9Compatibility.hasClass = function (el, className) {
 	
 	return el.className.trim().split(/\s+/).indexOf(className) != -1;
 };
+
