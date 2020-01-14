@@ -405,6 +405,7 @@ SimpleDataTableListener.prototype.getDataTable = function () {
 	return this.dataTable;
 };
 
+
 SimpleDataTableListener.prototype.getTableHeaderElement = function (columnIndex) {
 	'use strict';
 	

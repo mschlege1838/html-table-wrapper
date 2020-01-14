@@ -88,3 +88,4 @@ IE9Compatibility.hasClass = function (el, className) {
 	return el.className.trim().split(/\s+/).indexOf(className) != -1;
 };
 
+

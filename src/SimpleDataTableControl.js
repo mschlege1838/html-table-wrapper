@@ -961,3 +961,4 @@ SimpleDataTableControl.ColumnValueFilter.prototype.shouldInclude = function (cel
 	return simple && list;
 };
 
+

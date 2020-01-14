@@ -219,3 +219,4 @@ SimpleDataTableUtils.shouldInclude = function (cellValue, operation, compareValu
 	return false;
 };
 
+

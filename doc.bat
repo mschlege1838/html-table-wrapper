@@ -21,7 +21,7 @@ goto :eof
 :jsdoc
 @echo on
 if exist "%out_dir%" rd /s /q %out_dir%
-call jsdoc -p -d %out_dir% -c %conf_file% ContextControl.js IE8Compatibility.js IE9Compatibility.js IEGeneralCompatibility.js SimpleDataTable.js SimpleDataTableControl.js SimpleDataTableListener.js SimpleDataTableUtils.js SimpleEventDispatcher.js SimpleFilterDescriptor.js SimpleSortDescriptor.js XMLBuilder.js virtual-interfaces.js
+call jsdoc -p -d %out_dir% -c %conf_file% -r src
 @echo off
 goto :eof
 
