@@ -154,8 +154,6 @@ SimpleDataTable.prototype.sort = function () {
 	// Pre-Validation Initialization.
 	sortDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
 	
-	console.info(sortDescriptors);
-	
 	// Validation.
 	for (i = 0; i < sortDescriptors.length; ++i) {
 		sortDescriptor = sortDescriptors[i];
@@ -192,8 +190,8 @@ SimpleDataTable.prototype.sort = function () {
 			
 			columnIndex = sortDescriptor.columnIndex;
 			
-			cellA = rowA[columnIndex];
-			cellB = rowB[columnIndex];
+			cellA = rowA.cells[columnIndex];
+			cellB = rowB.cells[columnIndex];
 			
 			compareValue = sortDescriptor.compare(cellA, cellB);
 			
@@ -229,7 +227,7 @@ SimpleDataTable.prototype.sort = function () {
 SimpleDataTable.prototype.filter = function () {
 	'use strict';
 	
-	var filterDescriptors, filterDescriptor, i, rows, row, filter, j;
+	var filterDescriptors, filterDescriptor, i, rows, row, filter, j, cells;
 	
 	// Initialization.
 	filterDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
@@ -264,12 +262,13 @@ SimpleDataTable.prototype.filter = function () {
 	rows = this.table.tBodies[0].rows;
 	for (i = 0; i < rows.length; ++i) {
 		row = rows[i];
+		cells = row.cells;
 		filter = false;
 		
 		for (j = 0; j < filterDescriptors.length; ++j) {
 			filterDescriptor = filterDescriptors[j];
 			
-			if (!filterDescriptor.include(row[filterDescriptor.columnIndex])) {
+			if (!filterDescriptor.include(cells[filterDescriptor.columnIndex])) {
 				filter = true;
 				break;
 			}
@@ -360,5 +359,5 @@ SimpleDataTable.prototype.getRows = function (includeFiltered) {
 		}
 	}
 	
-	return row;
+	return result;
 };

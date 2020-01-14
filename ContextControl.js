@@ -161,7 +161,7 @@ ContextControl.getOffset = function (el) {
 	'use strict';
 	
 	var result = new ContextControl.OffsetCoordinates();
-	ContextControl._getOffset(el, coordinates);
+	ContextControl._getOffset(el, result);
 	return result;
 };
 

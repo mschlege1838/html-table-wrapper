@@ -99,7 +99,7 @@ SimpleEventDispatcher.processType = function (type) {
 	if (!type) {
 		throw new ReferenceError('Event type must be defined (and have a length greater than 0).');
 	}
-	if (typeof type !== 'string' || !(type instanceof String)) {
+	if (typeof type !== 'string' && !(type instanceof String)) {
 		throw new TypeError('Event type must be a string.');
 	}
 	
@@ -199,7 +199,7 @@ SimpleEventDispatcher.prototype.dispatchEvent = function (event) {
 		throw new ReferenceError('Event must be defined.');
 	}
 	
-	if (typeof event.type !== 'string' || !(event.type instanceof String)) {
+	if (typeof event.type !== 'string' && !(event.type instanceof String)) {
 		throw new TypeError('Event must, at minimum, define a type property.');
 	}
 	

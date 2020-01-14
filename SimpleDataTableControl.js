@@ -219,6 +219,7 @@ SimpleDataTableControl.prototype.init = function () {
 	this.contextControl.addEventListener('create', this, false);
 };
 
+
 SimpleDataTableControl.prototype.dispose = function () {
 	'use strict';
 	
@@ -230,7 +231,7 @@ SimpleDataTableControl.prototype.dispose = function () {
 	if (controlElement) {
 		controlElement.querySelector('input[name="filter-by-value-value"]').removeEventListener('keyup', this, false);
 		
-		clickTargets = controlElement.querySelectorAll('input[name="column-type"], input[name="sort-direction"], input[name=filter-by-value-option], input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"], input[name="column-value"], .close-button');
+		clickTargets = controlElement.querySelectorAll('input.column-type, input.sort-direction, input.filter-by-value-operator, input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"], input[name="column-value"], .close-button');
 		for (i = 0; i < clickTargets.length; ++i) {
 			clickTargets[i].removeEventListener('click', this, false);
 		}
@@ -256,23 +257,20 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 	switch (event.type) {
 		case 'create':
 			this.defineContent(target.getControlElement());
-			this.setUpDescriptors();
 			break;
 		case 'click':
 			if (IE9Compatibility.hasClass(target, 'close-button')) {
 				this.contextControl.close();
+			} else if (
+				IE9Compatibility.hasClass(target, 'column-type')
+				|| IE9Compatibility.hasClass(target, 'sort-direction')
+				|| IE9Compatibility.hasClass(target, 'filter-by-value-operator')
+				|| IE9Compatibility.hasClass(target, 'filter-option-ignore-case')
+				|| IE9Compatibility.hasClass(target, 'column-value')
+			) {
+				this.updateParent();
 			} else {
-			
 				switch (target.name) {
-					case 'column-type':
-					case 'sort-direction':
-					case 'filter-by-value-option':
-					case 'filter-option-ignore-case':
-					case 'column-value':
-						this.updateParent();
-						break;
-
-					
 					case 'clear-filter-button':
 						this.reset();
 						this.updateParent();
@@ -320,9 +318,9 @@ SimpleDataTableControl.prototype.reset = function () {
 	
 	columnValueInputs = control.querySelectorAll('input[name="column-value"]');
 	
-	SimpleDataTableControl.setChecked(control.querySelectorAll('input[name="column-type"]'), 'infer');
-	SimpleDataTableControl.setChecked(control.querySelectorAll('input[name="sort-direction"]'), 'none');
-	SimpleDataTableControl.setChecked(control.querySelectorAll('input[name="filter-by-value-option"]'), 'contains');
+	SimpleDataTableControl.setChecked(control.querySelectorAll('input.column-type'), 'infer');
+	SimpleDataTableControl.setChecked(control.querySelectorAll('input.sort-direction'), 'none');
+	SimpleDataTableControl.setChecked(control.querySelectorAll('input.filter-by-value-operator'), 'contains');
 	control.querySelector('input[name="filter-option-ignore-case"]').checked = true;
 	
 	for (i = 0; i < columnValueInputs.length; ++i) {
@@ -425,7 +423,7 @@ SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 	rows = this.parent.getDataTable().getRows();
 	
 	for (i = 0; i < rows.length; ++i) {
-		cell = rows[i][columnIndex];
+		cell = rows[i].cells[columnIndex];
 		if (callback) {
 			if (callback.populateCellValues) {
 				callback.populateCellValues(cell, result);
@@ -462,7 +460,7 @@ SimpleDataTableControl.prototype.getOperator = function () {
 	
 	var result;
 	
-	switch (this.getCheckedValue('input[name="filter-by-value-option"]')) {
+	switch (this.getCheckedValue('input.filter-by-value-operator')) {
 		case 'eq':
 			result = SimpleDataTableUtils.FILTER_OP_EQUALS;
 			break;
@@ -506,7 +504,7 @@ SimpleDataTableControl.prototype.getOperator = function () {
 SimpleDataTableControl.prototype.getColumnType = function () {
 	'use strict';
 	
-	switch (this.getCheckedValue('input[name="column-type"]')) {
+	switch (this.getCheckedValue('input.column-type')) {
 		case 'infer':
 			return SimpleDataTableUtils.COLUMN_TYPE_INFER;
 		case 'text':
@@ -528,7 +526,7 @@ SimpleDataTableControl.prototype.getColumnType = function () {
 SimpleDataTableControl.prototype.getSortOrder = function () {
 	'use strict';
 	
-	switch (this.getCheckedValue('input[name="sort-direction"]')) {
+	switch (this.getCheckedValue('input.sort-direction')) {
 		case 'none':
 			return SimpleDataTableControl.SORT_ORDER_NONE;
 		case 'ascending':
@@ -557,7 +555,7 @@ SimpleDataTableControl.prototype.getSelectedCellValues = function () {
 		return null;
 	}
 	
-	columnValueInputs = controlElement.querySelector('input[name="column-value"]');
+	columnValueInputs = controlElement.querySelectorAll('input[name="column-value"]');
 	selectedValues = [];
 	for (i = 0; i < columnValueInputs.length; ++i) {
 		columnValueInput = columnValueInputs[i];
@@ -579,7 +577,7 @@ SimpleDataTableControl.prototype.getCompareValue = function () {
 	
 	var controlElement;
 	
-	controlElement = this.controlElement;
+	controlElement = this.contextControl.getControlElement();
 	if (!controlElement) {
 		return null;
 	}
@@ -678,13 +676,13 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 		.startTag('div').attribute('class', 'sub-section')
 			.startTag('div').attribute('class', 'section-container column-options')
 				.startTag('h5').attribute('class', 'section-title').content(i18nStrings.columnOptionsLabel).closeTag()
-				.startTag('div').attribute('class', 'column-type section-content')
+				.startTag('div').attribute('class', 'section-content')
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'column-type').attribute('value', 'infer').attribute('checked').attribute('id', inferColumnTypeId).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'column-type').attribute('value', 'infer').attribute('checked').attribute('id', inferColumnTypeId).closeTag()
 						.startTag('label').attribute('for', inferColumnTypeId).content(i18nStrings.inferDataType).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'column-type').attribute('value', 'text').attribute('id', textOnlyColumnTypeId).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'column-type').attribute('value', 'text').attribute('id', textOnlyColumnTypeId).closeTag()
 						.startTag('label').attribute('for', textOnlyColumnTypeId).content(i18nStrings.textOnlyDataType).closeTag()
 					.closeTag()
 				.closeTag()
@@ -695,15 +693,15 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 				.startTag('h5').attribute('class', 'section-title').content(i18nStrings.sortOptionsLabel).closeTag()
 				.startTag('div').attribute('class', 'sort-options section-content')
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'sort-direction').attribute('value', 'none').attribute('checked').attribute('id', sortOptionNoneId).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'sort-direction').attribute('value', 'none').attribute('checked').attribute('id', sortOptionNoneId).closeTag()
 						.startTag('label').attribute('for', sortOptionNoneId).content(i18nStrings.noSortOrder).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'sort-direction').attribute('value', 'ascending').attribute('id', sortOptionAscendingId).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'sort-direction').attribute('value', 'ascending').attribute('id', sortOptionAscendingId).closeTag()
 						.startTag('label').attribute('for', sortOptionAscendingId).content(i18nStrings.ascendingSortOrder).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'sort-direction').attribute('value', 'descending').attribute('id', sortOptionDescendingId).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'sort-direction').attribute('value', 'descending').attribute('id', sortOptionDescendingId).closeTag()
 						.startTag('label').attribute('for', sortOptionDescendingId).content(i18nStrings.descendingSortOrder).closeTag()
 					.closeTag()
 				.closeTag()
@@ -716,40 +714,40 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 			.startTag('div').attribute('class', 'filter-by-value-operators section-content')
 				.startTag('div').attribute('class', 'field-group')
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'filter-by-value-option').attribute('value', 'eq').attribute('id', filterOptionEq).attribute('title', i18nStrings.filterOptionEqualsToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'eq').attribute('id', filterOptionEq).attribute('title', i18nStrings.filterOptionEqualsToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionEq).attribute('title', i18nStrings.filterOptionEqualsToolTip).content(i18nStrings.filterOptionEquals).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'filter-by-value-option').attribute('value', 'neq').attribute('id', filterOptionNeq).attribute('title', i18nStrings.filterOptionNotEqualsToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'neq').attribute('id', filterOptionNeq).attribute('title', i18nStrings.filterOptionNotEqualsToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionNeq).attribute('title', i18nStrings.filterOptionNotEqualsToolTip).content(i18nStrings.filterOptionNotEquals).closeTag()
 					.closeTag()
 				.closeTag()
 				.startTag('div').attribute('class', 'field-group')
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'filter-by-value-option').attribute('value', 'lt').attribute('id', filterOptionLt).attribute('title', i18nStrings.filterOptionLessThanToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'lt').attribute('id', filterOptionLt).attribute('title', i18nStrings.filterOptionLessThanToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionLt).attribute('title', i18nStrings.filterOptionLessThanToolTip).content(i18nStrings.filterOptionLessThan).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'filter-by-value-option').attribute('value', 'gt').attribute('id', filterOptionGt).attribute('title', i18nStrings.filterOptionGreaterThanToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'gt').attribute('id', filterOptionGt).attribute('title', i18nStrings.filterOptionGreaterThanToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionGt).attribute('title', i18nStrings.filterOptionGreaterThanToolTip).content(i18nStrings.filterOptionGreaterThan).closeTag()
 					.closeTag()
 				.closeTag()
 				.startTag('div').attribute('class', 'field-group')
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'filter-by-value-option').attribute('value', 'lte').attribute('id', filterOptionLte).attribute('title', i18nStrings.filterOptionLessThanOrEqualToToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'lte').attribute('id', filterOptionLte).attribute('title', i18nStrings.filterOptionLessThanOrEqualToToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionLte).attribute('title', i18nStrings.filterOptionLessThanOrEqualToToolTip).content(i18nStrings.filterOptionLessThanOrEqualTo).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('name', 'filter-by-value-option').attribute('value', 'gte').attribute('id', filterOptionGte).attribute('title', i18nStrings.filterOptionGreaterThanOrEqualToToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'gte').attribute('id', filterOptionGte).attribute('title', i18nStrings.filterOptionGreaterThanOrEqualToToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionGte).attribute('title', i18nStrings.filterOptionGreaterThanOrEqualToToolTip).content(i18nStrings.filterOptionGreaterThanOrEqualTo).closeTag()
 					.closeTag()
 				.closeTag()
 				.startTag('div').attribute('class', 'field')
-					.startTag('input').attribute('type', 'radio').attribute('name', 'filter-by-value-option').attribute('value', 'contains').attribute('id', filterOptionContains).attribute('checked').closeTag()
+					.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'contains').attribute('id', filterOptionContains).attribute('checked').closeTag()
 					.startTag('label').attribute('for', filterOptionContains).content(i18nStrings.filterOptionContains).closeTag()
 				.closeTag()
 				.startTag('div').attribute('class', 'field')
-					.startTag('input').attribute('type', 'checkbox').attribute('name', 'filter-option-ignore-case').attribute('id', filterOptionIgnoreCase).attribute('checked').closeTag()
+					.startTag('input').attribute('type', 'checkbox').attribute('class', 'filter-option-ignore-case').attribute('id', filterOptionIgnoreCase).attribute('checked').closeTag()
 					.startTag('label').attribute('for', filterOptionIgnoreCase).content(i18nStrings.filterOptionIgnoreTextCase).closeTag()
 				.closeTag()
 			.closeTag()
@@ -795,7 +793,7 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	// Register events.
 	container.querySelector('input[name="filter-by-value-value"]').addEventListener('keyup', this, false);
 	
-	clickTargets = container.querySelectorAll('input[name="column-type"], input[name="sort-direction"], input[name=filter-by-value-option], input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"], input[name="column-value"], .close-button');
+	clickTargets = container.querySelectorAll('input.column-type, input.sort-direction, input.filter-by-value-operator, input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"], input[name="column-value"], .close-button');
 	for (i = 0; i < clickTargets.length; ++i) {
 		clickTargets[i].addEventListener('click', this, false);
 	}
@@ -926,6 +924,11 @@ SimpleDataTableControl.ColumnValueFilter.prototype.include = function (cell) {
 SimpleDataTableControl.ColumnValueFilter.prototype.shouldInclude = function (cellValue) {
 	'use strict';
 
-	return SimpleDataTableUtils.shouldInclude(cellValue, this.operator, this.compareValue, this.columnType) && this.selectedValues.indexOf(cellValue) !== -1;
+	var simple, list;
+	
+	simple = SimpleDataTableUtils.shouldInclude(cellValue, this.operator, this.compareValue, this.columnType);
+	list = this.selectedValues.indexOf(cellValue) !== -1;
+	
+	return simple && list;
 };
 

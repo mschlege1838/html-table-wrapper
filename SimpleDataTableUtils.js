@@ -137,12 +137,12 @@ SimpleDataTableUtils.getNumber = function (val, strict) {
  * string-type comparisons, regardless of whether {@link SimpleDataTableUtils.FILTER_FLAG_NOT} is set. 
  *
  * @param {(string|number)} cellValue Value of the current cell being tested.
- * @param {number} operator Bitfield representing the combination of one or more `FILTER_OP_`* fields, and zero or more `FILTER_FLAG_`* fields.
+ * @param {number} operation Bitfield representing the combination of one or more `FILTER_OP_`* fields, and zero or more `FILTER_FLAG_`* fields.
  * @param {(string|number)} compareValue Value against which to test the given `cellValue`.
  * @param {number} columnType One of the `COLUMN_TYPE_`* constants representing how the given `cellValue` and `compareValue` are to be treated.
  * @returns {boolean} `true` if any of the requested comparisons succeed, otherwise `false`.
  */
-SimpleDataTableUtils.shouldInclude = function (cellValue, operator, compareValue, columnType) {
+SimpleDataTableUtils.shouldInclude = function (cellValue, operation, compareValue, columnType) {
 	'use strict';
 	
 	var convertedCellValue, convertedCompareValue, negated, simpleFlags, textCellValue, textCompareValue, ignoreCase;
