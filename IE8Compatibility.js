@@ -7,7 +7,8 @@
  * @class
  * @augments IE9Compatibility
  * @classdesc
- *		Utility functions for MS Internet Explorer 8 compatibility. 
+ *
+ * Utility functions for MS Internet Explorer 8 compatibility. 
  */
 var IE8Compatibility = {};
 
@@ -25,7 +26,7 @@ var IE8Compatibility = {};
 
 
 /**
- * Cache of EventListeners registered via attachEvent.
+ * Cache of `EventListener`s registered via `attachEvent`.
  *
  * @private
  */
@@ -33,19 +34,19 @@ IE8Compatibility.allRegisteredListeners = null;
 
 
 /**
- * <p>Adds compatibility for the DOM EventTarget.addEventListener function.</p>
+ * Adds compatibility for the DOM `EventTarget.addEventListener` function.
  *
- * <p>If addEventListener is defined on target, simply calls <code>target.addEventListener(type, listener, useCapture)</code>, otherwise falls
- * back to the IE-specific attachEvent function. This implies useCapture, if defined, can either be a boolean or an options object, but will 
- * be ignored if falling back to attachEvent.</p>
+ * If `addEventListener` is defined on `target`, simply calls `target.addEventListener(type, listener, useCapture)`, otherwise falls
+ * back to the IE-specific `attachEvent` function. This implies `useCapture`, if defined, can either be a `boolean` or an options object, but will 
+ * be ignored if falling back to `attachEvent`.
  *
- * <p>In either case, if listener is an EventListener, handleEvent will be called upon receiving an event (either natively if addEventListener
- * is defined on target, or via anonymous closure if falling back to attachEvent).</p>
+ * In either case, if listener is an `EventListener`, `handleEvent` will be called upon receiving an event (either natively if `addEventListener`
+ * is defined on target, or via anonymous closure if falling back to `attachEvent`).
  *
- * @param {EventTarget} target Target to which the given listener is to be added.
- * @param {string} type Type name of the event for which the given listener is to be added.
- * @param {(function|EventListener)} listener Listener to add to the given target.
- * @param {(boolean|object)} [useCapture=false] Use capture/options argument for addEventListener; ignored if necessary to fall back to attachEvent.
+ * @param {EventTarget} target Target to which the given `listener` is to be added.
+ * @param {string} type Type name of the event for which the given `listener` is to be added.
+ * @param {(function|EventListener)} listener Listener to add to the given `target`.
+ * @param {(boolean|object)} [useCapture=false] Use capture/options argument for `addEventListener`; ignored if necessary to fall back to `attachEvent`.
  */
 IE8Compatibility.addEventListener = function (target, type, listener, useCapture) {
 	'use strict';
@@ -85,13 +86,13 @@ IE8Compatibility.addEventListener = function (target, type, listener, useCapture
 };
 
 /**
- * Adds compatibility for the DOM EventTarget.removeEventListener function. Follows the same fallback pattern as {@link IE8Compatibility.addEventListener},
- * except with removeEventListener and detachEvent.
+ * Adds compatibility for the DOM `EventTarget.removeEventListener` function. Follows the same fallback pattern as {@link IE8Compatibility.addEventListener},
+ * except with `removeEventListener` and `detachEvent`.
  *
  * @param {EventTarget} target Target from which the given listener is to be removed.
- * @param {string} type Type name of the event for which the given listener is to be removed.
+ * @param {string} type Type name of the event for which the given `listener` is to be removed.
  * @param {(function|EventListener)} listener Listener to be removed.
- * @param {(boolean|object)} [useCapture=false] Use capture/options argument for removeEventListener; ignored if necessary to fall back to detachEvent.
+ * @param {(boolean|object)} [useCapture=false] Use capture/options argument for `removeEventListener`; ignored if necessary to fall back to `detachEvent`.
  */
 IE8Compatibility.removeEventListener = function (target, type, listener, useCapture) {
 	'use strict';
@@ -124,7 +125,7 @@ IE8Compatibility.removeEventListener = function (target, type, listener, useCapt
 };
 
 /**
- * Adds compatibility for Object.create for the specific use-case of prototype-based inheritance.
+ * Adds compatibility for `Object.create` for the specific use-case of prototype-based inheritance.
  *
  * @param {object} proto Prototype property of the desired parent (superclass) constructor.
  */
@@ -143,9 +144,9 @@ IE8Compatibility.extend = function (proto) {
 };
 
 /**
- * Adds compatibility for the Node.textContent property.
+ * Adds compatibility for the `Node.textContent` property.
  *
- * @param {Node} node Node whose textContent is to be
+ * @param {Node} node Node whose text content is to be obtained.
  */
 IE8Compatibility.getTextContent = function (node) {
 	'use strict';
@@ -185,9 +186,8 @@ IE8Compatibility.getTextContent = function (node) {
 };
 
 /**
- * Recursive helper for {@link IE8Compatibility.getTextContent}. Returns the concatenation of all immediate and descendant
- * child nodes that are of type TEXT_NODE (3). A depth-first traversal is performed, as is specified in the DOM living standard
- * for node textContent.
+ * Recursive helper for {@link IE8Compatibility.getTextContent}. Returns the concatenation of all descendant child nodes that are
+ * of type `TEXT_NODE` (3). A depth-first traversal is performed, as is specified in the DOM living standard for `Node.textContent`.
  *
  * @private
  * @param {NodeList} nodeList Children of the current node being processed.
@@ -217,12 +217,11 @@ IE8Compatibility._getTextContent = function (nodeList) {
 };
 
 /**
- * Finds the index of the given listener in {@link IE8Compatibility.allRegisteredListeners}. Returns -1 if not
- * found.
+ * Finds the index of the given `listener` in {@link IE8Compatibility.allRegisteredListeners}. Returns -1 if not found.
  *
  * @private
- * @param {EventListener} listener EventListener whose index is to be retrieved.
- * @returns {number} Index of the given listener in {@link IE8Compatibility.allRegisteredListeners} or -1 if not found.
+ * @param {EventListener} listener `EventListener` whose index is to be retrieved.
+ * @returns {number} Index of the given `listener` in {@link IE8Compatibility.allRegisteredListeners} or -1 if not found.
  */
 IE8Compatibility.getListenerIndex = function (listener) {
 	'use strict';

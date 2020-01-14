@@ -24,7 +24,7 @@ var IE9Compatibility = {
 
 
 /**
- * Adds compatibility for the DOMTokenList.add function for Element.classList.
+ * Adds compatibility for the `DOMTokenList.add` function for `Element.classList`.
  *
  * @param {Element} el Element to which the given class is to be added.
  * @param {string} className Class name to add to the given element.
@@ -48,7 +48,7 @@ IE9Compatibility.addClass = function (el, className) {
 
 
 /**
- * Adds compatibility for the DOMTokenList.remove function for Element.classList.
+ * Adds compatibility for the `DOMTokenList.remove` function for `Element.classList`.
  *
  * @param {Element} el Element from which the given class is to be removed.
  * @param {string} className Class name to remove from the given element.
@@ -72,11 +72,11 @@ IE9Compatibility.removeClass = function (el, className) {
 };
 
 /**
- * Adds compatibility for the DOMTokenList.contains function for Element.className.
+ * Adds compatibility for the `DOMTokenList.contains` function for `Element.className`.
  *
  * @param {Element} el Element whose class list is to be examined.
- * @param {string} className Class name for which to look in el's classlist.
- * @returns {boolean} true if the given className is present in el's classlist, otherwise false.
+ * @param {string} className Class name for which to look in the given element's classlist.
+ * @returns {boolean} `true` if the given `className` is present in `el`'s classlist, otherwise `false`.
  */
 IE9Compatibility.hasClass = function (el, className) {
 	'use strict';

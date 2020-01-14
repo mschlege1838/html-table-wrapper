@@ -10,8 +10,8 @@
 var IEGeneralCompatibility = {};
 
 /**
- * Adds compatibility for the Number.parseInt function. Added only for ECMA2015 modularization purposes;
- * simply falls back to the global parseInt function if Number.parseInt is not defined.
+ * Adds compatibility for the `Number.parseInt` function. Added only for ECMA2015 modularization purposes;
+ * simply falls back to the global `parseInt` function if `Number.parseInt` is not defined.
  *
  * @param {string} val Value to be parsed.
  */
@@ -26,8 +26,8 @@ IEGeneralCompatibility.parseInt = function (val) {
 };
 
 /**
- * Adds compatibility for the Number.parseFloat function. Added only for ECMA2015 modularization purposes;
- * simply falls back to the global parseFloat function if Number.parseFloat is not defined. 
+ * Adds compatibility for the `Number.parseFloat` function. Added only for ECMA2015 modularization purposes;
+ * simply falls back to the global `parseFloat` function if `Number.parseFloat` is not defined. 
  *
  * @param {string} val Value to be parsed.
  */
@@ -42,7 +42,7 @@ IEGeneralCompatibility.parseFloat = function (val) {
 };
 
 /**
- * Adds compatibility for the Number.isNaN function.
+ * Adds compatibility for the `Number.isNaN` function.
  *
  * @param {*} val Value to be tested.
  */

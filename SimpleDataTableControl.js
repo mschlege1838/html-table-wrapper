@@ -1,4 +1,36 @@
 
+// Virtual Interfaces
+
+// CellInterpreter
+/**
+ * @interface CellInterpreter
+ * @classdesc
+ *		Object-based implementation of {@link SimpleDataTableControl~populateCellValues}.
+ */
+/**
+ * Implementation of {@link SimpleDataTableControl~populateCellValues}. See documentation for the callback for further details.
+ *
+ * @function CellInterpreter#populateCellValues
+ * @param {HTMLCellElement} cell
+ * @param {Array} values
+ */
+
+// Callbacks
+
+// populateCellValues
+/**
+ * Optional callback for {@link SimpleDataTableControl} to customize how cell values are interpreted. Based upon the given `cell`,
+ * should determine the individual cell value/values, and add them to the given `Array`. Note, duplicate values are permitted; 
+ * if distinct values are desired, this function should test for their presence in the `Array` prior to adding.
+ *
+ * @callback SimpleDataTableControl~populateCellValues
+ * @param {HTMLTableCellElement} cell Cell element whose values are to be retrieved.
+ * @param {Array} values Values to populate.
+ */
+
+
+
+// Constructor
 /**
  * @constructor
  * @implements ColumnControl
@@ -10,7 +42,7 @@
  *		can select a column's type and sort order, as well as define filters based upon user-entered values and
  *		individual cell values. Uses a backing {@link ContextControl}.
  */
-function SimpleDataTableControl(columnIndex, tableHeader, parent) {
+function SimpleDataTableControl(columnIndex, tableHeader, parent, cellInterpreter) {
 	'use strict';
 	
 	var contextControl;
@@ -41,6 +73,9 @@ function SimpleDataTableControl(columnIndex, tableHeader, parent) {
 	 */
 	this.parent = parent;
 	
+	if (cellInterpreter) {
+		this.cellInterpreter = cellInterpreter;
+	}
 	
 	contextControl.addEventListener('create', this, false);
 }
@@ -523,7 +558,7 @@ SimpleDataTableControl.prototype.setUpDescriptors = function () {
 	columnTypeInput = SimpleDataTableControl.getChecked(control.querySelectorAll('input[name="column-type"]'));
 	columnType = columnTypeInput ? SimpleDataTableControl.getColumnType(columnTypeInput.value) : SimpleDataTable.COLUMN_TYPE_INFER;
 	
-	columnValues = this.parent.dataTable.getColumnValues(columnIndex);
+	columnValues = this.getColumnValues();
 	
 	sortOrderInput = SimpleDataTableControl.getChecked(control.querySelectorAll('input[name="sort-direction"]'));
 	sortOrder = sortOrderInput ? SimpleDataTableControl.getSortOrder(sortOrderInput.value) : SimpleDataTableControl.SORT_ORDER_NONE;
@@ -533,6 +568,57 @@ SimpleDataTableControl.prototype.setUpDescriptors = function () {
 	this.filterDescriptor = new SimpleDataTableControl.ColumnValueFilter(columnIndex, compareValue, operation, columnType, columnValues);
 	
 };
+
+/**
+STALE
+ * Returns an `Array` containing all values for each cell of the given `columnIndex`. An optional callback can be provided to customize how cell values
+ * are intrepreted. If defined, it will be used, otherwise the default behavior is to simply return the distinct set of trimmed `textContent`
+ * for each cell in the column. The result is sorted prior to being returned unless `noSort` is `true`.
+ *
+ * @param {number} columnIndex Column index whose values are to be retrieved.
+ * @param {(SimpleDataTable~populateCellValues|CellInterpreter)} [callback] 
+ *		Optional {@link CellInterpreter} or callback function to customize how cell values are intrepreted.
+ * @param {boolean} [noSort=false] Whether to prevent the sorting of the result prior to being returned.
+ * @returns {Array} An `Array` containing all values for each cell of the given `columnIndex`.
+ * @throws {RangeError} If `columnIndex` is greater than the number of columns in the table.
+ * @throws {TypeError} If `callback` is defined, but does not implement {@link CellInterpreter} or is not a function itself.
+ */
+SimpleDataTableControl.prototype.getColumnValues = function () {
+	'use strict';
+	
+	var rows, i, cell, value, listItems, j, result, columnIndex, callback;
+	
+	if (callback && (typeof callback !== 'function' || typeof callback.populateCellValues !== 'function')) {
+		throw new TypeError('Callback must either define a populateCellValues function, or be a function itself.');
+	}
+	
+	columnIndex = this.columnIndex;
+	callback = this.cellInterpreter;
+	
+	result = [];
+	rows = this.table.tBodies[0].rows;
+	
+	for (i = 0; i < rows.length; ++i) {
+		cell = SimpleDataTable.getColumn(rows[i], columnIndex);
+		if (callback) {
+			if (callback.populateCellValues) {
+				callback.populateCellValues(cell, result);
+			} else {
+				callback(cell, result);
+			}
+		} else {
+			value = cell.textContent.trim();
+			if (result.indexOf(value) === -1) {
+				result.push(value);
+			}
+		}
+	}
+	
+	result.sort();
+	
+	return result;
+};
+
 
 /**
  * Defines the UI content on the given container, and registers this SimpleDataTableControl for the appropriate events.
@@ -572,7 +658,7 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	selectAllCells = idBase + 'selectAllCells';
 	
 	columnIndex = this.columnIndex;
-	columnValues = this.parent.dataTable.getColumnValues(columnIndex);
+	columnValues = this.getColumnValues();
 	
 	IE9Compatibility.addClass(container, SimpleDataTableControl.controlClassName)
 	
