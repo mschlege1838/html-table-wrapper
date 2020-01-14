@@ -527,7 +527,7 @@ SimpleDataTableControl.prototype.getOperator = function () {
 	}
 	
 	if (this.contextControl.getControlElement().querySelector('input.filter-option-ignore-case').checked) {
-		result |= SimpleDataTableUtils.FILTER_OP_IGNORE_CASE; 
+		result |= SimpleDataTableUtils.FILTER_FLAG_IGNORE_CASE; 
 	}
 	
 	return result;
@@ -816,7 +816,6 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	.closeTag();
 	
 	// Define content.
-	IE9Compatibility.addClass(container, SimpleDataTableListener.columnOptionsControlClassName);
 	container.insertAdjacentHTML('afterbegin', builder.toString());
 	
 	
