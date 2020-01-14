@@ -31,36 +31,6 @@ DataTable.FILTER_TYPE_NUMERIC = 2;
 
 
 // Static methods
-DataTable.parseInt = function (val) {
-	'use strict';
-	
-	if (typeof Number.parseInt === 'function') {
-		return Number.parseInt(val);
-	}
-	
-	return parseInt(val);
-};
-
-DataTable.parseFloat = function (val) {
-	'use strict';
-	
-	if (typeof Number.parseFloat === 'function') {
-		return Number.parseFloat(val);
-	}
-	
-	return parseFloat(val);
-};
-
-DataTable.isNaN = function (val) {
-	'use strict';
-	
-	if (typeof Number.isNaN === 'function') {
-		return Number.isNaN(val);
-	}
-	
-	return val !== val;
-};
-
 DataTable.hasFlag = function (flags, flag) {
 	'use strict';
 	
@@ -79,50 +49,6 @@ DataTable.copy = function (src) {
 	return result;
 };
 
-DataTable.addClass = function (el, className) {
-	'use strict';
-	
-	var classNames;
-	
-	if (el.classList) {
-		el.classList.add(className);
-		return;
-	}
-	
-	classNames = el.className.trim().split(/\s+/);
-	if (classNames.indexOf(className) == -1) {
-		classNames.push(className);
-		el.className = classNames.join(' ');
-	}
-};
-
-DataTable.removeClass = function (el, className) {
-	'use strict';
-	
-	var classNames, index;
-	
-	if (el.classList) {
-		el.classList.remove(className);
-		return;
-	}
-	
-	classNames = el.className.trim().split(/\s+/);
-	index = classNames.indexOf(className);
-	if (index != -1) {
-		classNames.splice(index, 1);
-		el.className = classNames.join(' ');
-	}
-};
-
-DataTable.hasClass = function (el, className) {
-	'use strict';
-	
-	if (el.classList) {
-		return el.classList.contains(className);
-	}
-	
-	return el.className.trim().split(/\s+/).indexOf(className) != -1;
-};
 
 DataTable.getNumber = function (val, strict) {
 	'use strict';
@@ -134,9 +60,9 @@ DataTable.getNumber = function (val, strict) {
 	}
 	
 	if (/^\d+$/.test(val)) {
-		return DataTable.parseInt(val);
+		return IEGeneralCompatibility.parseInt(val);
 	} else if (DataTable.isNumeric(val)) {
-		return DataTable.parseFloat(val);
+		return IEGeneralCompatibility.parseFloat(val);
 	} else {
 		return strict ? NaN : val;
 	}
@@ -329,9 +255,9 @@ DataTable.prototype.filter = function () {
 		}
 		
 		if (filter) {
-			DataTable.addClass(row, DataTable.FILTERED_CLASS_NAME);
+			IE9Compatibility.addClass(row, DataTable.FILTERED_CLASS_NAME);
 		} else {
-			DataTable.removeClass(row, DataTable.FILTERED_CLASS_NAME);
+			IE9Compatibility.removeClass(row, DataTable.FILTERED_CLASS_NAME);
 		}
 	}
 };
@@ -344,7 +270,7 @@ DataTable.prototype.clearFilter = function () {
 	rows = this.table.tBodies[0].rows;
 	
 	for (i = 0; i < rows.length; ++i) {
-		DataTable.removeClass(rows[i], DataTable.FILTERED_CLASS_NAME);
+		IE9Compatibility.removeClass(rows[i], DataTable.FILTERED_CLASS_NAME);
 	}
 	
 };
@@ -446,9 +372,9 @@ DataTable.ValueSort.prototype.compare = function (cellA, cellB) {
 	bVal = cellB.textContent;
 	
 	aNum = DataTable.getNumber(aVal, true);
-	aNaN = DataTable.isNaN(aNum);
+	aNaN = IEGeneralCompatibility.isNaN(aNum);
 	bNum = DataTable.getNumber(bVal, true);
-	bNaN = DataTable.isNaN(bNum);
+	bNaN = IEGeneralCompatibility.isNaN(bNum);
 	
 	if (aNaN && bNaN) {
 		return aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);

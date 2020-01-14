@@ -1,33 +1,25 @@
 
-// Constructor
-function DataTableListener(table) {
+
+function SimpleDataTableListener(table, contextControl) {
 	'use strict';
 	
-	if (!table) {
-		throw new ReferenceError('Table must be defined.');
-	}
-	
 	if (table instanceof DataTable) {
-		this.dataTable = table;
-		this.table = table.table;
+		this.dataTable = dataTable;
+		this.table = dataTable.table;
 	} else {
 		this.dataTable = new DataTable(table);
 		this.table = table;
 	}
+	
+	this.contextControl = contextControl;
 }
 
-// Static fields
-DataTableListener.COLUMN_OPTIONS_CONTAINER_CLASS_NAME = 'data-table-column-options';
-DataTableListener.DIALOGUE_OPENED_CLASS_NAME = 'opened';
-DataTableListener.DIALOGUE_CLOSED_CLASS_NAME = 'closed';
-DataTableListener.DIALOGUE_MOBILE_THRESHOLD = 0.35;
-DataTableListener.MOBILE_VIEW_CLASS_NAME = 'data-table-mobile-view';
-DataTableListener.DIALOGUE_COLUMN_HORIZANTAL_OFFSET_PX = 10;
-DataTableListener.DIALOGUE_COLUMN_VERTICAL_OFFSET_PX = -10;
 
-DataTableListener.PROCESSED_COLUMN_HEADER = 'data-table-column-header';
+// Static Fields
+SimpleDataTableListener.columnOptionsControlClassName = 'data-table-column-options';
+SimpleDataTableListener.PROCESSED_COLUMN_HEADER = 'data-table-column-header';
 
-DataTableListener.i18nStrings = {
+SimpleDataTableListener.i18nStrings = {
 	columnOptionsLabel: 'Column Options',
 	sortOptionsLabel: 'Sort Options',
 	
@@ -71,46 +63,212 @@ DataTableListener.i18nStrings = {
 };
 
 
-DataTableListener.getWindowScrollX = function () {
-	'use strict';
-	
-	if (typeof window.scrollX === 'number') {
-		return window.scrollX;
-	}
-	
-	return window.pageXOffset;
-	
-};
-
-DataTableListener.getWindowScrollY = function () {
-	'use strict';
-	
-	if (typeof window.scrollY === 'number') {
-		return window.scrollY;
-	}
-	
-	return window.pageYOffset;
-};
-
-
-// Static methods
-DataTableListener.getIdBase = function () {
+// Static Methods
+SimpleDataTableListener.getIdBase = function () {
 	'use strict';
 	
 	return 'dataTable_' + Math.random() + '_';
 };
 
-DataTableListener.createColumnOptionsElement = function () {
+
+// Default Instance Properties
+SimpleDataTableListener.prototype.tableHeaderCache = null;
+
+SimpleDataTableListener.prototype.currentColumnIndex = -1;
+
+
+// Instance Methods
+SimpleDataTableListener.prototype.init = function () {
 	'use strict';
 	
-	var container, idBase, inferColumnTypeId, textOnlyColumnTypeId, i18nStrings, sortOptionAscendingId,
+	var tableHeaders, tableHeaderCache, i, tableHeader;
+	
+	tableHeaders = this.table.tHead.rows[0].cells;
+	tableHeaderCache = this.tableHeaderCache = [];
+	
+	
+	for (i = 0; i < tableHeaders.length; ++i) {
+		tableHeader = tableHeaders[i];
+		tableHeader.addEventListener('click', this, false);
+		IE9Compatibility.addClass(tableHeader, SimpleDataTableListener.PROCESSED_COLUMN_HEADER);
+		tableHeaderCache.push(tableHeader);
+	}
+	
+	this.contextControl.addEventListener('create', this, false);
+	
+};
+
+
+SimpleDataTableListener.prototype.dispose = function () {
+	'use strict';
+	
+	var tableHeaders, i, tableHeader, clickTargets, controlElement, contextControl;
+
+	for (i = 0; i < tableHeaders.length; ++i) {
+		tableHeader = tableHeaders[i];
+		tableHeader.removeEventListener('click', this, false);
+		IE9Compatibility.removeClass(tableHeader, SimpleDataTableListener.PROCESSED_COLUMN_HEADER);
+	}
+	this.tableHeaderCache = null;
+	
+	
+	contextControl = this.contextControl;
+	controlElement = contextControl.getControlElement();
+	if (controlElement) {
+		controlElement.getElementsByClassName('close-button')[0].removeEventListener('click', this, false);
+			
+		controlElement.querySelector('input[name="filter-by-value-value"]').removeEventListener('keyup', this, false);
+		
+		clickTargets = controlElement.querySelectorAll('input[name="column-type"], input[name="sort-direction"], input[name=filter-by-value-option], input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"]');
+		for (i = 0; i < clickTargets.length; ++i) {
+			clickTargets[i].removeEventListener('click', this, false);
+		}
+	}
+	contextControl.removeEventListener('create', this, false);
+	contextControl.dispose();
+	
+};
+
+SimpleDataTableListener.prototype.handleEvent = function (event) {
+	'use strict';
+	
+	var target, name, currentColumnIndex, tableHeaderCache, contextControl, columnIndex;
+	
+	target = event.currentTarget;
+	contextControl = this.contextControl;
+	
+	switch (event.type) {
+		case 'create':
+			this.defineContent(contextControl.getControlElement());
+			break;
+		case 'click':
+			tableHeaderCache = this.tableHeaderCache;
+			if ((columnIndex = tableHeaderCache.indexOf(target)) !== -1) {
+				this.currentColumnIndex = columnIndex;
+				contextControl.open(target);
+				this.onOpen(contextControl.getControlElement(), columnIndex, target);
+				return;
+			}
+			
+			if (IE9Compatibility.hasClass(target, 'close-button')) {
+				this.currentColumnIndex = -1;
+				contextControl.close();
+				return;
+			}
+			
+			name = target.name;
+			if (name === 'column-value') {
+				this.selectColumnValue(target.getAttribute('data-column-index'), target.checked, target.value);
+				return;
+			}
+			
+			if (name === 'column-type') {
+				// TODO
+				console.info(`column type: ${target.value}`);
+				return;
+			}
+			
+			if (name === 'sort-direction') {
+				// TODO
+				console.info(`sort direction: ${target.value}`);
+				return;
+			}
+			
+			if (name === 'filter-by-value-option') {
+				// TODO
+				console.info(`filter option: ${target.value}`);
+				return;
+			}
+			
+			if (name === 'filter-option-ignore-case') {
+				// TODO
+				console.info(`ignore case: ${target.checked}`);
+				return;
+			}
+			
+			if (name === 'clear-filter-button') {
+				this.dataTable.clearFilter();
+				return;
+			}
+			
+			if (name === 'select-all-cell-values') {
+				currentColumnIndex = this.currentColumnIndex;
+				if (currentColumnIndex < 0) {
+					return;
+				}
+				this.selectAll(currentColumnIndex, target.checked);
+				return;
+			}
+			
+			break;
+		case 'keyup':
+			if (target.name === 'filter-by-value-value') {
+				// TODO
+				console.info(`Filter value: ${target.value}`);
+				return;
+			}
+			break;
+	}
+};
+
+
+
+SimpleDataTableListener.prototype.selectColumnValue = function (columnIndex, checked, value) {
+	'use strict';
+	
+	var columnOperationsElement, inputs, i, selectAll;
+	
+	columnOperationsElement = this.contextControl.getControlElement();
+	if (!columnOperationsElement) {
+		return;
+	}
+	
+	
+	// TODO Update Filter.
+	console.info(`Cell value: ${value} ${checked}`);
+	
+	
+	// Update 'Select All' checkbox.
+	selectAll = true;
+	inputs = columnOperationsElement.querySelectorAll('.filter-by-cell-values input[name="column-value"][data-column-index="' + columnIndex + '"]');
+	for (i = 0; i < inputs.length; ++i) {
+		if (!inputs[i].checked) {
+			selectAll = false;
+			break;
+		}
+	}
+	
+	columnOperationsElement.querySelector('input[name="select-all-cell-values"]').checked = selectAll;
+};
+
+SimpleDataTableListener.prototype.selectAll = function (columnIndex, checked) {
+	'use strict';
+	
+	var columnOperationsElement, inputs, i;
+	
+	columnOperationsElement = this.contextControl.getControlElement();
+	if (!columnOperationsElement) {
+		return;
+	}
+	
+	inputs = columnOperationsElement.querySelectorAll('.filter-by-cell-values input[name="column-value"][data-column-index="' + columnIndex + '"]');
+	for (i = 0; i < inputs.length; ++i) {
+		inputs[i].checked = checked;
+	}
+};
+
+SimpleDataTableListener.prototype.defineContent = function (container) {
+	'use strict';
+	
+	var idBase, inferColumnTypeId, textOnlyColumnTypeId, i18nStrings, sortOptionAscendingId,
 		sortOptionDescendingId, filterOptionEq, filterOptionNeq, filterOptionLt, filterOptionGt,
 		filterOptionLte, filterOptionGte, filterOptionContains, filterOptionIgnoreCase, sortOptionNoneId,
-		filterByValueInputId, writer, selectAllCells;
+		filterByValueInputId, builder, selectAllCells, clickTargets, i;
 	
-	i18nStrings = DataTableListener.i18nStrings;
+	i18nStrings = SimpleDataTableListener.i18nStrings;
 	
-	idBase = DataTableListener.getIdBase();
+	// Generate IDs.
+	idBase = SimpleDataTableListener.getIdBase();
 	
 	inferColumnTypeId = idBase + 'inferColumnType';
 	textOnlyColumnTypeId = idBase + 'textOnly';
@@ -128,13 +286,11 @@ DataTableListener.createColumnOptionsElement = function () {
 	filterByValueInputId = idBase + 'filterByValue';
 	selectAllCells = idBase + 'selectAllCells';
 	
-	container = document.createElement('div');
-	container.className = DataTableListener.COLUMN_OPTIONS_CONTAINER_CLASS_NAME;
 	
+	// Compose content.
+	builder = new XMLBuilder();
 	
-	writer = new XMLWriter();
-	
-	writer.startTag('div').attribute('class', 'section title-bar')
+	builder.startTag('div').attribute('class', 'section title-bar')
 		.startTag('span').attribute('class', 'column-title').closeTag(true)
 		.startTag('span').attribute('class', 'control-buttons')
 			.startTag('span').attribute('class', 'control-button close-button').attribute('title', i18nStrings.toolTipCloseDialogue).content('\u00D7').closeTag()
@@ -241,215 +397,45 @@ DataTableListener.createColumnOptionsElement = function () {
 		.startTag('ul').attribute('class', 'filter-by-cell-values').closeTag(true)
 	.closeTag();
 	
-	container.insertAdjacentHTML('afterbegin', writer.toString());
-	
-	document.body.appendChild(container);
-	return container;
-};
-
-DataTableListener.getOffset = function (el) {
-	'use strict';
-	
-	var result = { X: 0, Y: 0 };
-	DataTableListener._getOffset(el, result);
-	return result;
-};
-
-DataTableListener._getOffset = function (el, offsetCoords) {
-	'use strict';
-	
-	if (el == null) {
-		return;
-	}
-	
-	offsetCoords.X += el.offsetLeft;
-	offsetCoords.Y += el.offsetTop;
-	DataTableListener._getOffset(el.offsetParent, offsetCoords);
-};
-
-
-
-// Default instance properties
-DataTableListener.prototype.tableHeaderCache = null;
-
-DataTableListener.prototype.columnOperationsElement = null;
-
-DataTableListener.prototype.lastSelectedHeader = null;
-
-DataTableListener.prototype.mobileViewState = null;
-
-
-// Instance methods
-DataTableListener.prototype.init = function () {
-	'use strict';
-	
-	var tableHeaders, tableHeaderCache, i, tableHeader;
-	
-	tableHeaders = this.table.tHead.rows[0].cells;
-	tableHeaderCache = this.tableHeaderCache = [];
+	// Define content.
+	IE9Compatibility.addClass(container, SimpleDataTableListener.columnOptionsControlClassName);
+	container.insertAdjacentHTML('afterbegin', builder.toString());
 	
 	
-	for (i = 0; i < tableHeaders.length; ++i) {
-		tableHeader = tableHeaders[i];
-		tableHeader.addEventListener('click', this, false);
-		DataTable.addClass(tableHeader, DataTableListener.PROCESSED_COLUMN_HEADER);
-		tableHeaderCache.push(tableHeader);
+	// Register events.
+	container.getElementsByClassName('close-button')[0].addEventListener('click', this, false);
+		
+	container.querySelector('input[name="filter-by-value-value"]').addEventListener('keyup', this, false);
+	
+	clickTargets = container.querySelectorAll('input[name="column-type"], input[name="sort-direction"], input[name=filter-by-value-option], input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"]');
+	for (i = 0; i < clickTargets.length; ++i) {
+		clickTargets[i].addEventListener('click', this, false);
 	}
 	
 };
 
-DataTableListener.prototype.dispose = function () {
+SimpleDataTableListener.prototype.onOpen = function (controlElement, columnIndex, referenceHeader) {
 	'use strict';
 	
-	var tableHeaderCache, i, columnOperationsElement, clickTargets;
-	
-	tableHeaderCache = this.tableHeaderCache;
-	if (tableHeaderCache) {
-		for (i = 0; i < tableHeaders.length; ++i) {
-			tableHeaderCache[i].removeEventListener('click', this, false);
-		}
-	
-		this.tableHeaderCache = null;
-	}
-	
-	columnOperationsElement = this.columnOperationsElement;
-	if (columnOperationsElement) {
-		columnOperationsElement.getElementsByClassName('close-button')[0].removeEventListener('click', this, false);
-		
-		columnOperationsElement.querySelector('input[name="filter-by-value-value"]').removeEventListener('keyup', this, false);
-		
-		clickTargets = columnOperationsElement.querySelectorAll('input[name="column-type"], input[name="sort-direction"], input[name=filter-by-value-option], input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"]');
-		for (i = 0; i < clickTargets.length; ++i) {
-			clickTargets[i].removeEventListener('click', this, false);
-		}
-		
-		document.body.removeChild(columnOperationsElement);
-		window.removeEventListener('resize', this, false);
-		columnOperationsElement = this.columnOperationsElement = null;
-	}
-	
-};
-
-DataTableListener.prototype.handleEvent = function (event) {
-	'use strict';
-	
-	var target, columnOperationsElement, re, columnIndex, name;
-	
-	target = event.currentTarget;
-	
-	switch (event.type) {
-		case 'resize':
-			if (this.lastSelectedHeader) {
-				this.positionColumnOptions(this.lastSelectedHeader);
-				return;
-			}
-			break;
-		case 'click':
-			if ((columnIndex = this.tableHeaderCache.indexOf(target)) !== -1) {
-				this.lastSelectedHeader = target;
-				this.openColumnOptions(columnIndex);
-				return;
-			}
-			
-			if (DataTable.hasClass(target, 'close-button')) {
-				this.closeColumnOptions();
-				return;
-			}
-			
-			name = target.name;
-			if (name === 'column-value') {
-				console.info(`Cell value: ${target.value} ${target.checked}`);
-				return;
-			}
-			
-			if (name === 'column-type') {
-				console.info(`column type: ${target.value}`);
-				return;
-			}
-			
-			if (name === 'sort-direction') {
-				console.info(`sort direction: ${target.value}`);
-				return;
-			}
-			
-			if (name === 'filter-by-value-option') {
-				console.info(`filter option: ${target.value}`);
-				return;
-			}
-			
-			if (name === 'filter-option-ignore-case') {
-				console.info(`ignore case: ${target.checked}`);
-				return;
-			}
-			
-			if (name === 'clear-filter-button') {
-				console.info('Clear filters');
-				return;
-			}
-			
-			if (name === 'select-all-cell-values') {
-				console.info(`Select All: ${target.checked}`);
-				return;
-			}
-			
-			break;
-		case 'keyup':
-			if (target.name === 'filter-by-value-value') {
-				console.info(`Filter value: ${target.value}`);
-				return;
-			}
-			break;
-	}
-
-
-};
-
-
-DataTableListener.prototype.openColumnOptions = function (columnIndex) {
-	'use strict';
-	
-	var columnOperationsElement, writer, columnValues, i, columnValue, idBase, id, cellValueList,
-		newInputs, child, clickTargets, referenceHeader, fieldList, field;
-	
-	columnOperationsElement = this.columnOperationsElement;
-	
-	// Create dialogue if it doesn't exist.
-	if (!columnOperationsElement) {
-		columnOperationsElement = this.columnOperationsElement = DataTableListener.createColumnOptionsElement();
-		columnOperationsElement.getElementsByClassName('close-button')[0].addEventListener('click', this, false);
-		
-		columnOperationsElement.querySelector('input[name="filter-by-value-value"]').addEventListener('keyup', this, false);
-		
-		clickTargets = columnOperationsElement.querySelectorAll('input[name="column-type"], input[name="sort-direction"], input[name=filter-by-value-option], input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"]');
-		for (i = 0; i < clickTargets.length; ++i) {
-			clickTargets[i].addEventListener('click', this, false);
-		}
-		
-		window.addEventListener('resize', this, false);
-	}
-	
-	// Begin opening sequence.
-	DataTable.removeClass(columnOperationsElement, DataTableListener.DIALOGUE_CLOSED_CLASS_NAME);
-	DataTable.removeClass(columnOperationsElement, DataTableListener.DIALOGUE_OPENED_CLASS_NAME);
-	
+	var cellValueList, idBase, builder, columnValues, newInputs, i, columnValue, id, fieldList, field;
 	
 	// Add cell values for this column if not present.
-	cellValueList = columnOperationsElement.getElementsByClassName('filter-by-cell-values')[0];
+	cellValueList = controlElement.getElementsByClassName('filter-by-cell-values')[0];
 	if (!cellValueList.querySelector('[data-column-index="' + columnIndex + '"]')) {
-		idBase = DataTableListener.getIdBase();
-		writer = new XMLWriter()
+		idBase = SimpleDataTableListener.getIdBase();
+		builder = new XMLBuilder();
 		columnValues = this.dataTable.getColumnValues(columnIndex);
 		for (i = 0; i < columnValues.length; ++i) {
 			columnValue = columnValues[i];
 			id = idBase + 'columnValue_' + i;
 			
-			writer.startTag('li').attribute('class', 'field').attribute('data-column-index', columnIndex)
+			builder.startTag('li').attribute('class', 'field').attribute('data-column-index', columnIndex)
 				.startTag('input').attribute('type', 'checkbox').attribute('checked').attribute('value', columnValue).attribute('id', id).attribute('name', 'column-value').attribute('data-column-index', columnIndex).closeTag()
 				.startTag('label').attribute('for', id).content(columnValue).closeTag()
 			.closeTag();
 		}
 		
-		cellValueList.insertAdjacentHTML('afterbegin', writer.toString());
+		cellValueList.insertAdjacentHTML('afterbegin', builder.toString());
 		newInputs = cellValueList.querySelectorAll('input[data-column-index="' + columnIndex + '"]');
 		for (i = 0; i < newInputs.length; ++i) {
 			newInputs[i].addEventListener('click', this, false);
@@ -457,131 +443,16 @@ DataTableListener.prototype.openColumnOptions = function (columnIndex) {
 	}
 	
 	// Filter values not for this column.
-	fieldList = cellValueList.querySelectorAll('li[data-column-index="' + columnIndex + '"]');
+	fieldList = cellValueList.querySelectorAll('li[data-column-index]');
 	for (i = 0; i < fieldList.length; ++i) {
 		field = fieldList[i];
 		if (field.getAttribute('data-column-index') == columnIndex) {
-			DataTable.removeClass(field, DataTable.FILTERED_CLASS_NAME);
+			IE9Compatibility.removeClass(field, DataTable.FILTERED_CLASS_NAME);
 		} else {
-			DataTable.addClass(field, DataTable.FILTERED_CLASS_NAME);
+			IE9Compatibility.addClass(field, DataTable.FILTERED_CLASS_NAME);
 		}
 	}
 	
-	
-	referenceHeader = this.tableHeaderCache[columnIndex];
-	
-	// Position dialogue.
-	this.positionColumnOptions(referenceHeader);
-	
-	
-	// Finish opening sequence.
 	cellValueList.scrollTop = 0;
-	columnOperationsElement.getElementsByClassName('column-title')[0].textContent = referenceHeader.textContent;
-	DataTable.addClass(columnOperationsElement, DataTableListener.DIALOGUE_OPENED_CLASS_NAME);
-};
-
-DataTableListener.prototype.closeColumnOptions = function () {
-	'use strict';
-	
-	var columnOperationsElement, mobileViewState;
-	
-	columnOperationsElement = this.columnOperationsElement;
-	
-	if (!columnOperationsElement) {
-		return;
-	}
-	
-	if (mobileViewState = this.mobileViewState) {
-		mobileViewState.restoreDefaultView();
-		this.mobileViewState = null;
-	}
-	
-	DataTable.removeClass(columnOperationsElement, DataTableListener.DIALOGUE_OPENED_CLASS_NAME);
-	DataTable.addClass(columnOperationsElement, DataTableListener.DIALOGUE_CLOSED_CLASS_NAME);
-};
-
-DataTableListener.prototype.positionColumnOptions = function (referenceHeader) {
-	'use strict';
-	
-	var columnOperationsElement, offset, windowWidth, windowHeight, areaRatio, dialogueHeight, dialogueWidth, lastOverflow,
-		mobileViewState, proposedLeft, proposedTop;
-	
-	columnOperationsElement = this.columnOperationsElement;
-	mobileViewState = this.mobileViewState;
-	
-	windowWidth = window.innerWidth;
-	windowHeight = window.innerHeight;
-	dialogueWidth = mobileViewState ? mobileViewState.initialWidth : columnOperationsElement.offsetWidth;
-	dialogueHeight = mobileViewState ? mobileViewState.initialHeight : columnOperationsElement.offsetHeight;
-	
-	
-	areaRatio = (dialogueHeight * dialogueWidth) / (windowHeight * windowWidth);
-	
-	
-	if (areaRatio >= DataTableListener.DIALOGUE_MOBILE_THRESHOLD) {
-		if (!mobileViewState) {
-			mobileViewState = this.mobileViewState = new DataTableListener.MobileViewState(columnOperationsElement);
-			mobileViewState.setupMobileView();
-		}
-	} else {
-		if (mobileViewState) {
-			mobileViewState.restoreDefaultView();
-			this.mobileViewState = null;
-			dialogueWidth = columnOperationsElement.offsetWidth;
-			dialogueHeight = columnOperationsElement.offsetHeight;
-		}
-		
-		
-		offset = DataTableListener.getOffset(referenceHeader);
-		
-		proposedLeft = offset.X + DataTableListener.DIALOGUE_COLUMN_HORIZANTAL_OFFSET_PX;
-		proposedTop = offset.Y + referenceHeader.offsetHeight + DataTableListener.DIALOGUE_COLUMN_VERTICAL_OFFSET_PX;
-		
-		columnOperationsElement.style.left = (proposedLeft + dialogueWidth > window.innerWidth ? window.innerWidth - dialogueWidth - (window.outerWidth - window.innerWidth) : proposedLeft) + 'px';
-		columnOperationsElement.style.top = (proposedTop + dialogueHeight > window.innerHeight ? Math.max(0, window.innerHeight - dialogueHeight) : proposedTop) + 'px';
-	}
-	
-};
-
-
-
-DataTableListener.MobileViewState = function (columnOperationsElement) {
-	'use strict';
-	
-	
-	this.columnOperationsElement = columnOperationsElement;
-	this.initialWidth = columnOperationsElement.offsetWidth;
-	this.initialHeight = columnOperationsElement.offsetHeight;
-	this.scrollX = DataTableListener.getWindowScrollX();
-	this.scrollY = DataTableListener.getWindowScrollY();
-};
-
-DataTableListener.MobileViewState.prototype.setupMobileView = function () {
-	'use strict';
-	
-	var columnOperationsElement, controlStyle;
-	
-	columnOperationsElement = this.columnOperationsElement;
-	controlStyle = columnOperationsElement.style;
-	
-	controlStyle.removeProperty('left');
-	controlStyle.removeProperty('top');
-	
-	DataTable.addClass(columnOperationsElement, DataTableListener.MOBILE_VIEW_CLASS_NAME);
-	DataTable.addClass(document.body, DataTableListener.MOBILE_VIEW_CLASS_NAME);
-	
-	window.scrollTo(0, 0);
-};
-
-DataTableListener.MobileViewState.prototype.restoreDefaultView = function () {
-	'use strict';
-	
-	var columnOperationsElement;
-	
-	columnOperationsElement = this.columnOperationsElement;
-		
-	DataTable.removeClass(columnOperationsElement, DataTableListener.MOBILE_VIEW_CLASS_NAME);
-	DataTable.removeClass(document.body, DataTableListener.MOBILE_VIEW_CLASS_NAME);
-	
-	window.scrollTo(this.scrollX, this.scrollY);
+	controlElement.getElementsByClassName('column-title')[0].textContent = referenceHeader.textContent;
 };
