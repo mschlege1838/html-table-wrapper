@@ -12,12 +12,19 @@ function SimpleDataTableListener(table, contextControl) {
 	}
 	
 	this.contextControl = contextControl;
+	this.columnOperations = [];
 }
 
 
 // Static Fields
+SimpleDataTableListener.SORT_ORDER_NONE = 0;
+SimpleDataTableListener.SORT_ORDER_ASCENDING = 1;
+SimpleDataTableListener.SORT_ORDER_DESCENDING = 2;
+
+
 SimpleDataTableListener.columnOptionsControlClassName = 'data-table-column-options';
 SimpleDataTableListener.PROCESSED_COLUMN_HEADER = 'data-table-column-header';
+
 
 SimpleDataTableListener.i18nStrings = {
 	columnOptionsLabel: 'Column Options',
@@ -68,6 +75,130 @@ SimpleDataTableListener.getIdBase = function () {
 	'use strict';
 	
 	return 'dataTable_' + Math.random() + '_';
+};
+
+SimpleDataTableListener.getSortOrder = function (str) {
+	'use strict';
+	
+	switch (str) {
+		case 'none':
+			return SimpleDataTableListener.SORT_ORDER_NONE;
+		case 'ascending':
+			return SimpleDataTableListener.SORT_ORDER_ASCENDING;
+		case 'descending':
+			return SimpleDataTableListener.SORT_ORDER_DESCENDING;
+	}
+};
+
+SimpleDataTableListener.getSortOrderValue = function (val) {
+	'use strict';
+	
+	switch (val) {
+		case SimpleDataTableListener.SORT_ORDER_NONE:
+			return 'none';
+		case SimpleDataTableListener.SORT_ORDER_ASCENDING:
+			return 'ascending';
+		case SimpleDataTableListener.SORT_ORDER_DESCENDING:
+			return 'descending';
+	}
+};
+
+SimpleDataTableListener.getColumnType = function (str) {
+	'use strict';
+	
+	switch (str) {
+		case 'infer':
+			return DataTable.COLUMN_TYPE_INFER;
+		case 'text':
+			return DataTable.COLUMN_TYPE_TEXT;
+	}
+};
+
+SimpleDataTableListener.getColumnTypeValue = function (val) {
+	'use strict';
+	
+	switch (val) {
+		case DataTable.COLUMN_TYPE_INFER:
+			return 'infer';
+		case DataTable.COLUMN_TYPE_TEXT:
+			return 'text';
+	}
+};
+
+SimpleDataTableListener.getOperation = function (str) {
+	'use strict';
+	
+	switch (str) {
+		case 'eq':
+			return DataTable.FILTER_OP_EQUALS;
+		case 'neq':
+			return DataTable.FILTER_OP_NOT_EQUALS;
+		case 'lt':
+			return DataTable.FILTER_OP_LESS_THAN;
+		case 'gt':
+			return DataTable.FILTER_OP_GREATER_THAN;
+		case 'lte':
+			return DataTable.FILTER_OP_LESS_THAN | DataTable.FILTER_OP_EQUALS;
+		case 'gte':
+			return DataTable.FILTER_OP_GREATER_THAN | DataTable.FILTER_OP_EQUALS;
+		case 'contains':
+			return DataTable.FILTER_OP_CONTAINS;
+	}
+};
+
+SimpleDataTableListener.getOperationValue = function (val) {
+	'use strict';
+	
+	var hasFlag = DataTable.hasFlag;
+	
+	if (hasFlag(val, DataTable.FILTER_OP_CONTAINS)) {
+		return 'contains';
+	} else if (hasFlag(val, DataTable.FILTER_OP_LESS_THAN) && hasFlag(val, DataTable.FILTER_OP_EQUALS)) {
+		return 'lte';
+	} else if (hasFlag(val, DataTable.FILTER_OP_GREATER_THAN) && hasFlag(val, DataTable.FILTER_OP_EQUALS)) {
+		return 'gte';
+	} else if (hasFlag(val, DataTable.FILTER_OP_EQUALS)) {
+		return 'eq';
+	} else if (hasFlag(val, DataTable.FILTER_OP_NOT_EQUALS)) {
+		return 'neq';
+	} else if (hasFlag(val, DataTable.FILTER_OP_LESS_THAN)) {
+		return 'lt';
+	} else if (hasFlag(val, DataTable.FILTER_OP_GREATER_THAN)) {
+		return 'gt';
+	}
+	
+	
+};
+
+SimpleDataTableListener.getChecked = function (inputs) {
+	'use strict';
+	
+	var i, input;
+	
+	for (i = 0; i < inputs.length; ++i) {
+		input = inputs[i];
+		if (input.checked) {
+			return input;
+		}
+	}
+	
+	return null;
+};
+
+SimpleDataTableListener.setChecked = function (inputs, targetValue) {
+	'use strict';
+	
+	var i, input;
+	
+	for (i = 0; i < inputs.length; ++i) {
+		input = inputs[i];
+		if (input.value == targetValue) {
+			input.checked = true;
+		} else {
+			input.checked = false;
+		}
+	}
+	
 };
 
 
@@ -132,17 +263,21 @@ SimpleDataTableListener.prototype.dispose = function () {
 SimpleDataTableListener.prototype.handleEvent = function (event) {
 	'use strict';
 	
-	var target, name, currentColumnIndex, tableHeaderCache, contextControl, columnIndex;
+	var target, name, currentColumnIndex, tableHeaderCache, contextControl, columnIndex, operation;
 	
 	target = event.currentTarget;
 	contextControl = this.contextControl;
+	tableHeaderCache = this.tableHeaderCache;
 	
 	switch (event.type) {
 		case 'create':
 			this.defineContent(contextControl.getControlElement());
 			break;
+		case 'open':
+			columnIndex = this.currentColumnIndex;
+			this.onOpen(contextControl.getControlElement(), columnIndex, tableHeaderCache[columnIndex]);
+			break;
 		case 'click':
-			tableHeaderCache = this.tableHeaderCache;
 			if ((columnIndex = tableHeaderCache.indexOf(target)) !== -1) {
 				this.currentColumnIndex = columnIndex;
 				contextControl.open(target);
@@ -163,26 +298,30 @@ SimpleDataTableListener.prototype.handleEvent = function (event) {
 			}
 			
 			if (name === 'column-type') {
-				// TODO
-				console.info(`column type: ${target.value}`);
+				this.getColumnOperations(this.currentColumnIndex).setColumnType(SimpleDataTableListener.getColumnType(target.value));
 				return;
 			}
 			
 			if (name === 'sort-direction') {
-				// TODO
-				console.info(`sort direction: ${target.value}`);
+				this.getColumnOperations(this.currentColumnIndex).setSortOrder(SimpleDataTableListener.getSortOrder(target.value));
 				return;
 			}
 			
 			if (name === 'filter-by-value-option') {
-				// TODO
-				console.info(`filter option: ${target.value}`);
+				operation = SimpleDataTableListener.getOperation(target.value);
+				if (contextControl.getControlElement().querySelector('input[name="filter-option-ignore-case"]').checked) {
+					operation |= DataTable.FILTER_OP_IGNORE_CASE;
+				}
+				this.getColumnOperations(this.currentColumnIndex).setOperation(operation);
 				return;
 			}
 			
 			if (name === 'filter-option-ignore-case') {
-				// TODO
-				console.info(`ignore case: ${target.checked}`);
+				operation = SimpleDataTableListener.getOperation(SimpleDataTableListener.getChecked(contextControl.getControlElement().querySelectorAll('input[name="filter-by-value-option"]')).value);
+				if (target.checked) {
+					operation |= DataTable.FILTER_OP_IGNORE_CASE;
+				}
+				this.getColumnOperations(this.currentColumnIndex).setOperation(operation);
 				return;
 			}
 			
@@ -203,8 +342,7 @@ SimpleDataTableListener.prototype.handleEvent = function (event) {
 			break;
 		case 'keyup':
 			if (target.name === 'filter-by-value-value') {
-				// TODO
-				console.info(`Filter value: ${target.value}`);
+				this.getColumnOperations(this.currentColumnIndex).setCompareValue(target.value);
 				return;
 			}
 			break;
@@ -224,8 +362,8 @@ SimpleDataTableListener.prototype.selectColumnValue = function (columnIndex, che
 	}
 	
 	
-	// TODO Update Filter.
-	console.info(`Cell value: ${value} ${checked}`);
+	// Update Filter.
+	this.getColumnOperations(columnIndex).toggleColumnValue(value, checked);
 	
 	
 	// Update 'Select All' checkbox.
@@ -415,13 +553,13 @@ SimpleDataTableListener.prototype.defineContent = function (container) {
 };
 
 SimpleDataTableListener.prototype.onOpen = function (controlElement, columnIndex, referenceHeader) {
-	'use strict';
+	'use strict'; 	
 	
-	var cellValueList, idBase, builder, columnValues, newInputs, i, columnValue, id, fieldList, field;
+	var cellValueList, idBase, builder, columnValues, newInputs, i, columnValue, id, fieldList, field, columnOptions, selectAll, columnValueInputs;
 	
 	// Add cell values for this column if not present.
 	cellValueList = controlElement.getElementsByClassName('filter-by-cell-values')[0];
-	if (!cellValueList.querySelector('[data-column-index="' + columnIndex + '"]')) {
+	if (!(columnOptions = this.getColumnOperations(columnIndex))) {
 		idBase = SimpleDataTableListener.getIdBase();
 		builder = new XMLBuilder();
 		columnValues = this.dataTable.getColumnValues(columnIndex);
@@ -440,7 +578,20 @@ SimpleDataTableListener.prototype.onOpen = function (controlElement, columnIndex
 		for (i = 0; i < newInputs.length; ++i) {
 			newInputs[i].addEventListener('click', this, false);
 		}
-	}
+		
+		
+		this.columnOperations.push(columnOptions = new SimpleDataTableListener.ColumnConfiguration({
+			columnIndex: columnIndex,
+			sortOrder: SimpleDataTableListener.SORT_ORDER_NONE,
+			columnType: DataTable.COLUMN_TYPE_INFER,
+			compareValue: '',
+			operation: DataTable.FILTER_OP_CONTAINS | DataTable.FILTER_OP_IGNORE_CASE,
+			compareValues: columnValues
+		}));
+	} 
+		
+	columnOptions.updateControl(controlElement, columnIndex);
+	
 	
 	// Filter values not for this column.
 	fieldList = cellValueList.querySelectorAll('li[data-column-index]');
@@ -453,6 +604,155 @@ SimpleDataTableListener.prototype.onOpen = function (controlElement, columnIndex
 		}
 	}
 	
+	// Update select all checkbox.
+	columnValueInputs = cellValueList.querySelectorAll('input[data-column-index="' + columnIndex + '"]');
+	selectAll = true;
+	for (i = 0; i < columnValueInputs.length; ++i) {
+		if (!columnValueInputs[i].checked) {
+			selectAll = false;
+			break;
+		}
+	}
+	controlElement.querySelector('input[name="select-all-cell-values"]').checked = selectAll;
+	
 	cellValueList.scrollTop = 0;
 	controlElement.getElementsByClassName('column-title')[0].textContent = referenceHeader.textContent;
+};
+
+SimpleDataTableListener.prototype.getColumnOperations = function (columnIndex) {
+	'use strict';
+	
+	var i, columnOperations, columnOperation;
+	
+	columnOperations = this.columnOperations;
+	
+	for (i = 0; i < columnOperations.length; ++i) {
+		columnOperation = columnOperations[i];
+		if (columnOperation.columnIndex == columnIndex) {
+			return columnOperation;
+		}
+	}
+	
+	return null;
+};
+
+SimpleDataTableListener.prototype.processOperations = function () {
+	'use strict';
+	
+	
+};
+
+
+
+
+// Nested Types
+SimpleDataTableListener.ColumnConfiguration = function (config) {
+	'use strict';
+	
+	var columnIndex = config.columnIndex, sortOrder = config.sortOrder, columnType = config.columnType, operation = config.operation;
+
+	this.columnIndex = columnIndex;
+	this.sortOrder = sortOrder;
+	this.operation = operation;
+	this.columnType = columnType;
+	
+	this.sortDelegate = new DataTable.ValueSort(columnIndex, sortOrder == SimpleDataTableListener.SORT_ORDER_DESCENDING, columnType);
+	this.filterDelegate = new DataTable.ValueFilter(columnIndex, config.compareValue, operation, columnType);
+	
+	this.columnValues = config.compareValues;
+};
+
+SimpleDataTableListener.ColumnConfiguration.prototype.setColumnType = function (columnType) {
+	'use strict';
+	
+	this.columnType = this.sortDelegate.columnType = this.filterDelegate.columnType = columnType;
+};
+
+SimpleDataTableListener.ColumnConfiguration.prototype.setColumnIndex = function (columnIndex) {
+	'use strict';
+	
+	this.columnIndex = this.sortDelegate.columnIndex = this.filterDelegate.columnIndex = columnIndex;
+};
+
+SimpleDataTableListener.ColumnConfiguration.prototype.setSortOrder = function (sortOrder) {
+	'use strict';
+	
+	this.sortOrder = sortOrder;
+	if (sortOrder == SimpleDataTableListener.SORT_ORDER_DESCENDING) {
+		this.sortDelegate.descending = true;
+	}
+};
+
+SimpleDataTableListener.ColumnConfiguration.prototype.setCompareValue = function (compareValue) {
+	'use strict';
+	
+	this.filterDelegate.compareValue = compareValue;
+};
+
+SimpleDataTableListener.ColumnConfiguration.prototype.setOperation = function (operation) {
+	'use strict';
+	
+	this.operation = this.filterDelegate.operation = operation;
+};
+
+
+SimpleDataTableListener.ColumnConfiguration.prototype.toggleColumnValue = function (val, checked) {
+	'use strict';
+	
+	var columnValues, index;
+	
+	columnValues = this.columnValues;
+	
+	if (checked) {
+		if (columnValues.indexOf(val) === -1) {
+			columnValues.push(val);
+		}
+	} else {
+		if ((index = columnValues.indexOf(val)) !== -1) {
+			columnValues.splice(index, 1);
+		}
+	}
+};
+
+SimpleDataTableListener.ColumnConfiguration.prototype.updateControl = function (controlElement, columnIndex) {
+	'use strict';
+	
+	var operation, columnValueInputs, i, columnValueInput;
+	
+	operation = this.operation;
+	
+	
+	SimpleDataTableListener.setChecked(controlElement.querySelectorAll('input[name="column-type"]'), SimpleDataTableListener.getColumnTypeValue(this.columnType));
+	SimpleDataTableListener.setChecked(controlElement.querySelectorAll('input[name="sort-direction"]'), SimpleDataTableListener.getSortOrderValue(this.sortOrder));
+	SimpleDataTableListener.setChecked(controlElement.querySelectorAll('input[name="filter-by-value-option"]'), SimpleDataTableListener.getOperationValue(operation));
+	
+	controlElement.querySelector('input[name="filter-option-ignore-case"]').checked = DataTable.hasFlag(operation, DataTable.FILTER_OP_IGNORE_CASE);
+	
+};
+
+SimpleDataTableListener.ColumnConfiguration.prototype.compare = function (cellA, cellB) {
+	'use strict';
+	
+	return this.sortDelegate.compare(cellA, cellB);
+};
+
+SimpleDataTableListener.ColumnConfiguration.prototype.include = function (cell) {
+	'use strict';
+	
+	var columnValues, cellValues, i;
+	
+	if (!this.filterDelegate.include(cell)) {
+		return false;
+	}
+	
+	columnValues = this.columnValues;
+	
+	cellValues = DataTable.getCellValues(cell);
+	for (i = 0; i < cellValues.length; ++i) {
+		if (columnValues.indexOf(cellValues[i]) !== -1) {
+			return true;
+		}
+	}
+	
+	return true;
 };

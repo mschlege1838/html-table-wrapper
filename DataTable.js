@@ -25,8 +25,8 @@ DataTable.FILTER_OP_GREATER_THAN = 1 << 3;
 DataTable.FILTER_OP_IGNORE_CASE = 1 << 4;
 DataTable.FILTER_OP_NOT_EQUALS = 1 << 5;
 
-DataTable.FILTER_TYPE_STRING = 1;
-DataTable.FILTER_TYPE_NUMERIC = 2;
+DataTable.COLUMN_TYPE_TEXT = 1;
+DataTable.COLUMN_TYPE_INFER = 2;
 
 
 
@@ -59,12 +59,12 @@ DataTable.getNumber = function (val, strict) {
 		return val;
 	}
 	
-	if (/^\d+$/.test(val)) {
+	if (DataTable.isInt(val)) {
 		return IEGeneralCompatibility.parseInt(val);
 	} else if (DataTable.isNumeric(val)) {
 		return IEGeneralCompatibility.parseFloat(val);
 	} else {
-		return strict ? NaN : val;
+		return strict ? Number.NaN : val;
 	}
 	
 };
@@ -127,10 +127,16 @@ DataTable.getCellValues = function (cell, items) {
 	}
 };
 
+DataTable.isInt = function (val) {
+	'use strict';
+	
+	return /^\d+$/.test(val);
+};
+
 DataTable.isNumeric = function (val) {
 	'use strict';
 	
-	return /\d+(?:\.\d*)?(?:[eE]\d*)?/.test(val);
+	return /^\d+(?:\.\d*)?(?:[eE]\d*)?$/.test(val);
 };
 
 
@@ -211,13 +217,12 @@ DataTable.prototype.filter = function () {
 	
 	var filterDescriptors, filterDescriptor, i, rows, row, filter, j;
 	
-	// Pre-checks.
-	if (!arguments.length) {
+	// Initialization.
+	filterDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
+	
+	if (!filterDescriptors.length) {
 		return;
 	}
-	
-	// Pre-Validation Initialization.
-	filterDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
 	
 	// Validation.
 	for (i = 0; i < filterDescriptors.length; ++i) {
@@ -315,10 +320,12 @@ DataTable.prototype.getColumnValues = function (columnIndex) {
 
 
 
+
+
 // Nested Types
 
-// SortDescriptor
-DataTable.SortDescriptor = function (columnIndex, descending) {
+// ValueSort
+DataTable.ValueSort = function (columnIndex, descending, columnType) {
 	'use strict';
 	
 	this.columnIndex = columnIndex;
@@ -326,42 +333,15 @@ DataTable.SortDescriptor = function (columnIndex, descending) {
 	if (descending) {
 		this.descending = true;
 	}
+	if (columnType && columnType !== DataTable.COLUMN_TYPE_INFER) {
+		this.columnType = DataTable.COLUMN_TYPE_INFER;
+	}
 };
 
-DataTable.SortDescriptor.prototype.descending = false;
-//
+DataTable.ValueSort.prototype.descending = false;
 
+DataTable.ValueSort.prototype.columnType = DataTable.COLUMN_TYPE_INFER;
 
-// StringSort
-DataTable.StringSort = function (columnIndex, descending) {
-	'use strict';
-	
-	DataTable.SortDescriptor.call(this, columnIndex, descending);
-};
-
-DataTable.StringSort.prototype = Object.create(DataTable.SortDescriptor.prototype);
-
-DataTable.StringSort.prototype.compare = function (cellA, cellB) {
-	'use strict';
-	
-	var aVal, bVal;
-	
-	aVal = cellA.textContent;
-	bVal = cellB.textContent;
-	
-	return aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
-};
-//
-
-
-// ValueSort
-DataTable.ValueSort = function (columnIndex, descending) {
-	'use strict';
-	
-	DataTable.SortDescriptor.call(this, columnIndex, descending);
-};
-
-DataTable.ValueSort.prototype = Object.create(DataTable.SortDescriptor.prototype);
 
 DataTable.ValueSort.prototype.compare = function (cellA, cellB) {
 	'use strict';
@@ -371,24 +351,30 @@ DataTable.ValueSort.prototype.compare = function (cellA, cellB) {
 	aVal = cellA.textContent;
 	bVal = cellB.textContent;
 	
-	aNum = DataTable.getNumber(aVal, true);
-	aNaN = IEGeneralCompatibility.isNaN(aNum);
-	bNum = DataTable.getNumber(bVal, true);
-	bNaN = IEGeneralCompatibility.isNaN(bNum);
-	
-	if (aNaN && bNaN) {
-		return aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
+	switch (this.columnType) {
+		case DataTable.COLUMN_TYPE_INFER:
+			aNum = DataTable.getNumber(aVal, true);
+			aNaN = IEGeneralCompatibility.isNaN(aNum);
+			bNum = DataTable.getNumber(bVal, true);
+			bNaN = IEGeneralCompatibility.isNaN(bNum);
+			
+			if (aNaN && bNaN) {
+				return aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
+			}
+			
+			if (aNaN) {
+				return 1;
+			}
+			
+			if (bNaN) {
+				return -1;
+			}
+			
+			return aNum - bNum;
+		case DataTable.COLUMN_TYPE_TEXT:
+			return aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
 	}
-	
-	if (aNaN) {
-		return 1;
-	}
-	
-	if (bNaN) {
-		return -1;
-	}
-	
-	return aNum - bNum;
+
 };
 //
 
@@ -396,18 +382,21 @@ DataTable.ValueSort.prototype.compare = function (cellA, cellB) {
 
 
 // ValueFilter
-DataTable.ValueFilter = function (columnIndex, compareValue, operation, filterType, ignoreListCells) {
+DataTable.ValueFilter = function (columnIndex, compareValue, operation, columnType, ignoreListCells) {
 	'use strict';
 	
 	this.columnIndex = columnIndex;
-	this.compareValue = DataTable.getNumber(compareValue);
-	if (operation && operation != DataTable.FILTER_OP_EQUALS) {
+	this.compareValue = compareValue;
+	if (operation && operation !== DataTable.FILTER_OP_EQUALS) {
 		this.operation = operation;
 	}
-	this.filterType = filterType;
+	if (columnType && columnType !== DataTable.COLUMN_TYPE_INFER) {
+		this.columnType = columnType;
+	}
 	if (ignoreListCells) {
 		this.ignoreListCells = true;
 	}
+
 };
 
 
@@ -415,6 +404,8 @@ DataTable.ValueFilter = function (columnIndex, compareValue, operation, filterTy
 DataTable.ValueFilter.prototype.operation = DataTable.FILTER_OP_EQUALS;
 
 DataTable.ValueFilter.prototype.ignoreListCells = false;
+
+DataTable.ValueFilter.prototype.columnType = DataTable.COLUMN_TYPE_INFER;
 
 DataTable.ValueFilter.prototype.include = function (cell) {
 	'use strict';
@@ -439,7 +430,7 @@ DataTable.ValueFilter.prototype.include = function (cell) {
 DataTable.ValueFilter.prototype.includeValue = function (rawValue) {
 	'use strict';
 	
-	var operation, rawCompareValue, compareValue, value, filterType, negated;
+	var operation, rawCompareValue, compareValue, cellValue, filterType;
 	
 	// Initialization.
 	operation = this.operation;
@@ -471,69 +462,60 @@ DataTable.ValueFilter.prototype.includeValue = function (rawValue) {
 		}
 	}
 	
-	negated = DataTable.hasFlag(operation, DataTable.FILTER_OP_NOT);
-	
 	rawCompareValue = this.compareValue;
-	
-	filterType = this.filterType;
-	// Attempt to discern filter type based upon compare value if not explicitly given.
-	if (!filterType) {
-		filterType = typeof rawCompareValue === 'number' ? DataTable.FILTER_TYPE_NUMERIC : DataTable.FILTER_TYPE_STRING;
-	}
-	
-	// Type conversion.
-	switch (filterType) {
-		case DataTable.FILTER_TYPE_STRING:
-			compareValue = rawCompareValue;
-			value = rawValue;
-			break;
-		case DataTable.FILTER_TYPE_NUMERIC:
+	switch (this.columnType) {
+		case DataTable.COLUMN_TYPE_INFER:
 			compareValue = DataTable.getNumber(rawCompareValue);
-			value = DataTable.getNumber(rawValue);
+			cellValue = DataTable.getNumber(rawValue);
+			break;
+		case DataTable.COLUMN_TYPE_TEXT:
+			compareValue = String(rawCompareValue);
+			cellValue = String(rawValue);
 			break;
 	}
-	
 	
 
 	// Common comparisons.
 	if (DataTable.hasFlag(operation, DataTable.FILTER_OP_EQUALS)) {
-		if (value == compareValue) {
+		if (cellValue == compareValue) {
 			return true;
 		}
 	}
 	
 	if (DataTable.hasFlag(operation, DataTable.FILTER_OP_LESS_THAN)) {
-		if (value < compareValue) {
+		if (cellValue < compareValue) {
 			return true;
 		}
 	}
 	
 	if (DataTable.hasFlag(operation, DataTable.FILTER_OP_GREATER_THAN)) {
-		if (value > compareValue) {
+		if (cellValue > compareValue) {
 			return true;
 		}
 	}
 	
 	if (DataTable.hasFlag(operation, DataTable.FILTER_OP_NOT_EQUALS)) {
-		if (value != compareValue) {
+		if (cellValue != compareValue) {
 			return true;
 		}
 	}
 	
 	
+	
 	// String comparisons.
 	
 	// Reset compare values to strings.
-	value = rawValue;
-	compareValue = typeof compareValue === 'string' ? compareValue : String(rawCompareValue);
+	cellValue = String(rawValue);
+	compareValue = String(rawCompareValue);
 	if (DataTable.hasFlag(operation, DataTable.FILTER_OP_IGNORE_CASE)) {
-		value = value.toUpperCase();
+		cellValue = cellValue.toUpperCase();
 		compareValue = compareValue.toUpperCase();
 	}
 	
+	
 	// Comparisons.
 	if (DataTable.hasFlag(operation, DataTable.FILTER_OP_CONTAINS)) {
-		if (value.indexOf(compareValue) != -1) {
+		if (cellValue.indexOf(compareValue) != -1) {
 			return true;
 		}
 	}
