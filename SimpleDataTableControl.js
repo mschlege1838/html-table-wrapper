@@ -5,15 +5,40 @@
  * @param {number} columnIndex
  * @param {HTMLTableCellElement} tableHeader
  * @param {SimpleDataTableListener} parent
+ * @classdesc
+ *		The default {@link ColumnControl} used by {@link SimpleDataTableListener}. Defines a UI where an end-user
+ *		can select a column's type and sort order, as well as define filters based upon user-entered values and
+ *		individual cell values. Uses a backing {@link ContextControl}.
  */
 function SimpleDataTableControl(columnIndex, tableHeader, parent) {
 	'use strict';
 	
 	var contextControl;
 	
-	this.contextControl = contextControl = new ContextControl();
 	this.columnIndex = columnIndex;
+	
+	/**
+	 * Backing {@link ContextControl}.
+	 *
+	 * @private
+	 * @type {ContextControl}
+	 */
+	this.contextControl = contextControl = new ContextControl();
+	
+	/**
+	 * Header of the column to which this {@link ColumnControl} is associated.
+	 *
+	 * @private
+	 * @type {HTMLTableCellElement}
+	 */
 	this.tableHeader = tableHeader;
+	
+	/**
+	 * Parent {@link SimpleDataTableListener}
+	 *
+	 * @private
+	 * @type {SimpleDataTableListener}
+	 */
 	this.parent = parent;
 	
 	
@@ -22,12 +47,46 @@ function SimpleDataTableControl(columnIndex, tableHeader, parent) {
 
 
 // Static Fields
+/**
+ * Class name added to the backing {@link ContextControl}'s {@link ContextControl#getControlElement element} upon
+ * being {@link ContextControl#event:create created}.
+ *
+ * @type {string}
+ */
 SimpleDataTableControl.controlClassName = 'data-table-column-options';
 
+/**
+ * Constant representing a column should have no sort order.
+ *
+ * @type {number}
+ * @const
+ */
 SimpleDataTableControl.SORT_ORDER_NONE = 1;
+
+/**
+ * Constant representing a column should have ascending sort order.
+ *
+ * @type {number}
+ * @const
+ */
 SimpleDataTableControl.SORT_ORDER_ASCENDING = 2;
+
+/**
+ * Constant representing a column should have descending sort order.
+ *
+ * @type {number}
+ * @const
+ */
 SimpleDataTableControl.SORT_ORDER_DESCENDING = 3;
 
+/**
+ * A 'mapping' object whose properties correspond to labels printed on the control displayed to the end-user.
+ * By default values are set to en-US; client code that requires internationalization can redefine the properties
+ * of this object (or reassign a new value, so long as it contains all the properties in the original) on page
+ * initialization (before any SimpleDataTableControls are created) for the desired locale.
+ *
+ * @type {object}
+ */
 SimpleDataTableControl.i18nStrings = {
 	columnOptionsLabel: 'Column Options',
 	sortOptionsLabel: 'Sort Options',
@@ -71,17 +130,36 @@ SimpleDataTableControl.i18nStrings = {
 	toolTipCloseDialogue: 'Close'
 };
 
-
+/**
+ * Counter for generating unique DOM ids.
+ *
+ * @type {number}
+ * @private
+ */
 SimpleDataTableControl.idCounter = 0;
 
 
 // Static Methods
+/**
+ * Utility function for generating a unique id prefix for generated elements by SimpleDataTableControls.
+ *
+ * @private
+ */
 SimpleDataTableControl.getIdBase = function () {
 	'use strict';
 	
 	return 'dataTable_' + SimpleDataTableControl.idCounter++ + '_';
 };
 
+/**
+ * Gets a SimpleDataTableControl.SORT_ORDER_* constant based upon an HTMLInputElement value from generated control
+ * elements.
+ *
+ * @private
+ * @param {string} str Input value.
+ * @returns {number} A SimpleDataTableControl.SORT_ORDER_* constant based upon the given value.
+ * @throws {Error} If the given value does not correspond to a SimpleDataTableControl.SORT_ORDER_* constant.
+ */
 SimpleDataTableControl.getSortOrder = function (str) {
 	'use strict';
 	
@@ -97,6 +175,15 @@ SimpleDataTableControl.getSortOrder = function (str) {
 	throw new Error('Unrecognized sort order: ' + str);
 };
 
+/**
+ * Gets a {@link SimpleDataTable}.FILTER_OP_* constant based upon an HTMLInputElement value from generated control
+ * elements.
+ *
+ * @private
+ * @param {string} str Input value.
+ * @returns {number} A {@link SimpleDataTable}.FILTER_OP_* constant based upon the given value.
+ * @throws {Error} If the given value does not correspond to a {@link SimpleDataTable}.FILTER_OP_* constant.
+ */
 SimpleDataTableControl.getOperator = function (str) {
 	'use strict';
 	
@@ -120,6 +207,15 @@ SimpleDataTableControl.getOperator = function (str) {
 	throw new Error('Unrecognized operator: ' + str);
 };
 
+/**
+ * Gets a {@link SimpleDataTable}.COLUMN_TYPE_* constant based upon an HTMLInputElement value from generated control
+ * elements.
+ *
+ * @private
+ * @param {string} str Input value.
+ * @returns {number} A {@link SimpleDataTable}.COLUMN_TYPE_* constant based upon the given value.
+ * @throws {Error} If the given value does not correspond to a {@link SimpleDataTable}.COLUMN_TYPE_* constant.
+ */
 SimpleDataTableControl.getColumnType = function (str) {
 	'use strict';
 	
@@ -133,6 +229,12 @@ SimpleDataTableControl.getColumnType = function (str) {
 	throw new Error('Unrecognized column type: ' + str);
 };
 
+/**
+ * Gets the first HTMLInputElement whose checked attribute is true from the given inputs.
+ *
+ * @param {NodeList} inputs Collection of inputs to process.
+ * @returns The first input whose checked attribute is true; null if no element is checked.
+ */
 SimpleDataTableControl.getChecked = function (inputs) {
 	'use strict';
 	
@@ -148,6 +250,12 @@ SimpleDataTableControl.getChecked = function (inputs) {
 	return null;
 };
 
+/**
+ * Sets the first HTMLInputElement's checked attribute in the given inputs whose name is the given name.
+ *
+ * @param {NodeList} inputs Collection of inputs to process.
+ * @param {string} name Name of the input whose checked attribute is to be set.
+ */
 SimpleDataTableControl.setChecked = function (inputs, name) {
 	'use strict';
 	
@@ -160,13 +268,35 @@ SimpleDataTableControl.setChecked = function (inputs, name) {
 };
 
 // Default Instance Properties
+/**
+ * Current {@link FilterDescriptor}.
+ *
+ * @private
+ * @type {FilterDescriptor}
+ */
 SimpleDataTableControl.prototype.filterDescriptor = null;
 
+/**
+ * Current {@link SortDescriptor}.
+ *
+ * @private
+ * @type {SortDescriptor}
+ */
 SimpleDataTableControl.prototype.sortDescriptor = null;
 
+/**
+ * Current sort order.
+ *
+ * @private
+ * @type {number}
+ */
 SimpleDataTableControl.prototype.sortOrder = SimpleDataTable.SORT_ORDER_NONE;
 
 // Instance Methods
+/**
+ * Disposes this SimpleDataTableControl. This SimpleDataTableControl will be removed as an event listener for generated content;
+ * the backing {@link ContextControl} will also be {@link ContextControl#dispose disposed}.
+ */
 SimpleDataTableControl.prototype.dispose = function () {
 	'use strict';
 	
@@ -184,10 +314,16 @@ SimpleDataTableControl.prototype.dispose = function () {
 		}
 	}
 	
-	contextControl.removeEventListener('click', this, false);
+	contextControl.removeEventListener('create', this, false);
+	contextControl.dispose();
 };
 
 
+/**
+ * Implementation of DOM EventListener.
+ *
+ * @param {Event} event Event being dispatched.
+ */
 SimpleDataTableControl.prototype.handleEvent = function (event) {
 	'use strict';
 	
@@ -291,6 +427,12 @@ SimpleDataTableControl.prototype.close = function () {
 	this.contextControl.close();
 };
 
+
+/**
+ * Resets the state of this SimpleDataTableControl; all fields will be reset to their inital values. Note, this
+ * only updates the state of the user interface; if the parent table needs to be updated {@link SimpleDataTable#processTable}
+ * must be called subsequently.
+ */
 SimpleDataTableControl.prototype.reset = function () {
 	'use strict';
 	
@@ -312,6 +454,13 @@ SimpleDataTableControl.prototype.reset = function () {
 	this.setUpDescriptors();
 };
 
+/**
+ * Selects or deselects (depending upon the value of checked) all individual cell values for filtering. Note, this
+ * only updates the state of cell value checkboxes; if the parent table needs to be updated {@link SimpleDataTable#processTable}
+ * must be called subsequently.
+ *
+ * @param {boolean} checked Whether to select or deselect all individual cell values.
+ */
 SimpleDataTableControl.prototype.selectAllColumnValues = function (checked) {
 	'use strict';
 	
@@ -347,6 +496,12 @@ SimpleDataTableControl.prototype.getSortDescriptor = function () {
 	return sortOrder === SimpleDataTableControl.SORT_ORDER_NONE ? null : this.sortDescriptor;
 };
 
+/**
+ * Synchronizes the state of {@link SimpleDataTableControl#filterDescriptor} and {@link SimpleDataTableControl#sortDescriptor}
+ * with the UI. The fields are redefined; {@link SimpleDataTableListener#processTable} is not called.
+ *
+ * @private
+ */
 SimpleDataTableControl.prototype.setUpDescriptors = function () {
 	'use strict';
 	
@@ -379,6 +534,13 @@ SimpleDataTableControl.prototype.setUpDescriptors = function () {
 	
 };
 
+/**
+ * Defines the UI content on the given container, and registers this SimpleDataTableControl for the appropriate events.
+ * Only intended to be called once (in response to {@link ContextControl#event:create} events).
+ *
+ * @private
+ * @param {HTMLElement} Element upon which the content of this control is to be defined.
+ */
 SimpleDataTableControl.prototype.defineContent = function (container) {
 	'use strict';
 	
@@ -558,19 +720,37 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
  *
  * @constructor
  * @implements FilterDescriptor
- * @param {number} columnIndex
- * @param {*} compareValue
- * @param {(number|string)} operation
- * @param {number} columnType
- * @param {Array} columnValues
+ * @param {number} columnIndex Index of the column this {@link FilterDescriptor} describes.
+ * @param {*} compareValue See {@link SimpleDataTable.ValueFilter}.
+ * @param {(number|string)} operation See {@link SimpleDataTable.ValueFilter}.
+ * @param {number} columnType See {@link SimpleDataTable.ValueFilter}.
+ * @param {Array} columnValues A list of values against whom individual cell values are to be compared.
  * @classdesc
- *		
+ *		<p>A {@link FilterDescriptor} that delegates to a {@link SimpleDataTable.ValueFilter}, but also offers the capability of filtering
+ *		based upon whether a cell's value is within a given list of values.</p>
+ *
+ *		<p>When filtering, the {@link SimpleDataTable.ValueFilter}'s {@link FilterDescriptor#include include} function is called first. If
+ *		it returns false, the row in question will be filterd. If it returns true, the row will only be filtered if the cell's value does
+ *		not appear in the given columnValues.</p>
  */
 SimpleDataTableControl.ColumnValueFilter = function (columnIndex, compareValue, operation, columnType, columnValues) {
 	'use strict';
 	
-	this.valueFilter = new SimpleDataTable.ValueFilter(columnIndex, compareValue, operation, columnType);
 	this.columnIndex = columnIndex;
+	
+	/**
+	 * {@link SimpleDataTable.ValueFilter} delegate.
+	 *
+	 * @type {SimpleDataTable.ValueFilter}
+	 */
+	this.valueFilter = new SimpleDataTable.ValueFilter(columnIndex, compareValue, operation, columnType);
+		
+	/**
+	 * List of values against whom individual cell values are to be compared. If a cell's value appears in this list,
+	 * it will not be filtered, otherwise it will be.
+	 * 
+	 * @type Array
+	 */
 	this.columnValues = columnValues;
 };
 
@@ -578,25 +758,11 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, compareValue, 
 SimpleDataTableControl.ColumnValueFilter.prototype.include = function (cell) {
 	'use strict';
 	
-	var columnValues, cellValues, i;
-	
 	if (!this.valueFilter.include(cell)) {
 		return false;
 	}
 	
-	columnValues = this.columnValues;
-	
-	cellValues = [];
-	SimpleDataTable.getCellValues(cell, cellValues);
-	
-	for (i = 0; i < cellValues.length; ++i) {
-		if (columnValues.indexOf(cellValues[i]) !== -1) {
-			return true;
-		}
-	}
-	
-	
-	return false;
+	return this.columnValues.indexOf(cell.textContent.trim()) !== -1;
 };
 
 

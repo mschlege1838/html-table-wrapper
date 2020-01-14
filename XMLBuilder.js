@@ -16,10 +16,36 @@
 function XMLBuilder(useArray) {
 	'use strict';
 	
+	/**
+	 * Tag name stack.
+	 *
+	 * @private
+	 * @type {Array}
+	 */
 	this.stack = [];
+	
+	/**
+	 * Current state of this XMLBuilder. Corresponds to one of the STATE_* static members of this class.
+	 *
+	 * @private
+	 * @type {number}
+	 */
 	this.state = XMLBuilder.STATE_INITIAL;
 	
+	/**
+	 * Whether or not to use an Array to store the text content of this XMLBuilder.
+	 *
+	 * @private
+	 * @type {boolean}
+	 */
 	this.useArray = !!useArray;
+	
+	/**
+	 * The raw text of this XMLBuilder. If {@link XMLBuilder#useArray} is true, it will be an Array, otherwise a string.
+	 *
+	 * @private
+	 * @type {(string|Array)}
+	 */
 	this.text = useArray ? [] : ''
 }
 
@@ -29,6 +55,7 @@ function XMLBuilder(useArray) {
  *
  * @const
  * @private
+ * @type {number}
  */
 XMLBuilder.STATE_INITIAL = 0;
 
@@ -37,6 +64,7 @@ XMLBuilder.STATE_INITIAL = 0;
  *
  * @const
  * @private
+ * @type {number}
  */
 XMLBuilder.STATE_TAG = 1;
 
@@ -45,6 +73,7 @@ XMLBuilder.STATE_TAG = 1;
  *
  * @const
  * @private
+ * @type {number}
  */
 XMLBuilder.STATE_CONTENT = 2;
 
@@ -53,6 +82,7 @@ XMLBuilder.STATE_CONTENT = 2;
  *
  * @const
  * @private
+ * @type {object}
  */
 XMLBuilder.ESCAPE_CHARACTER_MAPPING = {
 	'"' : '&quot;'
@@ -104,7 +134,7 @@ XMLBuilder.escape = function (val) {
  * and begin defining the content of this tag's body. Calling {@link XMLBuilder#startTag} again will
  * also close this tag's opening, but start another tag as a child of this tag.
  *
- * @param {string} name Name of this tag.
+ * @param {string} name Name of the tag to be started.
  * @returns {XMLBuilder} This XMLBuilder.
  */
 XMLBuilder.prototype.startTag = function (name) {

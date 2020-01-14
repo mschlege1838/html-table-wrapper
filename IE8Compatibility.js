@@ -2,7 +2,7 @@
 
 /**
  * Not actually a constructor as there are no instance methods; underlying definition is an empty object.
- * Documented as a class for the purposes of the documentation generator only.
+ * Documented as a class for the purposes of this documentation generator only.
  *
  * @class
  * @augments IE9Compatibility
@@ -33,7 +33,7 @@ IE8Compatibility.allRegisteredListeners = null;
 
 
 /**
- * <p>Adds compatibility for the EventTarget.addEventListener function.</p>
+ * <p>Adds compatibility for the DOM EventTarget.addEventListener function.</p>
  *
  * <p>If addEventListener is defined on target, simply calls <code>target.addEventListener(type, listener, useCapture)</code>, otherwise falls
  * back to the IE-specific attachEvent function. This implies useCapture, if defined, can either be a boolean or an options object, but will 
@@ -85,7 +85,7 @@ IE8Compatibility.addEventListener = function (target, type, listener, useCapture
 };
 
 /**
- * Adds compatibility for the EventTarget.removeEventListener function. Follows the same fallback pattern as {@link IE8Compatibility.addEventListener},
+ * Adds compatibility for the DOM EventTarget.removeEventListener function. Follows the same fallback pattern as {@link IE8Compatibility.addEventListener},
  * except with removeEventListener and detachEvent.
  *
  * @param {EventTarget} target Target from which the given listener is to be removed.
@@ -142,6 +142,79 @@ IE8Compatibility.extend = function (proto) {
 	return new anon();
 };
 
+/**
+ * Adds compatibility for the Node.textContent property.
+ *
+ * @param {Node} node Node whose textContent is to be
+ */
+IE8Compatibility.getTextContent = function (node) {
+	'use strict';
+	
+	var children;
+	
+	if ('textContent' in node) {
+		return node.textContent;
+	}
+	
+	switch (node.nodeType) {
+		case 1: // ELEMENT_NODE
+			return node.innerText;
+		case 3: // TEXT_NODE
+		case 4: // CDATA_SECTION_NODE
+		case 7: // PROCESSING_INSTRUCTION_NODE
+		case 8: // COMMENT_NODE
+			return node.nodeValue;
+		
+		case 11: // DOCUMENT_FRAGMENT_NODE
+			children = node.childNodes;
+			return children.length ? node.IE8Compatibility._getTextContent(children) : '';
+		
+		// Default includes:
+		//   5/ENTITY_REFERENCE_NODE (Deprecated)
+		//   6/ENTITY_NODE (Deprecated)
+		//   9/DOCUMENT_NODE
+		//   10/DOCUMENT_TYPE_NODE
+		//   12/NOTATION_NODE (Deprecated)
+		default:
+			return null;
+			
+		case 2: // ATTRIBUTE_NODE (Deprecated)
+			return node.value;
+	}	
+	
+};
+
+/**
+ * Recursive helper for {@link IE8Compatibility.getTextContent}. Returns the concatenation of all immediate and descendant
+ * child nodes that are of type TEXT_NODE (3). A depth-first traversal is performed, as is specified in the DOM living standard
+ * for node textContent.
+ *
+ * @private
+ * @param {NodeList} nodeList Children of the current node being processed.
+ */
+IE8Compatibility._getTextContent = function (nodeList) {
+	'use strict';
+	
+	var i, node, children, text;
+	
+	text = '';
+	for (i = 0; i < nodeList.length; ++i) {
+		node = nodeList[i];
+		
+		// Depth-first traversal.
+		children = node.childNodes;
+		if (children.length) {
+			text += IE8Compatibility._getTextContent(children);
+		}
+		
+		// if node is of type TEXT_NODE...
+		if (node.nodeType == 3) {
+			text += node.nodeValue;
+		}
+	}
+	
+	return text;
+};
 
 /**
  * Finds the index of the given listener in {@link IE8Compatibility.allRegisteredListeners}. Returns -1 if not

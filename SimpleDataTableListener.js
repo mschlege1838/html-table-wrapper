@@ -3,15 +3,21 @@
 /**
  * @interface ColumnControlFactory
  * @classdesc
- *		
+ *		Can be used with {@link SimpleDataTableListener} to create custom {@link ColumnControl}s if client-defined controls are 
+ *		needed. If given to a {@link SimpleDataTableListener}, it will call {@link ColumnControlFactory#getColumnControl}
+ *		when it determines a new control needs to be created for a column. If the call returns a non-null (defined) value, it will
+ *		be used as the control for that column.
  */
 /**
+ * Called by {@link SimpleDataTable} to obtain a {@link ColumnControl} for a given column. If a non-null (defined) value is returned,
+ * it will be used as the control for that column. If a null (undefined) value is returned, a new {@link SimpleDataTableControl}
+ * will be created and used for that column.
  *
  * @function ColumnControlFactory#getColumnControl
- * @param {number} columnIndex
- * @param {HTMLTableHeaderElement} header
- * @param {SimpleDataTableListener} listener
- * @returns {ColumnControl}
+ * @param {number} columnIndex Column index for which a {@link ColumnControl} is needed.
+ * @param {HTMLTableHeaderElement} header Table header for the given columnIndex.
+ * @param {SimpleDataTableListener} parent The {@link SimpleDataTableListener} requesting a control.
+ * @returns {ColumnControl} A {@link ColumnControl} if a client-defined control is needed for the given columnIndex, otherwise null.
  */
 
 
@@ -133,14 +139,12 @@ SimpleDataTableListener.processedColumnHeader = 'data-table-column-header';
 /**
  * Backing {@link SimpleDataTable}. Wraps {@link SimpleDataTableListener#table}.
  *
- * @member SimpleDataTableListener#dataTable
- * @type SimpleDataTable
+ * @member {SimpleDataTable} SimpleDataTableListener#dataTable
  */
 /**
  * Backing table element.
  *
- * @member SimpleDataTableListener#table
- * @type HTMLTableElement
+ * @member {HTMLTableElement} SimpleDataTableListener#table
  */
 
 // Instance Methods

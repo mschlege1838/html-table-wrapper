@@ -21,14 +21,11 @@
  * @member {boolean} SortDescriptor#descending
  */
 /**
- * Callback comparator function that compares one cell to another. The respective rows are given in
- * case additional context is needed.
+ * Callback comparator function that compares one cell to another.
  *
  * @function SortDescriptor#compare
  * @param {HTMLCellElement} cellA Reference cell.
  * @param {HTMLCellElement} cellB Compare cell.
- * @param {HTMLRowElement} rowA Row containing reference cell.
- * @param {HTMLRowElement} rowB Row containing compare cell.
  * @returns {number} 
  *		A value greater than 0 if cellA should be sorted below cellB, less than 0 for above, 0 for 
  *		no preference.
@@ -48,16 +45,41 @@
  */
 /**
  * Callback function to determine whether the given cell's row is to be filtered. If this function returns false,
- * the containing row will be filtered. The cell's row is given in case additional is needed.
+ * the containing row will be filtered.
  *
  * @function FilterDescriptor#include
  * @param {HTMLCellElement} cell to be considered for inclusion.
- * @param {HTMLRowElement} row to which the cell being considered belongs.
  * @returns {boolean} false if this cell's row is to be filtered.
  */
 
+// CellInterpreter
+/**
+ * @interface CellInterpreter
+ * @classdesc
+ *		Object-based implementation of {@link SimpleDataTable~populateCellValues}.
+ */
+/**
+ * Implementation of {@link SimpleDataTable~populateCellValues}. See documentation for the callback for further details.
+ *
+ * @function CellInterpreter#populateCellValues
+ * @param {HTMLCellElement} cell
+ * @param {Array} values
+ */
 
+// Callbacks
 
+// populateCellValues
+/**
+ * Optional callback for {@link SimpleDataTable#getColumnValues} to customize how cell values are interpreted. Based upon
+ * the given cell, should determine the individual cell value/values, and add them to the given Array. Note, duplicate values
+ * are permitted; if distinct values are desired, this function should test for their presence in the Array prior to adding.
+ *
+ * @callback SimpleDataTable~populateCellValues
+ * @param {HTMLTableCellElement} cell Cell element whose values are to be retrieved.
+ * @param {Array} values Values to populate.
+ */
+
+ 
 
 
 // Constructor
@@ -66,7 +88,8 @@
  * @constructor 
  * @param {HTMLTableElement} table Table element this SimpleDataTable is to process.
  * @classdesc
- *		
+ *		Wrapper for HTMLTableElements that provides extended functionality, most notably {@link SimpleDataTable#sort sorting}
+ *		and {@link SimpleDataTable#filter filtering}.
  */
 function SimpleDataTable(table) {
 	'use strict';
@@ -75,7 +98,20 @@ function SimpleDataTable(table) {
 		throw new ReferenceError('Table must be an defined and have a body.');
 	}
 	
+	/**
+	 * Backing HTMLTableElement.
+	 *
+	 * @private
+	 * @type {HTMLTableElement}
+	 */
 	this.table = table;
+	
+	/**
+	 * Cache of the initial state of the table. Used when sort parameters are {@link SimpleDataTable#clearSort cleared}.
+	 *
+	 * @private
+	 * @type {Array}
+	 */
 	this.initialOrder = SimpleDataTable.copy(table.tBodies[0].rows);
 
 }
@@ -88,67 +124,67 @@ function SimpleDataTable(table) {
  * Class name to add to the class list of filtered elements. Default value is 'data-table-filtered';
  * configure a new value in page initialization scripts if another class name is desired for this purpose.
  *
- * @member {string}
+ * @type {string}
  */
 SimpleDataTable.filteredClassName = 'data-table-filtered';
 
 /**
  * Bit flag indicating only cells containing a specified value should remain after a filtering operation.
  *
- * @member {number}
+ * @type {number}
  * @const
  */
 SimpleDataTable.FILTER_OP_CONTAINS = 1;
 /**
  * Bit flag indicating only cells with a value equal to a specified value should remain after a filtering operation.
  *
- * @member {number}
+ * @type {number}
  * @const
  */
 SimpleDataTable.FILTER_OP_EQUALS = 1 << 1;
 /**
  * Bit flag indicating only cells with a value less than a specified value should remain after a filtering operation.
  *
- * @member {number}
+ * @type {number}
  * @const
  */
 SimpleDataTable.FILTER_OP_LESS_THAN = 1 << 2;
 /**
  * Bit flag indicating only cells with a value greater than a specified value should remain after a filtering operation.
  *
- * @member {number}
+ * @type {number}
  * @const
  */
 SimpleDataTable.FILTER_OP_GREATER_THAN = 1 << 3;
 /**
  * Bit flag indicating string-type comparisons during a filtering operation should ignore case.
  *
- * @member {number}
+ * @type {number}
  * @const
  */
 SimpleDataTable.FILTER_OP_IGNORE_CASE = 1 << 4;
 /**
  * Bit flag indicating only cells with a value not equal to a specified value should remain after a filtering operation.
  *
- * @member {number}
+ * @type {number}
  * @const
  */
 SimpleDataTable.FILTER_OP_NOT_EQUALS = 1 << 5;
 
 
 /**
- * Indicates cells within a column should be considered to have text only for processing.
+ * Indicates the values cells within a column should be considered to be text only, and can be directly processed.
  *
- * @member {number}
+ * @type {number}
  * @const
  */
 SimpleDataTable.COLUMN_TYPE_TEXT = 1;
 
 /**
- * Indicates values of cells within a column should attempt be inferred, and converted to appropriate underlying types
+ * Indicates the values of cells within a column should attempt be inferred, and converted to an appropriate underlying type
  * prior to processing.
  *
- * @member {number}
+ * @type {number}
  * @const
  */
 SimpleDataTable.COLUMN_TYPE_INFER = 2;
@@ -158,7 +194,6 @@ SimpleDataTable.COLUMN_TYPE_INFER = 2;
 // Static methods
 /**
  * Utility function to determine whether the given flags (number) has the given flag set.
- *
  * 
  * @package
  * @param {number} flags Set of flags to test.
@@ -173,10 +208,11 @@ SimpleDataTable.hasFlag = function (flags, flag) {
 
 /**
  * Utility function to copy the elements from the given src into a new Array. The given src need not
- * necessarily be an array, but only needs to be a collection-like object indexable by numbers and define 
- * a length property that reflects the number of values in the collection.
+ * necessarily be an Array, but only needs to be a collection-like object indexable by numbers and defining 
+ * a length property that reflects the number of values in the collection. E.g. a NodeList is an acceptable
+ * value for src.
  *
- * @package
+ * @private
  * @param {object} src A collection-like object to be copied.
  * @return {Array} An Array containing the same elements of the given src.
  */
@@ -196,10 +232,10 @@ SimpleDataTable.copy = function (src) {
 /**
  * Utility function for obtaining a number from the given val. If the given val is, itself, a number, it
  * is simply returned. If not, it is treated as a string, and parsed as an integer if it contains only digits,
- * or as a float if it contains a decimal point or E-notation exponents. If val is not numeric, it is returned
- * as given if strict is false, or NaN is returned if strict is true.
+ * or as a float if it contains a decimal point and/or E-notation exponents. If val is not numeric and not parsable
+ * as a number, it is returned as-is if strict is false, or NaN is returned if strict is true.
  *
- * @package
+ * @private
  * @param {(string|number)} val Value to be converted to a number.
  * @param {boolean} [strict=false] Whether to return NaN if val is not a number, or simply to return val itself.
  */
@@ -225,7 +261,7 @@ SimpleDataTable.getNumber = function (val, strict) {
  * Utility function for obtaining a column that considers the colSpan attribute of a row's cells. Cells with a 
  * colSpan greater than 1 are considered to span multiple column indicies.
  *
- * @package
+ * @private
  * @param {HTMLTableRowElement} row Row from which to extract a column.
  * @param {number} columnIndex Column index defining the cell to be extracted.
  * @returns {HTMLCellElement} Cell corresponding to the given columnIndex.
@@ -252,23 +288,23 @@ SimpleDataTable.getColumn = function (row, columnIndex) {
 };
 
 /**
- * Utility method to determine the count of child elements of the given el. Returns the count of the
- * childNodes of el with a nodeType of 1 (ELEMENT_NODE).
+ * Utility method to determine the count of child elements of the given node. Returns the count of the
+ * childNodes of node with a nodeType of 1 (ELEMENT_NODE).
  *
- * @package
- * @param {Node} el Element whose child element count is to be determined.
- * @returns {number} Count of child elements of the given el.
+ * @private
+ * @param {Node} node Element whose child element count is to be determined.
+ * @returns {number} Count of child elements of the given node.
  */
-SimpleDataTable.getElementCount = function (el) {
+SimpleDataTable.getElementCount = function (node) {
 	'use strict';
 	
 	var count, i, childNodes;
 	
-	childNodes = el.childNodes;
+	childNodes = node.childNodes;
 	count = 0;
 	
 	for (i = 0; i < childNodes.length; ++i) {
-		if (childNodes[i].nodeType == 1) {
+		if (childNodes[i].nodeType === 1) {
 			++count;
 		}
 	}
@@ -277,40 +313,12 @@ SimpleDataTable.getElementCount = function (el) {
 };
 
 
-/**
- * Populates the given items with the (trimmed) text content of the given cell. If the cell contains a single
- * list element (ul or ol), the text content of each child list item (li) is added to the given items, otherwise the
- * text content of the entire cell is added.
- *
- * @package
- * @param {HTMLCellElement} cell Cell whose content is to be added to items.
- * @param {Array} items Array to add the content of the given cell.
- */
-SimpleDataTable.getCellValues = function (cell, items) {
-	'use strict';
-	
-	var listItems, i, value;
-	
-	if (SimpleDataTable.getElementCount(cell) == 1 && (cell.getElementsByTagName('ul').length) || cell.getElementsByTagName('ol').length) {
-		listItems = cell.getElementsByTagName('li');
-		for (i = 0; i < listItems.length; ++i) {
-			value = listItems[i].textContent.trim();
-			if (items.indexOf(value) === -1) {
-				items.push(value);
-			}
-		}
-	} else {
-		value = cell.textContent.trim();
-		if (items.indexOf(value) === -1) {
-			items.push(value);
-		}
-	}
-};
+
 
 /**
  * Determines whether the given val is an integer. Returns true if val contains only digits, otherwise false.
  *
- * @package
+ * @private
  * @param {string} val Value to parse.
  * @returns {boolean} true if val represents an integer, otherwise false.
  */
@@ -324,7 +332,7 @@ SimpleDataTable.isInt = function (val) {
  * Determines whether the given val is numeric. Returns true if val contains only digits, optionally a decimal point,
  * and optionally a scientific E-notation expontent, otherwise false.
  *
- * @package
+ * @private
  * @param {string} val Value to parse.
  * @returns {boolean} true if val represents a number, otherwise false.
  */
@@ -398,7 +406,7 @@ SimpleDataTable.prototype.sort = function () {
 			cellA = SimpleDataTable.getColumn(rowA, columnIndex);
 			cellB = SimpleDataTable.getColumn(rowB, columnIndex);
 			
-			compareValue = sortDescriptor.compare(cellA, cellB, rowA, rowB);
+			compareValue = sortDescriptor.compare(cellA, cellB);
 			
 			// Allowing type coercion if (for whatever reason) the compare function does not return an integer.
 			if (compareValue != 0) {
@@ -470,7 +478,7 @@ SimpleDataTable.prototype.filter = function () {
 		for (j = 0; j < filterDescriptors.length; ++j) {
 			filterDescriptor = filterDescriptors[j];
 			
-			if (!filterDescriptor.include(SimpleDataTable.getColumn(row, filterDescriptor.columnIndex), row)) {
+			if (!filterDescriptor.include(SimpleDataTable.getColumn(row, filterDescriptor.columnIndex))) {
 				filter = true;
 				break;
 			}
@@ -526,25 +534,50 @@ SimpleDataTable.prototype.clearSort = function () {
 
 
 /**
- * Returns an Array containing all values for each cell of the given columnIndex.
+ * Returns an Array containing all values for each cell of the given columnIndex. An optional callback can be provided to customize how cell values
+ * are intrepreted. If defined, it will be called to obtain the values for each cell, otherwise the default is to simply add the trimmed textContent
+ * of each cell, provided that value has not already been added (i.e. the distinct set of cell textContent for the column). The result will be
+ * sorted prior to being returned unless noSort is a true value.
  *
  * @param {number} columnIndex Column index whose values are to be retrieved.
+ * @param {(SimpleDataTable~populateCellValues|CellInterpreter)} [callback] 
+ *		Optional {@link CellInterpreter} or callback function to customize how cell values are intrepreted.
+ * @param {boolean} [noSort] Set to a true value to prevent the result from being sorted.
  * @returns {Array} An array containing all values fore each cell of the given columnIndex.
  * @throws {RangeError} If columnIndex is greater than the number of columns spanned by any row in the table.
+ * @throws {TypeError} If callback is defined, but does not implement {@link CellInterpreter} or is not a function itself.
  */
-SimpleDataTable.prototype.getColumnValues = function (columnIndex) {
+SimpleDataTable.prototype.getColumnValues = function (columnIndex, callback, noSort) {
 	'use strict';
 	
 	var rows, i, cell, value, listItems, j, result;
+	
+	if (callback && (typeof callback !== 'function' || typeof callback.populateCellValues !== 'function')) {
+		throw new TypeError('Callback must either define a populateCellValues function, or be a function itself.');
+	}
 	
 	result = [];
 	rows = this.table.tBodies[0].rows;
 	
 	for (i = 0; i < rows.length; ++i) {
-		SimpleDataTable.getCellValues(SimpleDataTable.getColumn(rows[i], columnIndex), result);
+		cell = SimpleDataTable.getColumn(rows[i], columnIndex);
+		if (callback) {
+			if (callback.populateCellValues) {
+				callback.populateCellValues(cell, result);
+			} else {
+				callback(cell, result);
+			}
+		} else {
+			value = cell.textContent.trim();
+			if (result.indexOf(value) === -1) {
+				result.push(value);
+			}
+		}
 	}
 	
-	result.sort();
+	if (!noSort) {
+		result.sort();
+	}
 	
 	return result;
 };
@@ -588,7 +621,7 @@ SimpleDataTable.ValueSort.prototype.descending = false;
  * and will be sorted under those successfully converted to numbers. If {@link SimpleDataTable.COLUMN_TYPE_TEXT}, all
  * values will be compared as strings only.
  *
- * @member {number}
+ * @type {number}
  */
 SimpleDataTable.ValueSort.prototype.columnType = SimpleDataTable.COLUMN_TYPE_INFER;
 
@@ -641,13 +674,10 @@ SimpleDataTable.ValueSort.prototype.compare = function (cellA, cellB) {
  * @param {(number|string)} [operation={@link SimpleDataTable.FILTER_OP_EQUALS}] 
  *		Bit field or string indicating the operation this filter is to perform. Must be a combination of the {@link SimpleDataTable}.FILTER_OP_* fields
  *		if a number, or '=', '!=' '&lt', '&gt;' '&lt;=', '&gt;=', or '~' (contains, ignore case) if a string.
- * @param {number} [columnType={@link SimpleDataTable.COLUMN_TYPE_INFER}] How the cells in this column are to be interpreted.
- * @param {boolean} [ignoreListCells=false] 
- *		Whether to indiscriminately treat each cell's value as its textContent, or to first inspect it for list elements as described
- *		in {@link SimpleDataTable.getCellValues}.
+ * @param {number} [columnType={@link SimpleDataTable.COLUMN_TYPE_INFER}] How the values of cells in this column are to be determined.
  * @classdesc
  *		<p>Generic implementation of {@link FilterDescriptor}. Filters cells for the given columnIndex based upon the given compareValue using the given 
- *		operation. The values for individual cells are determined base upon columnType and ignoreListCells.<p>
+ *		operation. The values for individual cells are determined based upon columnType.<p>
  *
  *		<p>
  *		<span>Operation can be defined as either a bit field, or, for convenience, a string. If a bit field, it must be a combination 
@@ -672,12 +702,15 @@ SimpleDataTable.ValueSort.prototype.compare = function (cellA, cellB) {
  *		</ul>
  *		</p>
  */
-SimpleDataTable.ValueFilter = function (columnIndex, compareValue, operation, columnType, ignoreListCells) {
+SimpleDataTable.ValueFilter = function (columnIndex, compareValue, operation, columnType) {
 	'use strict';
 	
 	this.columnIndex = columnIndex;
 	
 	/**
+	 * Value against which individual cell values are to be compared.
+	 *
+	 * @type {*}
 	 */
 	this.compareValue = compareValue;
 	
@@ -687,9 +720,7 @@ SimpleDataTable.ValueFilter = function (columnIndex, compareValue, operation, co
 	if (columnType && columnType !== SimpleDataTable.COLUMN_TYPE_INFER) {
 		this.columnType = columnType;
 	}
-	if (ignoreListCells) {
-		this.ignoreListCells = true;
-	}
+
 
 };
 
@@ -698,19 +729,18 @@ SimpleDataTable.ValueFilter = function (columnIndex, compareValue, operation, co
 /**
  * Operation this ValueFilter is to use when determining whether to filter a cell. Valid values are described
  * in this class' description.
+ *
+ * @type {number}
  */
 SimpleDataTable.ValueFilter.prototype.operation = SimpleDataTable.FILTER_OP_EQUALS;
 
-/**
- * Whether or not to ignore cells with list elements. I.e. true to consider textContent only, or to call false
- * {@link SimpleDataTable.getCellValues} when determining values against which to filter for individual cells.
- */
-SimpleDataTable.ValueFilter.prototype.ignoreListCells = false;
 
 /**
  * How individual cell values are to be converted. If {@link SimpleDataTable.COLUMN_TYPE_TEXT}, cell values will
  * be treated only as text; if {@link SimpleDataTable.COLUMN_TYPE_INFER} (default), an attempt will be made to 
  * convert cell values to numbers prior to evaluating filter conditions.
+ *
+ * @type {number}
  */
 SimpleDataTable.ValueFilter.prototype.columnType = SimpleDataTable.COLUMN_TYPE_INFER;
 
@@ -719,26 +749,13 @@ SimpleDataTable.ValueFilter.prototype.columnType = SimpleDataTable.COLUMN_TYPE_I
 SimpleDataTable.ValueFilter.prototype.include = function (cell) {
 	'use strict';
 	
-	var values, i;
-	
-	if (this.ignoreListCells) {
-		return this.includeValue(cell.textContent.trim());
-	} else {
-		values = [];
-		SimpleDataTable.getCellValues(cell, values);
-		for (i = 0; i < values.length; ++i) {
-			if (this.includeValue(values[i])) {
-				return true;
-			}
-		}
-		return false;
-	}
+	return this.includeValue(cell.textContent.trim());
 };
 
 /**
  * Internal function that tests an individual value of a cell for whether or not it should be filtered.
  * 
- * @private
+ * @protected
  * @param {string} rawValue Individual value to test.
  * @returns {boolean} false if the containing cell should be filtered, otherwise true.
  */

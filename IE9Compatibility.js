@@ -1,7 +1,7 @@
 
 /**
  * Not actually a constructor as there are no instance methods; underlying definition is an empty object.
- * Documented as a class for the purposes of the documentation generator only.
+ * Documented as a class for the purposes of this documentation generator only.
  *
  * @class
  * @augments IEGeneralCompatibility
@@ -74,7 +74,9 @@ IE9Compatibility.removeClass = function (el, className) {
 /**
  * Adds compatibility for the DOMTokenList.contains function for Element.className.
  *
- * 
+ * @param {Element} el Element whose class list is to be examined.
+ * @param {string} className Class name for which to look in el's classlist.
+ * @returns {boolean} true if the given className is present in el's classlist, otherwise false.
  */
 IE9Compatibility.hasClass = function (el, className) {
 	'use strict';

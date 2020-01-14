@@ -1,7 +1,7 @@
 
 /**
  * Not actually a constructor as there are no instance methods; underlying definition is an empty object.
- * Documented as a class for the purposes of the documentation generator only.
+ * Documented as a class for the purposes of this documentation generator only.
  *
  * @class
  * @classdesc
