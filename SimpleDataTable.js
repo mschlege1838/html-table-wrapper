@@ -337,6 +337,9 @@ SimpleDataTable.prototype.getTableElement = function () {
  * Returns the `HTMLTableRowElement`s of the first table body section of the backing table. Rows that have been filtered are excluded unless
  * `includeFiltered` is `true`.
  *
+ * *IMPLEMENTATION NOTE:* Callers to this function should only rely on the interface defined by {@link MinimalList}, as this method may return
+ * either an `Array` or a `NodeList`.
+ *
  * @param {boolean} [includeFiltered=false] Whether to include rows that are filtered in the result.
  * @returns {MinimalList} `HTMLTableRowElement`s of the first table body section of the backing table.
  */

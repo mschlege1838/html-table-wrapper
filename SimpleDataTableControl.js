@@ -103,6 +103,10 @@ SimpleDataTableControl.SORT_ORDER_ASCENDING = 2;
  */
 SimpleDataTableControl.SORT_ORDER_DESCENDING = 3;
 
+
+SimpleDataTableControl.CLICK_TARGETS_SELECTOR = 
+		'input.column-type, input.sort-direction, input.filter-by-value-operator, input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"], input.column-value, .close-button';
+
 /**
  * A 'mapping' object whose property values correspond to labels printed on the dialogue presented to the end-user.
  * 
@@ -231,7 +235,7 @@ SimpleDataTableControl.prototype.dispose = function () {
 	if (controlElement) {
 		controlElement.querySelector('input[name="filter-by-value-value"]').removeEventListener('keyup', this, false);
 		
-		clickTargets = controlElement.querySelectorAll('input.column-type, input.sort-direction, input.filter-by-value-operator, input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"], input[name="column-value"], .close-button');
+		clickTargets = controlElement.querySelectorAll(SimpleDataTableControl.CLICK_TARGETS_SELECTOR);
 		for (i = 0; i < clickTargets.length; ++i) {
 			clickTargets[i].removeEventListener('click', this, false);
 		}
@@ -339,6 +343,7 @@ SimpleDataTableControl.prototype.updateParent = function () {
 	'use strict';
 	
 	this.parent.processTable();
+	this.contextControl.position();
 };
 
 /**
@@ -422,7 +427,7 @@ SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 	columnIndex = this.columnIndex;
 	
 	result = [];
-	rows = this.parent.getDataTable().getRows();
+	rows = this.parent.getDataTable().getRows(true);
 	
 	for (i = 0; i < rows.length; ++i) {
 		cell = rows[i].cells[columnIndex];
@@ -590,7 +595,7 @@ SimpleDataTableControl.prototype.getSelectedCellValues = function () {
 		return null;
 	}
 	
-	columnValueInputs = controlElement.querySelectorAll('input[name="column-value"]');
+	columnValueInputs = controlElement.querySelectorAll('input.column-value');
 	selectedValues = [];
 	for (i = 0; i < columnValueInputs.length; ++i) {
 		columnValueInput = columnValueInputs[i];
@@ -816,7 +821,7 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 			id = idBase + 'columnValue_' + i;
 			
 			builder.startTag('li').attribute('class', 'field')
-				.startTag('input').attribute('type', 'checkbox').attribute('checked').attribute('value', columnValue).attribute('id', id).attribute('name', 'column-value').closeTag()
+				.startTag('input').attribute('type', 'checkbox').attribute('checked').attribute('value', columnValue).attribute('id', id).attribute('class', 'column-value').closeTag()
 				.startTag('label').attribute('for', id).content(columnValue).closeTag()
 			.closeTag();
 		}
@@ -832,7 +837,7 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	// Register events.
 	container.querySelector('input[name="filter-by-value-value"]').addEventListener('keyup', this, false);
 	
-	clickTargets = container.querySelectorAll('input.column-type, input.sort-direction, input.filter-by-value-operator, input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"], input[name="column-value"], .close-button');
+	clickTargets = container.querySelectorAll(SimpleDataTableControl.CLICK_TARGETS_SELECTOR);
 	for (i = 0; i < clickTargets.length; ++i) {
 		clickTargets[i].addEventListener('click', this, false);
 	}
