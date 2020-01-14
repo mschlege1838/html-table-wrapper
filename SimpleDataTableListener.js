@@ -1,5 +1,6 @@
 
 // Virtual Interfaces
+// ColumnControlFactory
 /**
  * @interface ColumnControlFactory
  * @classdesc
@@ -21,7 +22,7 @@
  * @returns {ColumnControl} A {@link ColumnControl} if a client-defined control is needed for the given columnIndex, otherwise nothing.
  */
 
-
+// ColumnControl
 /**
  * @interface ColumnControl
  * @classdesc

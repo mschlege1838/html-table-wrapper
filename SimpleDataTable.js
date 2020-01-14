@@ -57,21 +57,21 @@
  * @constructor 
  * @param {HTMLTableElement} table Table element this `SimpleDataTable` is to process.
  * @throws {ReferenceError} 
- *   If `table` is not defined, `table` does not define a `tBodies` property, or if `table.tBodies` does not define a 0th element
- *   (i.e. `table.tBodies[0]`).
+ *   If `table` is not defined, `table` does not define table body section, if `table` does not define a table header section, or if `table`'s table
+ *   header section has no rows.
  * @classdesc
  *
  * Wrapper for 'simply defined' `HTMLTableElement`s that provides extended functionality, most notably {@link SimpleDataTable#sort sorting}
- * and {@link SimpleDataTable#filter filtering}. The tables this class processes are 'simply defined' in that they define a single table body section
- * (`<tbody>`) whose rows contain the table's data.
+ * and {@link SimpleDataTable#filter filtering}. The tables this class processes are 'simply defined' in that they define a table header section (`<thead>`)
+ * whose first row's cells define the table's column headers, and a single table body section (`<tbody>`) whose rows contain the table's data.
  *
- * Although the table can define more than one table body section, all but the first table body section will be ignored by the processing in
- * in this class.
+ * Although the backing table can define more than one row in the table header section, and/or more than one table body section, only the first row in the table
+ * header section and the first table body section will be processed by this class.
  */
 function SimpleDataTable(table) {
 	'use strict';
 	
-	if (!table || !table.tBodies || !table.tBodies[0]) {
+	if (!table || !table.tBodies || !table.tBodies.length || !table.tHead || !table.tHead.rows.length) {
 		throw new ReferenceError('Table must be an defined and have a body.');
 	}
 	
@@ -108,13 +108,10 @@ SimpleDataTable.filteredClassName = 'data-table-filtered';
 
 // Static methods
 /**
- * Utility function to copy the elements from the given `src` into a new `Array`. The given `src` need not
- * necessarily be an `Array`, but only needs to be a collection-like object indexable by numbers and defining 
- * a `length` property that reflects the number of values in the collection. E.g. a `NodeList` is an acceptable
- * value for `src`.
+ * Utility function to copy the elements from the given `src` {@link MinimalList} into a new `Array`.
  *
  * @private
- * @param {object} src A collection-like object to be copied.
+ * @param {MinimalList} src List to be copied.
  * @return {Array} An `Array` containing the same elements of the given `src`.
  */
 SimpleDataTable.copy = function (src) {
@@ -324,7 +321,7 @@ SimpleDataTable.prototype.clearFilter = function () {
 	
 	var i, rows;
 	
-	rows = this.getRows();
+	rows = this.table.tBodies[0].rows;
 	
 	for (i = 0; i < rows.length; ++i) {
 		IE9Compatibility.removeClass(rows[i], SimpleDataTable.filteredClassName);
@@ -355,13 +352,43 @@ SimpleDataTable.prototype.clearSort = function () {
 	
 };
 
+SimpleDataTable.prototype.getColumn = function (row, columnIndex) {
+	'use strict';
+	
+	var headers, cells, i, numColumns;
+	
+	headers = this.table.tHead.rows[0].cells;
+	cells = row.cells;
+	
+	for (i = 0; i < headers.length; ++i) {
+		numColumns += headers[i].colSpan;
+	}
+	
+	if (columnIndex >= numColumns) {
+		throw new RangeError();
+	}
+	
+	
+};
 
+/**
+ * Returns the `HTMLTableCellElement`s defining the column headers of this table.
+ *
+ * @returns {MinimalList} The `HTMLTableCellElement`s defining the column headers of this table.
+ */
 SimpleDataTable.prototype.getHeaders = function () {
 	'use strict';
 	
 	return this.table.tHead.rows[0];
 };
 
+/**
+ * Returns the `HTMLTableRowElement`s containing the data of this table. Rows that have been filtered are excluded unless
+ * `includeFiltered` is `true`.
+ *
+ * @param {boolean} [includeFiltered=false] Whether to include rows that are filtered in the result.
+ * @returns {MinimalList} `HTMLTableRowElement`s containing the data of this table.
+ */
 SimpleDataTable.prototype.getRows = function (includeFiltered) {
 	'use strict';
 	

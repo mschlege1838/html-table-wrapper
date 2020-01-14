@@ -109,15 +109,14 @@ SimpleEventDispatcher.processType = function (type) {
 
 // Instance methods
 /**
- * Adds a the given listener for the given event type.
+ * Adds the given `listener` for the given event `type`.
  *
- * @param {string} type Event type for which the given listener is to be registered.
+ * @param {string} type Event type for which the given `listener` is to be registered.
  * @param {(SimpleEventListener|function)} listener Listener to register.
  * @param {boolean} [useCapture=false] 
- *   Optional parameter added for consistency with the standard DOM EventTarget addEventListener definition.
- *   If not `false` (more specifically, {@link Nothing}), will print a warning on the console.
- * @throws {ReferenceError} If type is not defined or is a zero-length string; if listener is not defined.
- * @throws {TypeError} If type is not a string; if listener does not implement {@link SimpleEventListener} or is not a function.
+ *   Optional parameter added for consistency with the standard DOM `EventTarget.addEventListener` definition. If not {@link Nothing}, will print a warning on the console.
+ * @throws {ReferenceError} If `type` is not defined or is a zero-length string; if `listener` is not defined.
+ * @throws {TypeError} If type is not a `string`; if `listener` does not implement {@link SimpleEventListener} or is not a function.
  */
 SimpleEventDispatcher.prototype.addEventListener = function (type, listener, useCapture) {
 	'use strict';
@@ -149,15 +148,14 @@ SimpleEventDispatcher.prototype.addEventListener = function (type, listener, use
 };
 
 /**
- * Removes the given listener for the given event type, provided it is currently registered for that type.
+ * Removes the given `listener` for the given event `type`, provided it is currently registered for that type.
  *
- * @param {string} type Event type for which the given listener is to be removed.
+ * @param {string} type Event type for which the given `listener` is to be removed.
  * @param {(SimpleEventListener|function)} listener Listener to be removed.
  * @param {boolean} [useCapture=false] 
- *   Optional parameter added for consistency with the standard DOM EventTarget addEventListener definition.
- *   If not `false` (more specifically, {@link Nothing}), will print a warning on the console.
- * @throws {ReferenceError} If type is not defined or is a zero-length string.
- * @throws {TypeError} If type is not a string.
+ *   Optional parameter added for consistency with the standard DOM `EventTarget.addEventListener` definition. If not {@link Nothing}, will print a warning on the console.
+ * @throws {ReferenceError} If `type` is not defined or is a zero-length string.
+ * @throws {TypeError} If `type` is not a string.
  */
 SimpleEventDispatcher.prototype.removeEventListener = function (type, listener, useCapture) {
 	'use strict';
@@ -186,11 +184,11 @@ SimpleEventDispatcher.prototype.removeEventListener = function (type, listener, 
 
 
 /**
- * Dispatches the given event to registered listeners. Listeners are called in the order they are added.
+ * Dispatches the given `event` to registered listeners. Listeners are called in the order they are added.
  *
  * @param {SimpleEventIntf} event Event to dispatch.
- * @throws {ReferenceError} If event is not defined.
- * @throws {TypeError} If event does not implement {@link SimpleEventIntf}.
+ * @throws {ReferenceError} If `event` is not defined.
+ * @throws {TypeError} If `event` does not implement {@link SimpleEventIntf}.
  */
 SimpleEventDispatcher.prototype.dispatchEvent = function (event) {
 	'use strict';

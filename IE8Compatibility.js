@@ -89,7 +89,7 @@ IE8Compatibility.addEventListener = function (target, type, listener, useCapture
  * Adds compatibility for the DOM `EventTarget.removeEventListener` function. Follows the same fallback pattern as {@link IE8Compatibility.addEventListener},
  * except with `removeEventListener` and `detachEvent`.
  *
- * @param {EventTarget} target Target from which the given listener is to be removed.
+ * @param {EventTarget} target Target from which the given `listener` is to be removed.
  * @param {string} type Type name of the event for which the given `listener` is to be removed.
  * @param {(function|EventListener)} listener Listener to be removed.
  * @param {(boolean|object)} [useCapture=false] Use capture/options argument for `removeEventListener`; ignored if necessary to fall back to `detachEvent`.
@@ -144,9 +144,25 @@ IE8Compatibility.extend = function (proto) {
 };
 
 /**
- * Adds compatibility for the `Node.textContent` property.
+ * Adds compatibility for the `Node.textContent` property. Returns `node.textContent` if the `textContent` property is `in node`, otherwise the return value
+ * is as follows:
  *
+ * The depth-first concatenation of the `nodeValue` of all the child nodes of `node` that are of type `TEXT_NODE` (3) if `node` is of type:
+ * - `ELEMENT_NODE` (1)
+ * - `DOCUMENT_FRAGMENT_NODE` (11)
+ *
+ * The `nodeValue` of `node` if `node` is of type:
+ * - `TEXT_NODE` (3)
+ * - `CDATA_SECTION_NODE` (4)
+ * - `PROCESSING_INSTRUCTION_NODE` (7)
+ * - `COMMENT_NODE` (8)
+ *
+ * Or the `value` of `node` if `node` is of type `ATTRIBUTE_NODE` (2), and `null` if `node` is of any other type. This is designed to be consistent with the
+ * definition of `textContent` in the DOM Living Standard.
+ * 
  * @param {Node} node Node whose text content is to be obtained.
+ * @returns {string} The `textContent` of `node`, or a value consistent with its definition in the DOM living standard.
+ * @see https://dom.spec.whatwg.org/#dom-node-textcontent
  */
 IE8Compatibility.getTextContent = function (node) {
 	'use strict';
@@ -159,16 +175,18 @@ IE8Compatibility.getTextContent = function (node) {
 	
 	switch (node.nodeType) {
 		case 1: // ELEMENT_NODE
-			return node.innerText;
+		case 11: // DOCUMENT_FRAGMENT_NODE
+			children = node.childNodes;
+			return children.length ? IE8Compatibility._getTextContent(children) : '';
+			
 		case 3: // TEXT_NODE
 		case 4: // CDATA_SECTION_NODE
 		case 7: // PROCESSING_INSTRUCTION_NODE
 		case 8: // COMMENT_NODE
 			return node.nodeValue;
-		
-		case 11: // DOCUMENT_FRAGMENT_NODE
-			children = node.childNodes;
-			return children.length ? node.IE8Compatibility._getTextContent(children) : '';
+			
+		case 2: // ATTRIBUTE_NODE (Deprecated)
+			return node.value;
 		
 		// Default includes:
 		//   5/ENTITY_REFERENCE_NODE (Deprecated)
@@ -178,10 +196,7 @@ IE8Compatibility.getTextContent = function (node) {
 		//   12/NOTATION_NODE (Deprecated)
 		default:
 			return null;
-			
-		case 2: // ATTRIBUTE_NODE (Deprecated)
-			return node.value;
-	}	
+	}
 	
 };
 
@@ -191,6 +206,7 @@ IE8Compatibility.getTextContent = function (node) {
  *
  * @private
  * @param {NodeList} nodeList Children of the current node being processed.
+ * @returns {string} The depth-first concatenation of the values of all descendant child nodes that are of type `TEXT_NODE` (3).
  */
 IE8Compatibility._getTextContent = function (nodeList) {
 	'use strict';

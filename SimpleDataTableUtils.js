@@ -100,6 +100,7 @@ SimpleDataTableUtils.getNumber = function (val, strict) {
 	
 };
 
+
 /**
  * Utility function to aid in the implementation of {@link FilterDescriptor#include}. Compares the given `cellValue` to the given `compareValue` using
  * the given `operator` and `columnType`.
@@ -117,7 +118,7 @@ SimpleDataTableUtils.getNumber = function (val, strict) {
  *
  * Comparisons are performed in two distinct steps. The first are the 'simple' comparisons, which correspond to the combination of the relational operator
  * bitfields: {@link SimpleDataTableUtils.FILTER_OP_EQUALS}, {@link SimpleDataTableUtils.FILTER_OP_LESS_THAN}, and {@link SimpleDataTableUtils.FILTER_OP_GREATER_THAN}.
- * The next is the contains comparison (corresponding to the {@link SimpleDataTableUtils.FILTER_OP_CONTAINS bitfield). The contains comparison is only performed
+ * The next is the contains comparison (corresponding to the {@link SimpleDataTableUtils.FILTER_OP_CONTAINS bitfield}). The contains comparison is only performed
  * if its corresponding flag is set, and the 'simple' (relational) comparisons fail, and/or none of their flags are set. That is to say this function will
  * return `true` on the first (requested) comparison that succeeds, otherwise `false`.
  * 
@@ -128,13 +129,12 @@ SimpleDataTableUtils.getNumber = function (val, strict) {
  * If the {@link SimpleDataTableUtils.FILTER_FLAG_IGNORE_CASE} flag is set, it only affects the result of the 'simple' relational comparisons if the given `columnType`
  * is {@link SimpleDataTableUtils.COLUMN_TYPE_TEXT}. The flag will always, however, affect the contains comparison. In either case, though, the applicable values
  * are converted to a consistent case prior to comparison.
- *
+ * 
  * If the {@link SimpleDataTableUtils.FILTER_FLAG_NOT} flag is set, it forms the logical negation of the 'simple' relational comparisons. E.g. (in logical terms)
  * 'equals' becomes 'not equal to', 'less than' becomes 'greater than or equal to', etc. For the contains comparison, it simply causes the logical
  * inverse of the result to be returned. Of note, the {@link SimpleDataTableUtils.FILTER_FLAG_NOT} flag *only* affects the operators, and has no effect on 
  * the {@link SimpleDataTableUtils.FILTER_FLAG_IGNORE_CASE} flag; if {@link SimpleDataTableUtils.FILTER_FLAG_IGNORE_CASE} is set case will always be ignored for 
- * string-type comparisons, regardless of whether {@link SimpleDataTableUtils.FILTER_FLAG_NOT} is set.
- * 
+ * string-type comparisons, regardless of whether {@link SimpleDataTableUtils.FILTER_FLAG_NOT} is set. 
  *
  * @param {(string|number)} cellValue Value of the current cell being tested.
  * @param {number} operator Bitfield representing the combination of one or more `FILTER_OP_`* fields, and zero or more `FILTER_FLAG_`* fields.

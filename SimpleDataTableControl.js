@@ -829,22 +829,54 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
  *
  * @constructor
  * @implements FilterDescriptor
- * @param {number} columnIndex
- * @param {number} operator
- * @param {string} compareValue
- * @param {number} columnType
- * @param {Array} selectedValues
- * @param {(CellInterpreter|SimpleDataTableControl~populateCellValues)} [cellInterpreter=null]
+ * @param {number} columnIndex Column index of the parent {@link SimpleDataTableControl}.
+ * @param {number} operator {@link SimpleDataTableUtils} `FILTER_OP_`* and `FILTER_FLAG_*` combination representing the current selected operator.
+ * @param {string} compareValue User-entered filter value.
+ * @param {number} columnType {@link SimpleDataTableUtils} `COLUMN_TYPE_`* constant representing the current selected column type.
+ * @param {Array} selectedValues A list of values currently selected in the Excel-like filter portion of the parent control.
+ * @param {(CellInterpreter|SimpleDataTableControl~populateCellValues)} [cellInterpreter=null] {@link CellInterpreter} or callback of the parent {@link SimpleDataTableControl}.
  * @private
- * 
+ * @classdesc
+ *
+ * The {@link FilterDescriptor} implementation returned by {@link SimpleDataTableControl#getFilterDescriptor}. Determines whether individual cell values should be filtered or not
+ * based upon the given `operator`, `compareValue`, `selectedValues` and `columnType`. Individual cell values are determined with the given `cellInterpreter` if present. If no value
+ * is given for `cellInterpreter`, each cell's value is its trimmed `textContent`.
  */
 SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, compareValue, columnType, selectedValues, cellInterpreter) {
 	'use strict';
 	
 	this.columnIndex = columnIndex;
+	
+	/**
+	 *
+	 *
+	 * @private
+	 * @type {number}
+	 */
 	this.operator = operator;
+	
+	/**
+	 *
+	 *
+	 * @private
+	 * @type {string}
+	 */
 	this.compareValue = compareValue;
+	
+	/**
+	 *
+	 *
+	 * @private
+	 * @type {number}
+	 */
 	this.columnType = columnType;
+	
+	/**
+	 *
+	 *
+	 * @private
+	 * @type {Array}
+	 */
 	this.selectedValues = selectedValues;
 	
 	if (cellInterpreter) {
@@ -854,9 +886,20 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, comp
 	}
 };
 
-
+/**
+ *
+ *
+ * @private
+ * @type {(CellInterpreter|SimpleDataTableControl~populateCellValues)}
+ */
 SimpleDataTableControl.ColumnValueFilter.prototype.cellInterpreter = null;
 
+/**
+ *
+ *
+ * @private
+ * @type {Array}
+ */
 SimpleDataTableControl.ColumnValueFilter.prototype.currentCellCache = null;
 
 
@@ -891,6 +934,13 @@ SimpleDataTableControl.ColumnValueFilter.prototype.include = function (cell) {
 };
 
 
+/**
+ *
+ *
+ * @private
+ * @param {string} cellValue
+ * @returns {boolean}
+ */
 SimpleDataTableControl.ColumnValueFilter.prototype.shouldInclude = function (cellValue) {
 	'use strict';
 

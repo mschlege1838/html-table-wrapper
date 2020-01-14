@@ -15,6 +15,7 @@ var IEGeneralCompatibility = {};
  * simply falls back to the global `parseInt` function if `Number.parseInt` is not defined.
  *
  * @param {string} val Value to be parsed.
+ * @returns {number} The integer representation of the given `val`, or `NaN` if `val` cannot be parsed.
  */
 IEGeneralCompatibility.parseInt = function (val) {
 	'use strict';
@@ -31,6 +32,7 @@ IEGeneralCompatibility.parseInt = function (val) {
  * simply falls back to the global `parseFloat` function if `Number.parseFloat` is not defined. 
  *
  * @param {string} val Value to be parsed.
+ * @returns {number} The floating point representation of the given `val`, or `NaN` if `val` cannot be parsed.
  */
 IEGeneralCompatibility.parseFloat = function (val) {
 	'use strict';
