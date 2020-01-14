@@ -261,10 +261,12 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 		case 'click':
 			if (IE9Compatibility.hasClass(target, 'close-button')) {
 				this.contextControl.close();
+			} else if (IE9Compatibility.hasClass(target, 'filter-by-value-operator')) {
+				this.contextControl.getControlElement().getElementsByClassName('filter-by-value-description')[0].textContent = this.getOperatorDescription();
+				this.updateParent();
 			} else if (
 				IE9Compatibility.hasClass(target, 'column-type')
 				|| IE9Compatibility.hasClass(target, 'sort-direction')
-				|| IE9Compatibility.hasClass(target, 'filter-by-value-operator')
 				|| IE9Compatibility.hasClass(target, 'filter-option-ignore-case')
 				|| IE9Compatibility.hasClass(target, 'column-value')
 			) {
@@ -486,11 +488,44 @@ SimpleDataTableControl.prototype.getOperator = function () {
 			return null;
 	}
 	
-	if (this.contextControl.getControlElement().querySelector('input[name="filter-option-ignore-case"]').checked) {
+	if (this.contextControl.getControlElement().querySelector('input.filter-option-ignore-case').checked) {
 		result |= SimpleDataTableUtils.FILTER_OP_IGNORE_CASE; 
 	}
 	
 	return result;
+};
+
+/**
+ * Returns a description based upon the current selected operator, or `null` if no operator is selected, or this control has not
+ * yet been opened.
+ *
+ * @returns {string} 
+ *   A description based upon the current selected operator, or `null` if no operator is selected, or this control has not yet
+ *   been opened.
+ */
+SimpleDataTableControl.prototype.getOperatorDescription = function () {
+	'use strict';
+	
+	var i18nStrings = SimpleDataTableControl.i18nStrings;
+	
+	switch (this.getCheckedValue('input.filter-by-value-operator')) {
+		case 'eq':
+			return i18nStrings.filterDescriptionEquals;
+		case 'neq':
+			return i18nStrings.filterDescriptionNotEquals;
+		case 'lt':
+			return i18nStrings.filterDescriptionLessThan;
+		case 'gt':
+			return i18nStrings.filterDescriptionGreaterThan;
+		case 'lte':
+			return i18nStrings.filterDescriptionLessThanOrEqualTo;
+		case 'gte':
+			return i18nStrings.filterDescriptionGreaterThanOrEqualTo;
+		case 'contains':
+			return i18nStrings.filterDescriptionContains;
+		default:
+			return null;
+	}
 };
 
 /**
@@ -635,7 +670,7 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 		sortOptionDescendingId, filterOptionEq, filterOptionNeq, filterOptionLt, filterOptionGt,
 		filterOptionLte, filterOptionGte, filterOptionContains, filterOptionIgnoreCase, sortOptionNoneId,
 		filterByValueInputId, builder, selectAllCells, clickTargets, i, columnValues, columnValue, id, 
-		columnIndex;
+		columnIndex, columnTypeName, sortOrderName, operatorName;
 	
 	i18nStrings = SimpleDataTableControl.i18nStrings;
 	
@@ -658,6 +693,10 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	filterByValueInputId = idBase + 'filterByValue';
 	selectAllCells = idBase + 'selectAllCells';
 	
+	columnTypeName = idBase + 'columnType';
+	sortOrderName = idBase + 'sortOrder';
+	operatorName = idBase + 'operator';
+	
 	columnIndex = this.columnIndex;
 	columnValues = this.getColumnValues();
 	
@@ -678,11 +717,11 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 				.startTag('h5').attribute('class', 'section-title').content(i18nStrings.columnOptionsLabel).closeTag()
 				.startTag('div').attribute('class', 'section-content')
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'column-type').attribute('value', 'infer').attribute('checked').attribute('id', inferColumnTypeId).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', columnTypeName).attribute('class', 'column-type').attribute('value', 'infer').attribute('checked').attribute('id', inferColumnTypeId).closeTag()
 						.startTag('label').attribute('for', inferColumnTypeId).content(i18nStrings.inferDataType).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'column-type').attribute('value', 'text').attribute('id', textOnlyColumnTypeId).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', columnTypeName).attribute('class', 'column-type').attribute('value', 'text').attribute('id', textOnlyColumnTypeId).closeTag()
 						.startTag('label').attribute('for', textOnlyColumnTypeId).content(i18nStrings.textOnlyDataType).closeTag()
 					.closeTag()
 				.closeTag()
@@ -693,15 +732,15 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 				.startTag('h5').attribute('class', 'section-title').content(i18nStrings.sortOptionsLabel).closeTag()
 				.startTag('div').attribute('class', 'sort-options section-content')
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'sort-direction').attribute('value', 'none').attribute('checked').attribute('id', sortOptionNoneId).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', sortOrderName).attribute('class', 'sort-direction').attribute('value', 'none').attribute('checked').attribute('id', sortOptionNoneId).closeTag()
 						.startTag('label').attribute('for', sortOptionNoneId).content(i18nStrings.noSortOrder).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'sort-direction').attribute('value', 'ascending').attribute('id', sortOptionAscendingId).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', sortOrderName).attribute('class', 'sort-direction').attribute('value', 'ascending').attribute('id', sortOptionAscendingId).closeTag()
 						.startTag('label').attribute('for', sortOptionAscendingId).content(i18nStrings.ascendingSortOrder).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'sort-direction').attribute('value', 'descending').attribute('id', sortOptionDescendingId).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', sortOrderName).attribute('class', 'sort-direction').attribute('value', 'descending').attribute('id', sortOptionDescendingId).closeTag()
 						.startTag('label').attribute('for', sortOptionDescendingId).content(i18nStrings.descendingSortOrder).closeTag()
 					.closeTag()
 				.closeTag()
@@ -714,36 +753,36 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 			.startTag('div').attribute('class', 'filter-by-value-operators section-content')
 				.startTag('div').attribute('class', 'field-group')
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'eq').attribute('id', filterOptionEq).attribute('title', i18nStrings.filterOptionEqualsToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', operatorName).attribute('class', 'filter-by-value-operator').attribute('value', 'eq').attribute('id', filterOptionEq).attribute('title', i18nStrings.filterOptionEqualsToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionEq).attribute('title', i18nStrings.filterOptionEqualsToolTip).content(i18nStrings.filterOptionEquals).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'neq').attribute('id', filterOptionNeq).attribute('title', i18nStrings.filterOptionNotEqualsToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', operatorName).attribute('class', 'filter-by-value-operator').attribute('value', 'neq').attribute('id', filterOptionNeq).attribute('title', i18nStrings.filterOptionNotEqualsToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionNeq).attribute('title', i18nStrings.filterOptionNotEqualsToolTip).content(i18nStrings.filterOptionNotEquals).closeTag()
 					.closeTag()
 				.closeTag()
 				.startTag('div').attribute('class', 'field-group')
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'lt').attribute('id', filterOptionLt).attribute('title', i18nStrings.filterOptionLessThanToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', operatorName).attribute('class', 'filter-by-value-operator').attribute('value', 'lt').attribute('id', filterOptionLt).attribute('title', i18nStrings.filterOptionLessThanToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionLt).attribute('title', i18nStrings.filterOptionLessThanToolTip).content(i18nStrings.filterOptionLessThan).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'gt').attribute('id', filterOptionGt).attribute('title', i18nStrings.filterOptionGreaterThanToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', operatorName).attribute('class', 'filter-by-value-operator').attribute('value', 'gt').attribute('id', filterOptionGt).attribute('title', i18nStrings.filterOptionGreaterThanToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionGt).attribute('title', i18nStrings.filterOptionGreaterThanToolTip).content(i18nStrings.filterOptionGreaterThan).closeTag()
 					.closeTag()
 				.closeTag()
 				.startTag('div').attribute('class', 'field-group')
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'lte').attribute('id', filterOptionLte).attribute('title', i18nStrings.filterOptionLessThanOrEqualToToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', operatorName).attribute('class', 'filter-by-value-operator').attribute('value', 'lte').attribute('id', filterOptionLte).attribute('title', i18nStrings.filterOptionLessThanOrEqualToToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionLte).attribute('title', i18nStrings.filterOptionLessThanOrEqualToToolTip).content(i18nStrings.filterOptionLessThanOrEqualTo).closeTag()
 					.closeTag()
 					.startTag('div').attribute('class', 'field')
-						.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'gte').attribute('id', filterOptionGte).attribute('title', i18nStrings.filterOptionGreaterThanOrEqualToToolTip).closeTag()
+						.startTag('input').attribute('type', 'radio').attribute('name', operatorName).attribute('class', 'filter-by-value-operator').attribute('value', 'gte').attribute('id', filterOptionGte).attribute('title', i18nStrings.filterOptionGreaterThanOrEqualToToolTip).closeTag()
 						.startTag('label').attribute('for', filterOptionGte).attribute('title', i18nStrings.filterOptionGreaterThanOrEqualToToolTip).content(i18nStrings.filterOptionGreaterThanOrEqualTo).closeTag()
 					.closeTag()
 				.closeTag()
 				.startTag('div').attribute('class', 'field')
-					.startTag('input').attribute('type', 'radio').attribute('class', 'filter-by-value-operator').attribute('value', 'contains').attribute('id', filterOptionContains).attribute('checked').closeTag()
+					.startTag('input').attribute('type', 'radio').attribute('name', operatorName).attribute('class', 'filter-by-value-operator').attribute('value', 'contains').attribute('id', filterOptionContains).attribute('checked').closeTag()
 					.startTag('label').attribute('for', filterOptionContains).content(i18nStrings.filterOptionContains).closeTag()
 				.closeTag()
 				.startTag('div').attribute('class', 'field')
@@ -753,11 +792,11 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 			.closeTag()
 		.closeTag()
 		.startTag('div').attribute('class', 'sub-section')
-			.startTag('div').attribute('class', 'filter-by-value-description section-content')
+			.startTag('div').attribute('class', 'section-content')
 				.startTag('div').attribute('class', 'field clear-filter-field')
 					.startTag('input').attribute('type', 'button').attribute('name', 'clear-filter-button').attribute('value', i18nStrings.clearSearchFilters).closeTag()
 				.closeTag()
-				.startTag('label').attribute('for', filterByValueInputId).content(i18nStrings.filterDescriptionContains).closeTag()
+				.startTag('label').attribute('class', 'filter-by-value-description').attribute('for', filterByValueInputId).content(i18nStrings.filterDescriptionContains).closeTag()
 			.closeTag()
 		.closeTag()
 	.closeTag()
