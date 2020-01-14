@@ -133,7 +133,7 @@ SimpleDataTable.copy = function (src) {
 // Instance methods
 /**
  * Sorts the first table body section of the backing table according to the given {@link SortDescriptor}s. This function can be called with a single
- * `Array` of {@link SortDescriptor}s or in a variatric manner. If no arguments are provided, or a zero-length `Array` is provided for argument 0,
+ * `Array` of {@link SortDescriptor}s or in a variadic manner. If no arguments are provided, or a zero-length `Array` is provided for argument 0,
  * {@link SimpleDataTable#clearSort} is implicitly called.
  *
  * @param {...SortDescriptor} args 
@@ -145,14 +145,13 @@ SimpleDataTable.prototype.sort = function () {
 	
 	var sortDescriptors, sortDescriptor, i, tbody, rows, copy, _this;
 	
-	// Pre-checks.
-	if (!arguments.length) {
+	// Pre-Validation Initialization.
+	sortDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
+	
+	if (!sortDescriptors.length) {
 		this.clearSort();
 		return;
 	}
-	
-	// Pre-Validation Initialization.
-	sortDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
 	
 	// Validation.
 	for (i = 0; i < sortDescriptors.length; ++i) {
@@ -217,7 +216,7 @@ SimpleDataTable.prototype.sort = function () {
 
 /**
  * Filters the first table body section of the backing table according to the given {@link FilterDescriptor}s. This function can be called with a single
- * `Array` of {@link FilterDescriptor}s or in a variatric manner. If no arguments are provided or a zero-length `Array` is provided for argument 0,
+ * `Array` of {@link FilterDescriptor}s or in a variadic manner. If no arguments are provided or a zero-length `Array` is provided for argument 0,
  * {@link SimpleDataTable#clearFilter} is implicitly called.
  *
  * @param {...FilterDescriptor} args 
