@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Open/Close</td>
+				<td>Column control should open when clicking on a header, and close upon clicking the close button, or opening another control.</th>
+			</tr>
+			<tr>
+				<td>Infer Sorting</td>
+				<td>Sorting with column type infer should sort strings convertible to numbers accordingly, and sort numbers above strings.</td>
+			</tr>
+			<tr>
+				<td>Infer Sorting (desc)</td>
+				<td>Decending order should sort strings convertible to numbers accordingly, and sort numbers below strings.</td>
+			</tr>
+			<tr>
+				<td>Text-only Sorting</td>
+				<td>Sorting with column type Text-Only should sort strings based upon their value directly.</td>
+			</tr>
+			<tr>
+				<td>Text-only Sorting (desc)</td>
+				<td>Same as previous test, but reverse order.</td>
+			</tr>
+			<tr>
+				<td>Clearing Sort Parameters</td>
+				<td>When all sort parameters are cleared, the original order of the table should be restored.</td>
+			</tr>
+			<tr>
+				<td>Sorting of Multiple Columns</td>
+				<td>Sort orders should be applied in the order they are set/cleared, adhearing to all previous rules with regards to sorting.</td>
+			</tr>
+			<tr>
+				<td>Filtering by Value</td>
+				<td>Should keep columns where {column_val} {operator} {compare_val} is true.</td>
+			</tr>
+			<tr>
+				<td>Filtering by Value (Ignore Case)</td>
+				<td>Same as before, but case should be ignored. Should not affect numeric values for Infer column types.</td>
+			</tr>
+			<tr>
+				<td>Filtering by Value (Description)</td>
+				<td>The description of the by-value-filter should be updated as other operators are selected.</td>
+			<tr>
+				<td>Filtering by Selected Values</td>
+				<td>Only values selected should be shown in the table.</td>
+			</tr>
+			<tr>
+				<td>Select/Deselect All</td>
+				<td>Select All should show all rows in the table, deselect all should show none.</td>
+			</tr>
+			<tr>
+				<td>Select All Checkbox</td>
+				<td>Should be updated as individual values are selected; if at least one is deselected, should be selected itself, else (if all are selected), should be selected itself.</td>
+			</tr>
+			<tr>
+				<td>Reset Column Button</td>
+				<td>Should reset column to initial state.</td>
+			</tr>
+			<tr>
+				<td>Filtering by Value + Selected Values</td>
+				<td>The by-value condition should be applied first, followed by any selected/deselected cell values.</td>
+			</tr>
+			<tr>
+				<td>Filtering of Multiple Columns</td>
+				<td>Each filter condition should be AND'ed together for the final result on the table.</td>
+			</tr>
+			<tr>
+				<td>Small Viewport</td>
+				<td>If the viewport is resonably small, column controls should occupy the entire screen; no other elements other than the control should be visible, able to be scrolled to.</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
