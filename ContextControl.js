@@ -105,6 +105,8 @@ ContextControl.mobileViewClassName = 'context-control-mobile-view';
  * Decimal percentage of the screen ContextControls' elements should occupy to trigger entry into mobile view state.
  *
  * @type {number}
+ *
+ * @type {number}
  */
 ContextControl.mobileThresholdRatio = 0.35;
 

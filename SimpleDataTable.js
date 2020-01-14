@@ -27,6 +27,7 @@
  * @param {HTMLCellElement} cellA Reference cell.
  * @param {HTMLCellElement} cellB Compare cell.
  * @returns {number} 
+ * @returns {number} 
  *		A value greater than 0 if cellA should be sorted below cellB, less than 0 for above, 0 for 
  *		no preference.
  */
@@ -49,6 +50,7 @@
  *
  * @function FilterDescriptor#include
  * @param {HTMLCellElement} cell to be considered for inclusion.
+ * @returns {boolean} false if this cell's row is to be filtered.
  * @returns {boolean} false if this cell's row is to be filtered.
  */
 
@@ -356,7 +358,7 @@ SimpleDataTable.isNumeric = function (val) {
 SimpleDataTable.prototype.sort = function () {
 	'use strict';
 	
-	var sortDescriptors, sortDescriptor, i, tbody, rows, copy;
+	var sortDescriptors, sortDescriptor, i, tbody, rows, copy, _this;
 	
 	// Pre-checks.
 	if (!arguments.length) {
@@ -395,6 +397,7 @@ SimpleDataTable.prototype.sort = function () {
 	copy = SimpleDataTable.copy(rows);
 	
 	// Perform sort.
+	_this = this;
 	copy.sort(function (rowA, rowB) {
 		var sortDescriptor, columnIndex, cellA, cellB, compareValue, i;
 		
@@ -532,6 +535,26 @@ SimpleDataTable.prototype.clearSort = function () {
 	
 };
 
+/**
+ * Populate the given items with the values within the given cell for the given columnIndex. By default simply adds the trimmed cell's textContent
+ * if not already present in items. Override/reassign this function to customize how cell values are obtained.
+ *
+ * @protected
+ * @param {number} columnIndex Index of the column whose values are being obtained.
+ * @param {HTMLTableCellElement} cell Cell whose values are to be obtained.
+ * @param {Array} items Array to which this cell's values are to be added.
+ */
+SimpleDataTable.prototype.populateCellValues = function (columnIndex, cell, items) {
+	'use strict';
+	
+	var value;
+
+	value = cell.textContent.trim();
+	if (items.indexOf(value) === -1) {
+		items.push(value);
+	}
+
+};
 
 /**
  * Returns an Array containing all values for each cell of the given columnIndex. An optional callback can be provided to customize how cell values
@@ -746,10 +769,12 @@ SimpleDataTable.ValueFilter.prototype.columnType = SimpleDataTable.COLUMN_TYPE_I
 
 
 // Instance Methods
-SimpleDataTable.ValueFilter.prototype.include = function (cell) {
+SimpleDataTable.ValueFilter.prototype.include = function (cell, table) {
 	'use strict';
 	
 	return this.includeValue(cell.textContent.trim());
+	
+	return false;
 };
 
 /**
