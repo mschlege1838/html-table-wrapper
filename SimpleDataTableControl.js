@@ -1,5 +1,12 @@
 
-function SimpleDataTableControl(columnIndex, tableHeader, listener) {
+/**
+ * @constructor
+ * @implements ColumnControl
+ * @param {number} columnIndex
+ * @param {HTMLTableCellElement} tableHeader
+ * @param {SimpleDataTableListener} parent
+ */
+function SimpleDataTableControl(columnIndex, tableHeader, parent) {
 	'use strict';
 	
 	var contextControl;
@@ -7,7 +14,7 @@ function SimpleDataTableControl(columnIndex, tableHeader, listener) {
 	this.contextControl = contextControl = new ContextControl();
 	this.columnIndex = columnIndex;
 	this.tableHeader = tableHeader;
-	this.listener = listener;
+	this.parent = parent;
 	
 	
 	contextControl.addEventListener('create', this, false);
@@ -202,14 +209,14 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 					case 'column-type':
 						this.filterDescriptor.valueFilter.columnType = this.sortDescriptor.columnType = SimpleDataTableControl.getColumnType(target.value);
 						
-						this.listener.processTable();
+						this.parent.processTable();
 						break;
 						
 					case 'sort-direction':
 						this.sortOrder = sortOrder = SimpleDataTableControl.getSortOrder(target.value);
 						this.sortDelegate.descending = sortOrder === SimpleDataTableControl.SORT_ORDER_DESCENDING;
 						
-						this.listener.processTable();
+						this.parent.processTable();
 						break;
 						
 					case 'filter-by-value-option':
@@ -219,7 +226,7 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 						}
 						this.filterDescriptor.valueFilter.operation = operation;
 						
-						this.listener.processTable();
+						this.parent.processTable();
 						break;
 						
 					case 'filter-option-ignore-case':
@@ -230,12 +237,12 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 						}
 						this.filterDescriptor.valueFilter.operation = operation;
 						
-						this.listener.processTable();
+						this.parent.processTable();
 						break;
 					
 					case 'clear-filter-button':
 						this.reset();
-						this.listener.processTable();
+						this.parent.processTable();
 						break;
 						
 					case 'column-value':
@@ -253,12 +260,12 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 							}
 						}
 						
-						this.listener.processTable();
+						this.parent.processTable();
 						break;
 						
 					case 'select-all-cell-values':
 						this.selectAllColumnValues(target.checked);
-						this.listener.processTable();
+						this.parent.processTable();
 						break;
 				}
 				
@@ -267,7 +274,7 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 		
 		case 'keyup':
 			this.filterDescriptor.valueFilter.compareValue = target.value;
-			this.listener.processTable();
+			this.parent.processTable();
 			break;
 	}	
 };
@@ -361,7 +368,7 @@ SimpleDataTableControl.prototype.setUpDescriptors = function () {
 	columnTypeInput = SimpleDataTableControl.getChecked(control.querySelectorAll('input[name="column-type"]'));
 	columnType = columnTypeInput ? SimpleDataTableControl.getColumnType(columnTypeInput.value) : SimpleDataTable.COLUMN_TYPE_INFER;
 	
-	columnValues = this.listener.dataTable.getColumnValues(columnIndex);
+	columnValues = this.parent.dataTable.getColumnValues(columnIndex);
 	
 	sortOrderInput = SimpleDataTableControl.getChecked(control.querySelectorAll('input[name="sort-direction"]'));
 	sortOrder = sortOrderInput ? SimpleDataTableControl.getSortOrder(sortOrderInput.value) : SimpleDataTableControl.SORT_ORDER_NONE;
@@ -403,7 +410,7 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	selectAllCells = idBase + 'selectAllCells';
 	
 	columnIndex = this.columnIndex;
-	columnValues = this.listener.dataTable.getColumnValues(columnIndex);
+	columnValues = this.parent.dataTable.getColumnValues(columnIndex);
 	
 	IE9Compatibility.addClass(container, SimpleDataTableControl.controlClassName)
 	
@@ -547,11 +554,23 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 
 
 
-
+/**
+ *
+ * @constructor
+ * @implements FilterDescriptor
+ * @param {number} columnIndex
+ * @param {*} compareValue
+ * @param {(number|string)} operation
+ * @param {number} columnType
+ * @param {Array} columnValues
+ * @classdesc
+ *		
+ */
 SimpleDataTableControl.ColumnValueFilter = function (columnIndex, compareValue, operation, columnType, columnValues) {
 	'use strict';
 	
 	this.valueFilter = new SimpleDataTable.ValueFilter(columnIndex, compareValue, operation, columnType);
+	this.columnIndex = columnIndex;
 	this.columnValues = columnValues;
 };
 

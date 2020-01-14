@@ -62,12 +62,11 @@
 
 // Constructor
 /**
- * Constructs a new SimpleDataTable with the given HTMLTableElement. The given table must have a body.
  * 
  * @constructor 
  * @param {HTMLTableElement} table Table element this SimpleDataTable is to process.
  * @classdesc
- *		The SimpleDataTable class.
+ *		
  */
 function SimpleDataTable(table) {
 	'use strict';
@@ -206,8 +205,6 @@ SimpleDataTable.copy = function (src) {
  */
 SimpleDataTable.getNumber = function (val, strict) {
 	'use strict';
-	
-	var result;
 	
 	if (typeof val === 'number') {
 		return val;
@@ -566,6 +563,8 @@ SimpleDataTable.prototype.getColumnValues = function (columnIndex) {
  * @param {boolean} [descending=false] true if the result of this descriptor is to be inverted.
  * @param {number} [columnType={@link SimpleDataTable.COLUMN_TYPE_INFER}] 
  *		How this column is to be sorted. Default is infer, set to {@link SimpleDataTable.COLUMN_TYPE_TEXT} to sort as text only.
+ * @classdesc
+ *		Simple/direct implementation of {@link SortDescriptor}. 
  */
 SimpleDataTable.ValueSort = function (columnIndex, descending, columnType) {
 	'use strict';
@@ -639,18 +638,49 @@ SimpleDataTable.ValueSort.prototype.compare = function (cellA, cellB) {
  * @implements FilterDescriptor
  * @param {number} columnIndex Column index this FilterDescriptor describes.
  * @param {*} compareValue Value to which cells are to be compared.
- * @param {number} [operation={@link SimpleDataTable.FILTER_OP_EQUALS}] 
- *		Bit field indicating the operation this filter is to perform. Must be a combination of the {@link SimpleDataTable}.FILTER_OP_* fields.
+ * @param {(number|string)} [operation={@link SimpleDataTable.FILTER_OP_EQUALS}] 
+ *		Bit field or string indicating the operation this filter is to perform. Must be a combination of the {@link SimpleDataTable}.FILTER_OP_* fields
+ *		if a number, or '=', '!=' '&lt', '&gt;' '&lt;=', '&gt;=', or '~' (contains, ignore case) if a string.
  * @param {number} [columnType={@link SimpleDataTable.COLUMN_TYPE_INFER}] How the cells in this column are to be interpreted.
  * @param {boolean} [ignoreListCells=false] 
  *		Whether to indiscriminately treat each cell's value as its textContent, or to first inspect it for list elements as described
  *		in {@link SimpleDataTable.getCellValues}.
+ * @classdesc
+ *		<p>Generic implementation of {@link FilterDescriptor}. Filters cells for the given columnIndex based upon the given compareValue using the given 
+ *		operation. The values for individual cells are determined base upon columnType and ignoreListCells.<p>
+ *
+ *		<p>
+ *		<span>Operation can be defined as either a bit field, or, for convenience, a string. If a bit field, it must be a combination 
+ *		of the following:<span>
+ *		<ul>
+ *		<li>{@link SimpleDataTable.FILTER_OP_CONTAINS}</li>
+ *		<li>{@link SimpleDataTable.FILTER_OP_EQUALS}</li>
+ *		<li>{@link SimpleDataTable.FILTER_OP_LESS_THAN}</li>
+ *		<li>{@link SimpleDataTable.FILTER_OP_GREATER_THAN}</li>
+ *		<li>{@link SimpleDataTable.FILTER_OP_IGNORE_CASE}</li>
+ *		<li>{@link SimpleDataTable.FILTER_OP_NOT_EQUALS}</li>
+ *		</ul>
+ *		<span>If a string, it must be one of the following (equivalent bit field combinations shown in parenthesis):</span>
+ *		<ul>
+ *		<li>'=' (<code>{@link SimpleDataTable.FILTER_OP_EQUALS}</code>)</li>
+ *		<li>'&gt;' (<code>{@link SimpleDataTable.FILTER_OP_GREATER_THAN}</code>)</li>
+ *		<li>'&lt;' (<code>{@link SimpleDataTable.FILTER_OP_LESS_THAN}</code>)</li>
+ *		<li>'&gt=' (<code>{@link SimpleDataTable.FILTER_OP_GREATER_THAN}|{@link SimpleDataTable.FILTER_OP_EQUALS}</code>)</li>
+ *		<li>'&lt=' (<code>{@link SimpleDataTable.FILTER_OP_LESS_THAN}|{@link SimpleDataTable.FILTER_OP_EQUALS}</code>)</li>
+ *		<li>'!=' (<code>{@link SimpleDataTable.FILTER_OP_NOT_EQUALS}</code>)</li>
+ *		<li>'~' (<code>{@link SimpleDataTable.FILTER_OP_CONTAINS}|{@link SimpleDataTable.FILTER_OP_IGNORE_CASE}</code>)</li>
+ *		</ul>
+ *		</p>
  */
 SimpleDataTable.ValueFilter = function (columnIndex, compareValue, operation, columnType, ignoreListCells) {
 	'use strict';
 	
 	this.columnIndex = columnIndex;
+	
+	/**
+	 */
 	this.compareValue = compareValue;
+	
 	if (operation && operation !== SimpleDataTable.FILTER_OP_EQUALS) {
 		this.operation = operation;
 	}
@@ -665,10 +695,23 @@ SimpleDataTable.ValueFilter = function (columnIndex, compareValue, operation, co
 
 
 // Default Instance Properties
+/**
+ * Operation this ValueFilter is to use when determining whether to filter a cell. Valid values are described
+ * in this class' description.
+ */
 SimpleDataTable.ValueFilter.prototype.operation = SimpleDataTable.FILTER_OP_EQUALS;
 
+/**
+ * Whether or not to ignore cells with list elements. I.e. true to consider textContent only, or to call false
+ * {@link SimpleDataTable.getCellValues} when determining values against which to filter for individual cells.
+ */
 SimpleDataTable.ValueFilter.prototype.ignoreListCells = false;
 
+/**
+ * How individual cell values are to be converted. If {@link SimpleDataTable.COLUMN_TYPE_TEXT}, cell values will
+ * be treated only as text; if {@link SimpleDataTable.COLUMN_TYPE_INFER} (default), an attempt will be made to 
+ * convert cell values to numbers prior to evaluating filter conditions.
+ */
 SimpleDataTable.ValueFilter.prototype.columnType = SimpleDataTable.COLUMN_TYPE_INFER;
 
 
@@ -695,6 +738,7 @@ SimpleDataTable.ValueFilter.prototype.include = function (cell) {
 /**
  * Internal function that tests an individual value of a cell for whether or not it should be filtered.
  * 
+ * @private
  * @param {string} rawValue Individual value to test.
  * @returns {boolean} false if the containing cell should be filtered, otherwise true.
  */
@@ -792,6 +836,6 @@ SimpleDataTable.ValueFilter.prototype.includeValue = function (rawValue) {
 	}
 	
 	
-	// Default case (no matches).
-	return false;
+	// Default case (fall back to equals).
+	return cellValue == compareValue;
 };

@@ -5,7 +5,7 @@
  * @interface SimpleEventIntf
  * @classdesc
  *		Simplified definition of an event for the purposes of {@link SimpleEventDispatcher}. Although
- *		it is unlikely standard HTML DOM events will be used with {@link SimpleEventDispatcher}, they
+ *		it is unlikely standard DOM events will be used with {@link SimpleEventDispatcher}, they
  *		do implement this interface.
  */
 /**
@@ -16,10 +16,12 @@
 
 /**
  * 
- * @interface SimpleEventListenerIntf
+ * @interface SimpleEventListener
  * @classdesc
  *		Definition of an event listener for the purposes of {@link SimpleEventDispatcher}. Effectively
- *		identical to the standard HTML DOM EventListener.
+ *		identical to the standard DOM EventListener.
+ *
+ * @see https://dom.spec.whatwg.org/#callbackdef-eventlistener
  */
 /**
  * Callback function to handle events for which this listener is registered.
@@ -42,9 +44,11 @@
  *		listeners for events by type. Although this type can be used on its own, it is often more 
  *		conveninet to extend it.</p>
  *
- *		<p>This type is designed to have consistency with the HTML DOM standard, however events are 
+ *		<p>This type is designed to have consistency with the DOM EventTarget, however events are 
  *		simply dispatched to listeners in the order they are registered. I.e. there is no support for
  *		bubbling, cancelling, etc.</p>
+ *
+ * @see https://dom.spec.whatwg.org/#interface-eventtarget
  */
 function SimpleEventDispatcher() {
 	'use strict';
@@ -81,12 +85,12 @@ SimpleEventDispatcher.processType = function (type) {
  * Adds a the given listener for the given event type.
  *
  * @param {string} type Event type for which the given listener is to be registered.
- * @param {(SimpleEventListenerIntf|function)} listener Listener to register.
+ * @param {(SimpleEventListener|function)} listener Listener to register.
  * @param {boolean} [useCapture=false] 
- *		Optional parameter added for consistency with the standard HTML DOM EventTarget addEventListener definition.
+ *		Optional parameter added for consistency with the standard DOM EventTarget addEventListener definition.
  *		If not false ('falsy'), will print a warning on the console.
  * @throws {ReferenceError} If type is not defined or is a zero-length string; if listener is not defined.
- * @throws {TypeError} If type is not a string; if listener does not implement {@link SimpleEventListenerIntf} or is not a function.
+ * @throws {TypeError} If type is not a string; if listener does not implement {@link SimpleEventListener} or is not a function.
  */
 SimpleEventDispatcher.prototype.addEventListener = function (type, listener, useCapture) {
 	'use strict';
@@ -121,9 +125,9 @@ SimpleEventDispatcher.prototype.addEventListener = function (type, listener, use
  * Removes the given listener for the given event type, provided it is currently registered for that type.
  *
  * @param {string} type Event type for which the given listener is to be removed.
- * @param {(SimpleEventListenerIntf|function)} listener Listener to be removed.
+ * @param {(SimpleEventListener|function)} listener Listener to be removed.
  * @param {boolean} [useCapture=false] 
- *		Optional parameter added for consistency with the standard HTML DOM EventTarget addEventListener definition.
+ *		Optional parameter added for consistency with the standard DOM EventTarget addEventListener definition.
  *		If not false ('falsy'), will print a warning on the console.
  * @throws {ReferenceError} If type is not defined or is a zero-length string.
  * @throws {TypeError} If type is not a string.
@@ -203,10 +207,13 @@ SimpleEventDispatcher.prototype.dispatchEvent = function (event) {
  * @param {string} type Type of this event. N.B. no case conversion is performed in this constructor.
  * @param {object} target Target of this event.
  * @classdesc
- *		Simple implementation of {@link SimpleEventIntf} that also includes the HTML DOM standard
+ *		Simple implementation of {@link SimpleEventIntf} that also includes the DOM standard
  * 		target and currentTarget properties. Note target remains constant as this event dispatcher 
  * 		implementation does not support bubbling. The currentTarget property is also set to the
  * 		given target.
+ * 
+ * @see https://dom.spec.whatwg.org/#dom-event-target
+ * @see https://dom.spec.whatwg.org/#dom-event-currenttarget
  */
 SimpleEventDispatcher.SimpleEvent = function (type, target) {
 	'use strict';
@@ -222,7 +229,7 @@ SimpleEventDispatcher.SimpleEvent = function (type, target) {
 	this.target = target;
 	
 	/**
-	 * Added for consistency with HTML DOM event definition; same as {@link SimpleEventDispatcher.SimpleEvent#target}.
+	 * Added for consistency with DOM event definition; same as {@link SimpleEventDispatcher.SimpleEvent#target}.
 	 */
 	this.currentTarget = target;
 };

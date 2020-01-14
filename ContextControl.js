@@ -1,7 +1,9 @@
 
 // Virtual Events
 /**
- * ContextControl create event.
+ * Fired the first time a ContextControl is {@link ContextControl#open opened}. The target and currentTarget
+ * properties are set to the ContextControl being opened. The control's backing element can be obtained via
+ * {@link ContextControl#getControlElement} for listeners defining the control's content.
  *
  * @event ContextControl#event:create
  * @type {SimpleEventDispatcher.SimpleEvent}
@@ -253,7 +255,9 @@ ContextControl.prototype.dispose = function () {
 
 
 /**
- * Implementation of EventListener.
+ * Implementation of DOM EventListener.
+ *
+ * @param {Event} event Event being dispatched.
  */
 ContextControl.prototype.handleEvent = function (event) {
 	

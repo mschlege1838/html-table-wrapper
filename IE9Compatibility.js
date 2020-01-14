@@ -1,8 +1,16 @@
 
-
-function IE9Compatibility() {
-	'use strict';
-}
+/**
+ * Not actually a constructor as there are no instance methods; underlying definition is an empty object.
+ * Documented as a class for the purposes of the documentation generator only.
+ *
+ * @class
+ * @augments IEGeneralCompatibility
+ * @classdesc
+ *		Utility functions for MS Internet Explorer 9 compatibility.
+ */
+var IE9Compatibility = {
+	
+};
 
 (function (src, target) {
 	'use strict';
@@ -15,6 +23,12 @@ function IE9Compatibility() {
 })(IEGeneralCompatibility, IE9Compatibility);
 
 
+/**
+ * Adds compatibility for the DOMTokenList.add function for Element.classList.
+ *
+ * @param {Element} el Element to which the given class is to be added.
+ * @param {string} className Class name to add to the given element.
+ */
 IE9Compatibility.addClass = function (el, className) {
 	'use strict';
 	
@@ -32,6 +46,13 @@ IE9Compatibility.addClass = function (el, className) {
 	}
 };
 
+
+/**
+ * Adds compatibility for the DOMTokenList.remove function for Element.classList.
+ *
+ * @param {Element} el Element from which the given class is to be removed.
+ * @param {string} className Class name to remove from the given element.
+ */
 IE9Compatibility.removeClass = function (el, className) {
 	'use strict';
 	
@@ -50,6 +71,11 @@ IE9Compatibility.removeClass = function (el, className) {
 	}
 };
 
+/**
+ * Adds compatibility for the DOMTokenList.contains function for Element.className.
+ *
+ * 
+ */
 IE9Compatibility.hasClass = function (el, className) {
 	'use strict';
 	
