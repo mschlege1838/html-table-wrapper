@@ -11,6 +11,9 @@ class Program
 	static readonly string[] col1 = new string[] { "D", "b", "A", "a", "C", "c", "d", "ee", "aa", "Aa", "aA" };
 	static readonly string[] col2 = new string[] { "1", "2", "3", "4", "5", "10", "11", "12", "1a", "a1", "2b" };
 	static readonly string[] col3 = new string[] { "1", "2", "3", "4", "5", "10", "11", "12", "13", "14", "01" };
+	static readonly string[] col4 = new string[] { "2", "2", "2", "2", "1", "1", "1", "1", "3", "3", "3" };
+	static readonly string[] col5 = new string[] { "5", "6", "4", "5", "2", "3", "1", "1", "2",  "3", "4" };
+	static readonly string[] col6 = new string[] { "11", "5", "1", "10",  "4", "2", "3", "6", "7", "8", "9" };
 	
 	static void Main()
 	{
@@ -46,6 +49,9 @@ class Program
 								.StartTag("th").Content("Column 1").CloseTag()
 								.StartTag("th").Content("Column 2").CloseTag()
 								.StartTag("th").Content("Column 3").CloseTag()
+								.StartTag("th").Content("Column 4").CloseTag()
+								.StartTag("th").Content("Column 5").CloseTag()
+								.StartTag("th").Content("Column 6").CloseTag()
 							.CloseTag()
 						.CloseTag()
 						.StartTag("tbody");
@@ -55,6 +61,9 @@ class Program
 									.StartTag("td").Content(i < col1.Length ? col1[i] : "").CloseTag()
 									.StartTag("td").Content(i < col2.Length ? col2[i] : "").CloseTag()
 									.StartTag("td").Content(i < col3.Length ? col3[i] : "").CloseTag()
+									.StartTag("td").Content(i < col4.Length ? col4[i] : "").CloseTag()
+									.StartTag("td").Content(i < col5.Length ? col5[i] : "").CloseTag()
+									.StartTag("td").Content(i < col6.Length ? col6[i] : "").CloseTag()
 								.CloseTag();
 							}
 						writer.CloseTag()

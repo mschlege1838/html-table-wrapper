@@ -140,6 +140,15 @@ SimpleDataTableListener.processedColumnHeader = 'data-table-column-header';
  *
  * @member {SimpleDataTable} SimpleDataTableListener#dataTable
  */
+ 
+ 
+/**
+ * Current column-order in which to apply sort descriptors. Initially `null`, initialized on first call to {@link SimpleDataTableListener#processTable}.
+ *
+ * @private
+ * @type {int[]}
+ */
+SimpleDataTableListener.prototype.sortDescriptorOrder = null;
 
 // Instance Methods
 /**
@@ -306,15 +315,25 @@ SimpleDataTableListener.prototype.getColumnControl = function (columnIndex) {
  * The {@link ColumnControl#getFilterDescriptor} and {@link ColumnControl#getSortDescriptor} functions are called for each
  * cached {@link ColumnControl} in the order they are created. Each result that is not {@link Nothing} is stored in a distinct
  * `Array` (one for {@link FiterDescriptor}s, another for {@link SortDescriptor}s), and subsequently passed to the backing
- * {@link SimpleDataTable}'s {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort} functions. Filtering is performed before sorting. 
+ * {@link SimpleDataTable}'s {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort} functions. Filtering is performed before sorting.
+ * 
+ * {@link SortDescriptor}s are ordered according to the order in which they are/were returned in this and previous calls. E.g., consider
+ * the following sequence of calls to `processTable`:
+ *   1. A valid {@link SortDescriptor} is returned for column 1 => table will be ordered by column 1
+ *   2. A valid {@link SortDescriptor} is returned for columns 1 and 2 => table will be ordered by columns 1, 2
+ *   3. A valid {@link SortDescriptor} is returned for columns 1, 2, and 3 => table will be ordered by columns 1, 2, 3
+ *   4. A valid {@link SortDescriptor} is only returned for columns 2 and 3 => table will be ordered by columns 2, 3
+ *   5. A valid {@link SortDescriptor} is returned for columns 1, 2, and 3 again => table will be ordered by columns 2, 3, 1
  *
  */
 SimpleDataTableListener.prototype.processTable = function () {
 	'use strict';
 	
 	var sortDescriptors, filterDescriptors, columnControls, i, columnControl, dataTable, filterDescriptor,
-		sortDescriptor;
+		sortDescriptor, sortDescriptorOrder, columnIndex, j, targetIndex;
 	
+	
+	// Get descriptors.
 	filterDescriptors = [];
 	sortDescriptors = [];
 	columnControls = this.columnControls;
@@ -332,6 +351,47 @@ SimpleDataTableListener.prototype.processTable = function () {
 		}
 	}
 	
+	
+	// Determine order for sort descriptors.
+	sortDescriptorOrder = this.sortDescriptorOrder;
+	if (!sortDescriptorOrder) {
+		sortDescriptorOrder = this.sortDescriptorOrder = [];
+	}
+	
+	// Add column indicies to order that were returned, but not present.
+	for (i = 0; i < sortDescriptors.length; ++i) {
+		columnIndex = sortDescriptors[i].columnIndex;
+		if (sortDescriptorOrder.indexOf(columnIndex) === -1) {
+			sortDescriptorOrder.push(columnIndex);
+		}
+	}
+	
+	// Remove column indicies from order that are present, but not returned
+	for (i = 0; i < sortDescriptorOrder.length; ++i) {
+		columnIndex = sortDescriptorOrder[i];
+		
+		targetIndex = -1;
+		for (j = 0; j < sortDescriptors.length; ++j) {
+			if (sortDescriptors[j].columnIndex === columnIndex) {
+				targetIndex = j;
+				break;
+			}
+		}
+		
+		if (targetIndex === -1) {
+			sortDescriptorOrder.splice(i, 1);
+			--i;
+		}
+	}
+	
+	// Sort sort descriptors according to order.
+	sortDescriptors.sort(function (a, b) {
+		return sortDescriptorOrder.indexOf(a.columnIndex) - sortDescriptorOrder.indexOf(b.columnIndex);
+	});
+	
+	
+	
+	// Process backing table.
 	dataTable = this.dataTable;
 	
 	dataTable.filter(filterDescriptors);
