@@ -22,12 +22,24 @@
  * @interface Disposable
  * @classdesc
  *
- * Represents an object that is to be {@link Disposable#init initialized} prior to use, and {@link Disposable#dispose disposed}
- * when no longer needed. Most useful for user-defined objects that make use of host objects, but any object can implement this
- * interface.
+ * Represents an object that should be (optionally) {@link Disposable#init initialized} prior to use, and {@link Disposable#dispose disposed}
+ * when no longer needed. Most useful for user-defined objects that make use of, and/or maintain references to, host objects, but any object 
+ * can implement this interface.
+ *
+ * As {@link Disposable#init} is optiona, usage of a `Disposable` object should be akin to the following (given `disposable`):
+ * ``` javascript
+ * if (typeof disposable === 'function') {
+ *     disposable.init()
+ * }
+ *
+ * // Usage of the Disposable object...
+ *
+ * // Disposable no longer needed
+ * disposable.dispose();
+ * ```
  */
 /**
- * Initialize this object for use.
+ * Optional function to initialize this object for use.
  *
  * @function Disposable#init
  */
@@ -54,7 +66,7 @@
  *
  * Anything that is not convertible to `false` (i.e. not one of the above values) does not implement this interface.
  *
- * Throughout this documentation, this interface is primarily referenced to indicate a return value from a function (typically a callback) is optional, and 
+ * Throughout this documentation, this interface is often used to indicate a return value from a function (typically a callback) is optional, and 
  * specific actions will be taken in the event that function returns a value convertible to `false`. To exemplify the concept, both the following functions 
  * are considered to return `Nothing`:
  *

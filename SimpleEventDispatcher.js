@@ -4,9 +4,19 @@
  *
  * @interface SimpleEventIntf
  * @classdesc
- *		Simplified definition of an event for the purposes of {@link SimpleEventDispatcher}. Although
- *		it is unlikely standard DOM events will be used with {@link SimpleEventDispatcher}, they
- *		do implement this interface.
+ *
+ * Simplified definition of a DOM `Event` for the purposes of {@link SimpleEventDispatcher} that only contains the `type` attribute.
+ * Although it is unlikely standard DOM events will be used with {@link SimpleEventDispatcher}, they do implement this interface.
+ *
+ *
+ * <div class="see-also-section">
+ * 
+ * <div class="see-also">
+ * <span class="label">See Also:</span>
+ * <a href="https://dom.spec.whatwg.org/#interface-event">https://dom.spec.whatwg.org/#interface-event</a>
+ * </div>
+ * 
+ * </div>
  */
 /**
  * The type of this event.
@@ -18,15 +28,25 @@
  * 
  * @interface SimpleEventListener
  * @classdesc
- *		Definition of an event listener for the purposes of {@link SimpleEventDispatcher}. Effectively
- *		identical to the standard DOM EventListener.
  *
- * @see https://dom.spec.whatwg.org/#callbackdef-eventlistener
+ * Definition of an event listener for the purposes of {@link SimpleEventDispatcher}. Effectively identical to the standard DOM 
+ * `EventListener`.
+ *
+ *
+ * <div class="see-also-section">
+ * 
+ * <div class="see-also">
+ * <span class="label">See Also:</span>
+ * <a href="https://dom.spec.whatwg.org/#callbackdef-eventlistener>https://dom.spec.whatwg.org/#callbackdef-eventlistener</a>
+ * </div>
+ * 
+ * </div>
+ * 
  */
 /**
  * Callback function to handle events for which this listener is registered.
  *
- * @function EventListener#handleEvent
+ * @function SimpleEventListener#handleEvent
  * @param {SimpleEvent} event
  */
 
@@ -40,15 +60,22 @@
  *
  * @constructor
  * @classdesc
- *		<p>Simple implementation of an event dispatcher that supports the registration of multiple
- *		listeners for events by type. Although this type can be used on its own, it is often more 
- *		conveninet to extend it.</p>
  *
- *		<p>This type is designed to have consistency with the DOM EventTarget, however events are 
- *		simply dispatched to listeners in the order they are registered. I.e. there is no support for
- *		bubbling, cancelling, etc.</p>
+ * Simple implementation of an event dispatcher that supports the registration of multiple listeners for various events. Although 
+ * this type can be used on its own, it is often more conveninet to extend it.
+ * 
+ * This type is designed to have (loose) consistency with the DOM `EventTarget`, however events are simply dispatched to listeners in the 
+ * order they are registered. I.e. there is no support for bubbling, cancelling, etc.
+ * 
  *
- * @see https://dom.spec.whatwg.org/#interface-eventtarget
+ * <div class="see-also-section">
+ *
+ * <div class="see-also">
+ * <span class="label">See Also:</span>
+ * <a href="https://dom.spec.whatwg.org/#interface-eventtarget">https://dom.spec.whatwg.org/#interface-eventtarget</a>
+ * </div>
+ *
+ * </div>
  */
 function SimpleEventDispatcher() {
 	'use strict';
@@ -60,7 +87,7 @@ function SimpleEventDispatcher() {
 /**
  * Utility function to validate an event type string, and convert it to a consistent case.
  *
- * @package
+ * @private
  * @param {string} type An event type string.
  * @returns The given type converted to a consistent case.
  * @throws {ReferenceError} If type is not defined or is a zero-length string.
@@ -87,8 +114,8 @@ SimpleEventDispatcher.processType = function (type) {
  * @param {string} type Event type for which the given listener is to be registered.
  * @param {(SimpleEventListener|function)} listener Listener to register.
  * @param {boolean} [useCapture=false] 
- *		Optional parameter added for consistency with the standard DOM EventTarget addEventListener definition.
- *		If not false ('falsy'), will print a warning on the console.
+ *   Optional parameter added for consistency with the standard DOM EventTarget addEventListener definition.
+ *   If not `false` (more specifically, {@link Nothing}), will print a warning on the console.
  * @throws {ReferenceError} If type is not defined or is a zero-length string; if listener is not defined.
  * @throws {TypeError} If type is not a string; if listener does not implement {@link SimpleEventListener} or is not a function.
  */
@@ -127,8 +154,8 @@ SimpleEventDispatcher.prototype.addEventListener = function (type, listener, use
  * @param {string} type Event type for which the given listener is to be removed.
  * @param {(SimpleEventListener|function)} listener Listener to be removed.
  * @param {boolean} [useCapture=false] 
- *		Optional parameter added for consistency with the standard DOM EventTarget addEventListener definition.
- *		If not false ('falsy'), will print a warning on the console.
+ *   Optional parameter added for consistency with the standard DOM EventTarget addEventListener definition.
+ *   If not `false` (more specifically, {@link Nothing}), will print a warning on the console.
  * @throws {ReferenceError} If type is not defined or is a zero-length string.
  * @throws {TypeError} If type is not a string.
  */
@@ -207,13 +234,27 @@ SimpleEventDispatcher.prototype.dispatchEvent = function (event) {
  * @param {string} type Type of this event. N.B. no case conversion is performed in this constructor.
  * @param {object} target Target of this event.
  * @classdesc
- *		Simple implementation of {@link SimpleEventIntf} that also includes the DOM standard
- * 		target and currentTarget properties. Note target remains constant as this event dispatcher 
- * 		implementation does not support bubbling. The currentTarget property is also set to the
- * 		given target.
+ *
+ * Simple implementation of {@link SimpleEventIntf} that also includes the DOM standard
+ * target and currentTarget properties. Note target remains constant as this event dispatcher 
+ * implementation does not support bubbling. The currentTarget property is also set to the
+ * given target.
+ *
  * 
- * @see https://dom.spec.whatwg.org/#dom-event-target
- * @see https://dom.spec.whatwg.org/#dom-event-currenttarget
+ * <div class="see-also-section">
+ *
+ * <div class="see-also">
+ * <span class="label">See Also:</span>
+ * <a href="https://dom.spec.whatwg.org/#dom-event-target">https://dom.spec.whatwg.org/#dom-event-target</a>
+ * </div>
+ *
+ * <div class="see-also">
+ * <span class="label">See Also:</span>
+ * <a href="https://dom.spec.whatwg.org/#dom-event-currenttarget">https://dom.spec.whatwg.org/#dom-event-currenttarget</a>
+ * </div>
+ *
+ * </div>
+ *
  */
 SimpleEventDispatcher.SimpleEvent = function (type, target) {
 	'use strict';

@@ -43,11 +43,39 @@ SimpleSortDescriptor.prototype.columnType = SimpleDataTableUtils.COLUMN_TYPE_INF
 SimpleSortDescriptor.prototype.compare = function (cellA, cellB) {
 	'use strict';
 	
-	var aVal, bVal, result;
+	var aVal, bVal, result, columnType, aNum, aNaN, bNum, bNaN;
 	
 	aVal = cellA.textContent.trim();
 	bVal = cellB.textContent.trim();
 	
-	result = SimpleDataTableUtils.doCompare(aVal, bVal, this.columnType);
+	columnType = this.columnType;
+	switch (columnType) {
+		case SimpleDataTableUtils.COLUMN_TYPE_INFER:
+			aNum = SimpleDataTableUtils.getNumber(aVal, true);
+			aNaN = IEGeneralCompatibility.isNaN(aNum);
+			bNum = SimpleDataTableUtils.getNumber(bVal, true);
+			bNaN = IEGeneralCompatibility.isNaN(bNum);
+			
+			if (aNaN && bNaN) {
+				result = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
+			} else if (aNaN) {
+				result = 1;
+			} else if (bNaN) {
+				result = -1;
+			} else {
+				result = aNum - bNum;
+			}
+			break;
+		case SimpleDataTableUtils.COLUMN_TYPE_TEXT:
+			result = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
+			break;
+		default:
+			result = 0;
+	}
+	
+	if (!result) {
+		return 0;
+	}
+	
 	return this.descending ? -1 * result : result;
 };

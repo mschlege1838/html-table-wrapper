@@ -530,6 +530,7 @@ ContextControl.MobileViewState.prototype.restoreDefaultView = function () {
  * @private
  * @constructor
  * @classdesc
+ *
  * Generic class representing the x, y viewport offset coordinates of an `HTMLElement`.
  *
  */

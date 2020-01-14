@@ -4,14 +4,15 @@
  * @constructor
  * @param {boolean} [useArray=false] Whether to maintain the underlying string as an Array. If false, will use string concatenation.
  * @classdesc
- * 		<p>Simplistic implementation of a builder for XML strings. All tags, attributes, attribute values and content
- *		have reserved characters replaced with their corresponding XML entity, regardless if such replacement is explicitly
- *		necessary (with the exception of calls to {@link XMLBuilder#appendDirect} in which the given value is appended as-is).</p>
  *
- *		<p>By default, the underlying data is maintained using string concatenation, however if the execution environment
- *		handles array-based concatenation more efficiently, passing the value true to this constructor enables this.</p>
+ * Simplistic implementation of a builder for XML strings. All tags, attributes, attribute values and content
+ * have reserved characters replaced with their corresponding XML entity, regardless if such replacement is explicitly
+ * necessary (with the exception of calls to {@link XMLBuilder#appendDirect} in which the given value is appended as-is).
  *
- *		<p>This implementation is state-based, and therefore, not thread-safe.</p>
+ * By default, the underlying data is maintained using string concatenation, however if the execution environment
+ * handles array-based concatenation more efficiently, passing the value true to this constructor enables this.
+ *
+ * This implementation is state-based, and therefore, not thread-safe.
  */
 function XMLBuilder(useArray) {
 	'use strict';

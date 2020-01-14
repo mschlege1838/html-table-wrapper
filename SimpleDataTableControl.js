@@ -38,9 +38,10 @@
  * @param {HTMLTableCellElement} tableHeader
  * @param {SimpleDataTableListener} parent
  * @classdesc
- *		The default {@link ColumnControl} used by {@link SimpleDataTableListener}. Defines a UI where an end-user
- *		can select a column's type and sort order, as well as define filters based upon user-entered values and
- *		individual cell values. Uses a backing {@link ContextControl}.
+ *
+ * The default {@link ColumnControl} used by {@link SimpleDataTableListener}. Defines a UI where an end-user
+ * can select a column's type and sort order, as well as define filters based upon user-entered values and
+ * individual cell values. Uses a backing {@link ContextControl}.
  */
 function SimpleDataTableControl(columnIndex, tableHeader, parent, cellInterpreter) {
 	'use strict';
@@ -188,7 +189,7 @@ SimpleDataTableControl.getIdBase = function () {
 
 
 /**
- * Sets the first HTMLInputElement's checked attribute in the given inputs whose name is the given name.
+ * Sets the first `HTMLInputElement`'s checked attribute in the given inputs whose name is the given name.
  *
  * @param {NodeList} inputs Collection of inputs to process.
  * @param {string} name Name of the input whose checked attribute is to be set.
@@ -203,6 +204,16 @@ SimpleDataTableControl.setChecked = function (inputs, name) {
 		input.checked = input.name === name;
 	}
 };
+
+SimpleDataTableControl.checkCellInterpreter = function (callback) {
+	'use strict';
+	
+	if (callback && (typeof callback !== 'function' || typeof callback.populateCellValues !== 'function')) {
+		throw new TypeError('Callback must either define a populateCellValues function, or be a function itself.');
+	}
+};
+
+
 
 
 // Default Instance Properties
@@ -231,10 +242,12 @@ SimpleDataTableControl.prototype.sortDescriptor = null;
 SimpleDataTableControl.prototype.sortOrder = SimpleDataTable.SORT_ORDER_NONE;
 
 // Instance Methods
-/**
- * Disposes this SimpleDataTableControl. This SimpleDataTableControl will be removed as an event listener for generated content;
- * the backing {@link ContextControl} will also be {@link ContextControl#dispose disposed}.
- */
+SimpleDataTableControl.prototype.init = function () {
+	'use strict';
+	
+	this.contextControl.addEventListener('create', this, false);
+};
+
 SimpleDataTableControl.prototype.dispose = function () {
 	'use strict';
 	
@@ -385,7 +398,7 @@ SimpleDataTableControl.prototype.getFilterDescriptor = function () {
 		return null;
 	}
 	
-	return new SimpleDataTableControl.ColumnValueFilter(this.columnIndex, this.getOperator(), this.getCompareValue(), this.getColumnType(), this.getSelectedColumnValues());
+	return new SimpleDataTableControl.ColumnValueFilter(this.columnIndex, this.getOperator(), this.getCompareValue(), this.getColumnType(), this.getSelectedCellValues(), this.cellInterpreter);
 };
 
 SimpleDataTableControl.prototype.getSortDescriptor = function () {
@@ -408,20 +421,25 @@ SimpleDataTableControl.prototype.getSortDescriptor = function () {
 };
 
 
-
-SimpleDataTableControl.prototype.getColumnValues = function () {
+/**
+ * Returns and `Array` containting all the individual values of the column with which this `SimpleDataTableControl` is associated.
+ * If this `SimpleDataTableControl` has a {@link CellInterpreter} or {@link SimpleDataTableControl~populateCellValues} callback
+ * configured, it will be used to obtain the values of individual cells, otherwise, the trimmed `textContent` of each cell will
+ * simply be returned.
+ *
+ * By default, the result is sorted prior to being returned, unless the `noSort` parameter is not {@link Nothing}.
+ *
+ * @param {boolean} [noSort=false]
+ */
+SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 	'use strict';
 	
-	var rows, i, cell, value, listItems, j, result, columnIndex, callback;
+	var rows, i, cell, value, result, columnIndex, callback;
 	
 	callback = this.cellInterpreter;
-	
-	if (callback && (typeof callback !== 'function' || typeof callback.populateCellValues !== 'function')) {
-		throw new TypeError('Callback must either define a populateCellValues function, or be a function itself.');
-	}
+	SimpleDataTableControl.checkCellInterpreter(callback);
 	
 	columnIndex = this.columnIndex;
-	callback = this.cellInterpreter;
 	
 	result = [];
 	rows = this.table.tBodies[0].rows;
@@ -442,14 +460,23 @@ SimpleDataTableControl.prototype.getColumnValues = function () {
 		}
 	}
 	
-	result.sort();
+	if (!noSort) {
+		result.sort();
+	}
 	
 	return result;
 };
 
 
 
-
+/**
+ * Returns a combination of the {@link SimpleDataTableUtils} `FILTER_OP_`* and `FILTER_FLAG_`* bitfields corresponding to
+ * the current selected operator, or `null` if no operator is selected, or this control has yet not been opened.
+ *
+ * @returns {number}
+ *   A combination of the {@link SimpleDataTableUtils} bitfields corresponding to the current selected operator, or `null`
+ *   if not operator is selected, or this control has not yet been opened.
+ */
 SimpleDataTableControl.prototype.getOperator = function () {
 	'use strict';
 	
@@ -488,6 +515,14 @@ SimpleDataTableControl.prototype.getOperator = function () {
 	return result;
 };
 
+/**
+ * Returns the {@link SimpleDataTableUtils} `COLUMN_TYPE_`* constant corresponding to the current selected column type, or
+ * `null` if no column type is selected, or this control has not yet been opened.
+ *
+ * @returns {number}
+ *   The {@link SimpleDataTableUtils} `COLUMN_TYPE_`* constant corresponding to the current selected column type, or
+ *   `null` if no column type is selected, or this control has not yet been opened.
+ */
 SimpleDataTableControl.prototype.getColumnType = function () {
 	'use strict';
 	
@@ -502,6 +537,14 @@ SimpleDataTableControl.prototype.getColumnType = function () {
 };
 
 
+/**
+ * Returns the `SORT_ORDER_`* constant defined on this class corresponding to the current selected sort order, or `null` if
+ * no sort order is selected, or this control has not yet been opened.
+ *
+ * @returns {number}
+ *   The `SORT_ORDER_`* constant defined on this class corresponding to the current selected sort order, or `null` if
+ *   no sort order is selected, or this control has not yet been opened.
+ */
 SimpleDataTableControl.prototype.getSortOrder = function () {
 	'use strict';
 	
@@ -518,7 +561,13 @@ SimpleDataTableControl.prototype.getSortOrder = function () {
 };
 
 
-SimpleDataTableControl.prototype.getSelectedColumnValues = function () {
+/**
+ * Returns an `Array` containing current selected individual cell values for this column (i.e. the selected values for the MS Excel-like filtering feature
+ * offered by this control), or `null` if this control has not yet been opened.
+ *
+ * @returns {Array} The current selected individual cell values for this column, or `null` if this control has not yet been opened.
+ */
+SimpleDataTableControl.prototype.getSelectedCellValues = function () {
 	'use strict';
 	
 	var controlElement, columnValueInputs, selectedValues, i, columnValueInput;
@@ -540,7 +589,11 @@ SimpleDataTableControl.prototype.getSelectedColumnValues = function () {
 	return selectedValues;
 };
 
-
+/**
+ * Returns the current `value` of the free-text filter input, or `null` if this control has not yet been opened.
+ *
+ * @returns {string} The current `value` of the free-text filter input, or `null` if this control has not yet been opened.
+ */
 SimpleDataTableControl.prototype.getCompareValue = function () {
 	'use strict';
 	
@@ -556,7 +609,15 @@ SimpleDataTableControl.prototype.getCompareValue = function () {
 
 
 /**
+ * Utility function to obtain the `value` of the first `checked` input element within this control's backing `HTMLElement` with the given query
+ * `selector`. The `querySelectorAll` function is ran on the backing element, and the result is iterated until the first element with a `checked`
+ * attribute of `true` is encountered, in which case that element's `value` attribute is returned. If no `checked` element is found with the given
+ * `selector`, or this control has not yet been opened, `null` is returned.
+ *
  * @private
+ * @return {string} 
+ *   The `value` of the first `checked` element within this control using the given `selector`, or `null` if no checked element is found, or this
+ *   control has not yet been opened.
  */
 SimpleDataTableControl.prototype.getCheckedValue = function (selector) {
 	'use strict';
@@ -768,9 +829,16 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
  *
  * @constructor
  * @implements FilterDescriptor
+ * @param {number} columnIndex
+ * @param {number} operator
+ * @param {string} compareValue
+ * @param {number} columnType
+ * @param {Array} selectedValues
+ * @param {(CellInterpreter|SimpleDataTableControl~populateCellValues)} [cellInterpreter=null]
+ * @private
  * 
  */
-SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, compareValue, columnType, selectedValues) {
+SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, compareValue, columnType, selectedValues, cellInterpreter) {
 	'use strict';
 	
 	this.columnIndex = columnIndex;
@@ -778,23 +846,54 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, comp
 	this.compareValue = compareValue;
 	this.columnType = columnType;
 	this.selectedValues = selectedValues;
+	
+	if (cellInterpreter) {
+		SimpleDataTableControl.checkCellInterpreter(cellInterpreter);
+		this.cellInterpreter = cellInterpreter;
+		this.currentCellCache = [];
+	}
 };
+
+
+SimpleDataTableControl.ColumnValueFilter.prototype.cellInterpreter = null;
+
+SimpleDataTableControl.ColumnValueFilter.prototype.currentCellCache = null;
 
 
 SimpleDataTableControl.ColumnValueFilter.prototype.include = function (cell) {
 	'use strict';
 	
-	var cellValue;
+	var cellInterpreter, currentCellCache, i;
 	
-	cellValue = cell.textContent.trim();
+	cellInterpreter = this.cellInterpreter;
 	
-	if (!SimpleDataTableUtils.shouldInclude(cellValue, this.operator, this.compareValue, this.columnType)) {
+	if (cellInterpreter) {
+		currentCellCache = this.currentCellCache;
+		if (cellInterpreter.populateCellValues) {
+			cellInterpreter.populateCellValues(cell, currentCellCache)
+		} else {
+			cellInterpreter(cell, currentCellCache);
+		}
+		
+		for (i = 0; i < currentCellCache.length; ++i) {
+			if (this.shouldInclude(currentCellCache[i])) {
+				currentCellCache.length = 0;
+				return true;
+			}
+		}
+		
+		currentCellCache.length = 0;
 		return false;
+	} else {
+		return this.shouldInclude(cell.textContent.trim());
 	}
 	
-	return selectedValues.indexOf(cellValue) !== -1;
 };
 
 
+SimpleDataTableControl.ColumnValueFilter.prototype.shouldInclude = function (cellValue) {
+	'use strict';
 
+	return SimpleDataTableUtils.shouldInclude(cellValue, this.operator, this.compareValue, this.columnType) && this.selectedValues.indexOf(cellValue) !== -1;
+};
 

@@ -22,8 +22,8 @@
  * @param {HTMLCellElement} cellA Reference cell.
  * @param {HTMLCellElement} cellB Compare cell.
  * @returns {number} 
- *		A value greater than 0 if cellA should be sorted below cellB, less than 0 for above, 0 for 
- *		no preference.
+ *   A value greater than 0 if cellA should be sorted below cellB, less than 0 for above, 0 for 
+ *   no preference.
  */
 
 
