@@ -14,6 +14,8 @@ if "%1"=="doc" (
 	call :jsdoc
 )
 
+endlocal
+
 goto :eof
 
 :jsdoc
@@ -29,5 +31,3 @@ goto :eof
 %out_dir%\index.html
 @echo off
 goto :eof
-
-endlocal

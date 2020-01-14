@@ -34,19 +34,16 @@
 /**
  * @constructor
  * @implements ColumnControl
- * @param {number} columnIndex 
- * @param {HTMLTableCellElement} tableHeader
- * @param {SimpleDataTableListener} parent
+ * @param {number} columnIndex Index of the column this `SimpleDataTableControl` controls.
+ * @param {SimpleDataTableListener} parent Parent {@link SimpleDataTableListener}.
  * @classdesc
  *
  * The default {@link ColumnControl} used by {@link SimpleDataTableListener}. Defines a UI where an end-user
- * can select a column's type and sort order, and define filters based upon a custom, user-entered value as well as seletion from a list of
+ * can select a column's type and sort order, and define filters based upon a custom, user-entered value as well as selection from a list of
  * individual cell values (similar to the column filtering dialogue in MS Excel). Uses a backing {@link ContextControl}.
  */
-function SimpleDataTableControl(columnIndex, tableHeader, parent, cellInterpreter) {
+function SimpleDataTableControl(columnIndex, parent, cellInterpreter) {
 	'use strict';
-	
-	var contextControl;
 	
 	this.columnIndex = columnIndex;
 	
@@ -56,18 +53,10 @@ function SimpleDataTableControl(columnIndex, tableHeader, parent, cellInterprete
 	 * @private
 	 * @type {ContextControl}
 	 */
-	this.contextControl = contextControl = new ContextControl();
+	this.contextControl = new ContextControl();
 	
 	/**
-	 * Header of the column to which this {@link ColumnControl} is associated.
-	 *
-	 * @private
-	 * @type {HTMLTableCellElement}
-	 */
-	this.tableHeader = tableHeader;
-	
-	/**
-	 * Parent {@link SimpleDataTableListener}
+	 * Parent {@link SimpleDataTableListener}.
 	 *
 	 * @private
 	 * @type {SimpleDataTableListener}
@@ -78,14 +67,13 @@ function SimpleDataTableControl(columnIndex, tableHeader, parent, cellInterprete
 		this.cellInterpreter = cellInterpreter;
 	}
 	
-	contextControl.addEventListener('create', this, false);
 }
 
 
 // Static Fields
 /**
- * Class name added to the backing {@link ContextControl}'s {@link ContextControl#getControlElement element} upon
- * being {@link ContextControl#event:create created}.
+ * Class name added to {@link ContextControl} {@link ContextControl#getControlElement element}s when they are
+ * being {@link ContextControl#event:create created} by instances of this class.
  *
  * @type {string}
  */
@@ -116,10 +104,11 @@ SimpleDataTableControl.SORT_ORDER_ASCENDING = 2;
 SimpleDataTableControl.SORT_ORDER_DESCENDING = 3;
 
 /**
- * A 'mapping' object whose properties correspond to labels printed on the control displayed to the end-user.
- * By default values are set to en-US; client code that requires internationalization can redefine the properties
- * of this object (or reassign a new value, so long as it contains all the properties in the original) on page
- * initialization (before any SimpleDataTableControls are created) for the desired locale.
+ * A 'mapping' object whose property values correspond to labels printed on the dialogue presented to the end-user.
+ * 
+ * By default, values are in en-US (United States English), however clients that require internationalization can redefine the properties
+ * of this object on page initialization (or, at minimum before any `SimpleDataTableControl`s are created) for the desired locale. 
+ * (Alternatively, a completely new object can be assigned, so long as it contains all the property names of the original).
  *
  * @type {object}
  */
@@ -177,7 +166,7 @@ SimpleDataTableControl.idCounter = 0;
 
 // Static Methods
 /**
- * Utility function for generating a unique id prefix for generated elements by SimpleDataTableControls.
+ * Utility function for generating a unique id prefix to use in generated dialogue content.
  *
  * @private
  */
@@ -189,9 +178,9 @@ SimpleDataTableControl.getIdBase = function () {
 
 
 /**
- * Sets the first `HTMLInputElement`'s checked attribute in the given inputs whose name is the given name.
+ * Sets the first `HTMLInputElement`'s `checked` attribute in the given set of `inputs` whose `name` is the given `name`.
  *
- * @param {NodeList} inputs Collection of inputs to process.
+ * @param {MinimalList} inputs Collection of inputs to process.
  * @param {string} name Name of the input whose checked attribute is to be set.
  */
 SimpleDataTableControl.setChecked = function (inputs, name) {
@@ -205,6 +194,13 @@ SimpleDataTableControl.setChecked = function (inputs, name) {
 	}
 };
 
+/**
+ * Utility function to check whether the given callback is a function itself (a {@link SimpleDataTableControl~populateCellValues}), or a
+ * {@link CellInterpreter}. Throws a `TypeError` if neither.
+ *
+ * @private
+ * @throws TypeError If `callback` is neither a {@link SimpleDataTableControl~populateCellValues} nor a {@link CellInterpreter}.
+ */
 SimpleDataTableControl.checkCellInterpreter = function (callback) {
 	'use strict';
 	
@@ -215,31 +211,6 @@ SimpleDataTableControl.checkCellInterpreter = function (callback) {
 
 
 
-
-// Default Instance Properties
-/**
- * Current {@link FilterDescriptor}.
- *
- * @private
- * @type {FilterDescriptor}
- */
-SimpleDataTableControl.prototype.filterDescriptor = null;
-
-/**
- * Current {@link SortDescriptor}.
- *
- * @private
- * @type {SortDescriptor}
- */
-SimpleDataTableControl.prototype.sortDescriptor = null;
-
-/**
- * Current sort order.
- *
- * @private
- * @type {number}
- */
-SimpleDataTableControl.prototype.sortOrder = SimpleDataTable.SORT_ORDER_NONE;
 
 // Instance Methods
 SimpleDataTableControl.prototype.init = function () {
@@ -271,7 +242,7 @@ SimpleDataTableControl.prototype.dispose = function () {
 
 
 /**
- * Implementation of DOM EventListener.
+ * Implementation of DOM `EventListener`.
  *
  * @param {Event} event Event being dispatched.
  */
@@ -298,18 +269,18 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 					case 'filter-by-value-option':
 					case 'filter-option-ignore-case':
 					case 'column-value':
-						this.parent.processTable();
+						this.updateParent();
 						break;
 
 					
 					case 'clear-filter-button':
 						this.reset();
-						this.parent.processTable();
+						this.updateParent();
 						break;
 
 					case 'select-all-cell-values':
 						this.selectAllColumnValues(target.checked);
-						this.parent.processTable();
+						this.updateParent();
 						break;
 				}
 				
@@ -317,7 +288,7 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 			break;
 		
 		case 'keyup':
-			this.parent.processTable();
+			this.updateParent();
 			break;
 	}	
 };
@@ -325,7 +296,7 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 SimpleDataTableControl.prototype.open = function () {
 	'use strict';
 	
-	this.contextControl.open(this.tableHeader);
+	this.contextControl.open(this.parent.getTableHeaderElement(this.columnIndex));
 };
 
 SimpleDataTableControl.prototype.close = function () {
@@ -336,8 +307,8 @@ SimpleDataTableControl.prototype.close = function () {
 
 
 /**
- * Resets the state of this SimpleDataTableControl; all fields will be reset to their inital values. Note, this
- * only updates the state of the user interface; if the parent table needs to be updated {@link SimpleDataTable#processTable}
+ * Resets the state of this `SimpleDataTableControl`; all fields will be reset to their inital values. Note, this
+ * only updates the state of the user interface; if the parent table needs to be updated, {@link SimpleDataTableControl#updateParent}
  * must be called subsequently.
  */
 SimpleDataTableControl.prototype.reset = function () {
@@ -362,8 +333,17 @@ SimpleDataTableControl.prototype.reset = function () {
 };
 
 /**
- * Selects or deselects (depending upon the value of checked) all individual cell values for filtering. Note, this
- * only updates the state of cell value checkboxes; if the parent table needs to be updated {@link SimpleDataTable#processTable}
+ * {@link SimpleDataTableListener#processTable Updates} the parent table.
+ */
+SimpleDataTableControl.prototype.updateParent = function () {
+	'use strict';
+	
+	this.parent.processTable();
+};
+
+/**
+ * Selects or deselects all individual cell values for filtering. Note, this
+ * only updates the state of the cell value checkboxes; if the parent table needs to be updated {@link SimpleDataTableControl#updateParent}
  * must be called subsequently.
  *
  * @param {boolean} checked Whether to select or deselect all individual cell values.
@@ -422,14 +402,14 @@ SimpleDataTableControl.prototype.getSortDescriptor = function () {
 
 
 /**
- * Returns and `Array` containting all the individual values of the column with which this `SimpleDataTableControl` is associated.
+ * Returns and `Array` containting all the individual cell values of the column with which this `SimpleDataTableControl` is associated.
  * If this `SimpleDataTableControl` has a {@link CellInterpreter} or {@link SimpleDataTableControl~populateCellValues} callback
- * configured, it will be used to obtain the values of individual cells, otherwise, the trimmed `textContent` of each cell will
- * simply be returned.
+ * configured, it will be used to obtain the values of individual cells, otherwise, returns the unique set of each cell's trimmed
+ * `textContent`.
  *
  * By default, the result is sorted prior to being returned, unless the `noSort` parameter is not {@link Nothing}.
  *
- * @param {boolean} [noSort=false]
+ * @param {boolean} [noSort=false] Whether to return the result unsorted.
  */
 SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 	'use strict';
@@ -470,12 +450,12 @@ SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 
 
 /**
- * Returns a combination of the {@link SimpleDataTableUtils} `FILTER_OP_`* and `FILTER_FLAG_`* bitfields corresponding to
+ * Returns a combination of the {@link SimpleDataTableUtils}`.FILTER_OP_`* and `FILTER_FLAG_`* bitfields corresponding to
  * the current selected operator, or `null` if no operator is selected, or this control has yet not been opened.
  *
  * @returns {number}
  *   A combination of the {@link SimpleDataTableUtils} bitfields corresponding to the current selected operator, or `null`
- *   if not operator is selected, or this control has not yet been opened.
+ *   if no operator is selected, or this control has not yet been opened.
  */
 SimpleDataTableControl.prototype.getOperator = function () {
 	'use strict';
@@ -516,11 +496,11 @@ SimpleDataTableControl.prototype.getOperator = function () {
 };
 
 /**
- * Returns the {@link SimpleDataTableUtils} `COLUMN_TYPE_`* constant corresponding to the current selected column type, or
+ * Returns the {@link SimpleDataTableUtils}`.COLUMN_TYPE_`* constant corresponding to the current selected column type, or
  * `null` if no column type is selected, or this control has not yet been opened.
  *
  * @returns {number}
- *   The {@link SimpleDataTableUtils} `COLUMN_TYPE_`* constant corresponding to the current selected column type, or
+ *   The {@link SimpleDataTableUtils}`.COLUMN_TYPE_`* constant corresponding to the current selected column type, or
  *   `null` if no column type is selected, or this control has not yet been opened.
  */
 SimpleDataTableControl.prototype.getColumnType = function () {
@@ -562,7 +542,7 @@ SimpleDataTableControl.prototype.getSortOrder = function () {
 
 
 /**
- * Returns an `Array` containing current selected individual cell values for this column (i.e. the selected values for the MS Excel-like filtering feature
+ * Returns an `Array` containing current selected individual cell values for this column (i.e. the selected values in the MS Excel-like filtering feature
  * offered by this control), or `null` if this control has not yet been opened.
  *
  * @returns {Array} The current selected individual cell values for this column, or `null` if this control has not yet been opened.
@@ -609,14 +589,14 @@ SimpleDataTableControl.prototype.getCompareValue = function () {
 
 
 /**
- * Utility function to obtain the `value` of the first `checked` input element within this control's backing `HTMLElement` with the given query
+ * Utility function to obtain the `value` of the first `checked` input element within this control's backing `HTMLElement` matching the given query
  * `selector`. The `querySelectorAll` function is ran on the backing element, and the result is iterated until the first element with a `checked`
  * attribute of `true` is encountered, in which case that element's `value` attribute is returned. If no `checked` element is found with the given
  * `selector`, or this control has not yet been opened, `null` is returned.
  *
  * @private
  * @return {string} 
- *   The `value` of the first `checked` element within this control using the given `selector`, or `null` if no checked element is found, or this
+ *   The `value` of the first `checked` element within this control matching the given `selector`, or `null` if no checked element is found, or this
  *   control has not yet been opened.
  */
 SimpleDataTableControl.prototype.getCheckedValue = function (selector) {
@@ -644,8 +624,8 @@ SimpleDataTableControl.prototype.getCheckedValue = function (selector) {
 
 
 /**
- * Defines the UI content on the given container, and registers this SimpleDataTableControl for the appropriate events.
- * Only intended to be called once (in response to {@link ContextControl#event:create} events).
+ * Defines the UI content on the given `container`, and registers this `SimpleDataTableControl` for the appropriate events on
+ * generated elements. Only intended to be called once (in response to {@link ContextControl#event:create} events).
  *
  * @private
  * @param {HTMLElement} Element upon which the content of this control is to be defined.
@@ -830,15 +810,15 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
  * @constructor
  * @implements FilterDescriptor
  * @param {number} columnIndex Column index of the parent {@link SimpleDataTableControl}.
- * @param {number} operator {@link SimpleDataTableUtils} `FILTER_OP_`* and `FILTER_FLAG_*` combination representing the current selected operator.
+ * @param {number} operator {@link SimpleDataTableUtils}`.FILTER_OP_`* and `FILTER_FLAG_*` combination representing the current selected operator.
  * @param {string} compareValue User-entered filter value.
- * @param {number} columnType {@link SimpleDataTableUtils} `COLUMN_TYPE_`* constant representing the current selected column type.
+ * @param {number} columnType {@link SimpleDataTableUtils}`.COLUMN_TYPE_`* constant representing the current selected column type.
  * @param {Array} selectedValues A list of values currently selected in the Excel-like filter portion of the parent control.
  * @param {(CellInterpreter|SimpleDataTableControl~populateCellValues)} [cellInterpreter=null] {@link CellInterpreter} or callback of the parent {@link SimpleDataTableControl}.
  * @private
  * @classdesc
  *
- * The {@link FilterDescriptor} implementation returned by {@link SimpleDataTableControl#getFilterDescriptor}. Determines whether individual cell values should be filtered or not
+ * The {@link FilterDescriptor} implementation returned by {@link SimpleDataTableControl#getFilterDescriptor}. Determines whether individual cell values should be filtered
  * based upon the given `operator`, `compareValue`, `selectedValues` and `columnType`. Individual cell values are determined with the given `cellInterpreter` if present. If no value
  * is given for `cellInterpreter`, each cell's value is its trimmed `textContent`.
  */
@@ -848,7 +828,7 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, comp
 	this.columnIndex = columnIndex;
 	
 	/**
-	 *
+	 * {@link SimpleDataTableUtils}`.FILTER_OP_`* and `FILTER_FLAG_*` combination representing the current selected operator.
 	 *
 	 * @private
 	 * @type {number}
@@ -856,7 +836,7 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, comp
 	this.operator = operator;
 	
 	/**
-	 *
+	 * User-entered filter value.
 	 *
 	 * @private
 	 * @type {string}
@@ -864,7 +844,7 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, comp
 	this.compareValue = compareValue;
 	
 	/**
-	 *
+	 * {@link SimpleDataTableUtils}`.COLUMN_TYPE_`* constant representing the current selected column type.
 	 *
 	 * @private
 	 * @type {number}
@@ -872,7 +852,7 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, comp
 	this.columnType = columnType;
 	
 	/**
-	 *
+	 * A list of values currently selected in the Excel-like filter portion of the parent control.
 	 *
 	 * @private
 	 * @type {Array}
@@ -887,7 +867,7 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, comp
 };
 
 /**
- *
+ * {@link CellInterpreter} or callback of the parent {@link SimpleDataTableControl}.
  *
  * @private
  * @type {(CellInterpreter|SimpleDataTableControl~populateCellValues)}
@@ -895,7 +875,9 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, comp
 SimpleDataTableControl.ColumnValueFilter.prototype.cellInterpreter = null;
 
 /**
- *
+ * `Array` to use with the configured {@link SimpleDataTableControl.ColumnValueFilter#cellInterpreter}, if present. (Prevents the need to create a new
+ * `Array` on each call to {@link SimpleDataTableControl.ColumnValueFilter#include} when filtering). This property is `null` if no `cellInterpreter`
+ * is configured.
  *
  * @private
  * @type {Array}
@@ -935,11 +917,11 @@ SimpleDataTableControl.ColumnValueFilter.prototype.include = function (cell) {
 
 
 /**
- *
+ * Utility function to test whether an individual cell value qualifies it for inclusion in a filtering operation.
  *
  * @private
- * @param {string} cellValue
- * @returns {boolean}
+ * @param {string} cellValue Cell value to test.
+ * @returns {boolean} `false` if the cell containing the given `cellValue` should be filtered, otherwise `true`.
  */
 SimpleDataTableControl.ColumnValueFilter.prototype.shouldInclude = function (cellValue) {
 	'use strict';

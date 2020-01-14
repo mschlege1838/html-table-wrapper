@@ -11,7 +11,7 @@
  * Describes the information necessary to sort a table based upon a column.
  */
 /**
- * Index of the column this SortDescriptor describes how to sort.
+ * Index of the column this `SortDescriptor` describes how to sort.
  *
  * @member {number} SortDescriptor#columnIndex
  */
@@ -34,17 +34,17 @@
  * Describes the information necessary to filter a table based upon a column.
  */
 /**
- * Index of the column this FilterDescriptor describes how to filter.
+ * Index of the column this `FilterDescriptor` describes how to filter.
  * 
  * @member {number} FilterDescriptor#columnIndex
  */
 /**
- * Callback function to determine whether the given cell's row is to be filtered. If this function returns false,
+ * Callback function to determine whether the given cell's row should be filtered. If this function returns `false`,
  * the containing row will be filtered.
  *
  * @function FilterDescriptor#include
  * @param {HTMLCellElement} cell Cell to be considered for inclusion.
- * @returns {boolean} `false` if the given `cell`'s row is to be filtered.
+ * @returns {boolean} `false` if the given `cell`'s row should be filtered.
  */
 
 
@@ -62,7 +62,7 @@
  * {@link SimpleDataTable#filter filtering} the first table body section.
  *
  * As the description implies, the given `table` must define at least one table body section, and that section should contain the table's primary data set
- * (any subsequent table body sections will be ignored). It is also assumed all the cells for each column are aligned (they all define the same `colSpan`;
+ * (any subsequent table body sections are ignored). It is also assumed all the cells for each column are aligned (i.e. they all define the same `colSpan`;
  * any misaligned rows will likely result in `RangeError`s). 
  *
  */
@@ -133,7 +133,8 @@ SimpleDataTable.copy = function (src) {
 // Instance methods
 /**
  * Sorts the first table body section of the backing table according to the given {@link SortDescriptor}s. This function can be called with a single
- * `Array` of {@link SortDescriptor}s or in a variatric manner.
+ * `Array` of {@link SortDescriptor}s or in a variatric manner. If no arguments are provided, or a zero-length `Array` is provided for argument 0,
+ * {@link SimpleDataTable#clearSort} is implicitly called.
  *
  * @param {...SortDescriptor} args 
  *   {@link SortDescriptor}s to process. If the first argument is an Array, it will be used and subsequent arguments
@@ -146,6 +147,7 @@ SimpleDataTable.prototype.sort = function () {
 	
 	// Pre-checks.
 	if (!arguments.length) {
+		this.clearSort();
 		return;
 	}
 	
@@ -217,7 +219,8 @@ SimpleDataTable.prototype.sort = function () {
 
 /**
  * Filters the first table body section of the backing table according to the given {@link FilterDescriptor}s. This function can be called with a single
- * `Array` of {@link FilterDescriptor}s or in a variatric manner.
+ * `Array` of {@link FilterDescriptor}s or in a variatric manner. If no arguments are provided or a zero-length `Array` is provided for argument 0,
+ * {@link SimpleDataTable#clearFilter} is implicitly called.
  *
  * @param {...FilterDescriptor} args 
  *   {@link FilterDescriptor}s to process. If the first argument is an `Array`, it will be used and subsequent arguments
@@ -232,6 +235,7 @@ SimpleDataTable.prototype.filter = function () {
 	filterDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
 	
 	if (!filterDescriptors.length) {
+		this.clearFilter();
 		return;
 	}
 	

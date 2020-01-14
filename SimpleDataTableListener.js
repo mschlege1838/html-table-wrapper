@@ -17,7 +17,6 @@
  *
  * @function ColumnControlFactory#getColumnControl
  * @param {number} columnIndex Column index for which a {@link ColumnControl} is needed.
- * @param {HTMLTableHeaderElement} header Table header for the given columnIndex.
  * @param {SimpleDataTableListener} parent The {@link SimpleDataTableListener} requesting a control.
  * @returns {ColumnControl} A {@link ColumnControl} if a client-defined control is needed for the given columnIndex, otherwise nothing.
  */
@@ -25,12 +24,13 @@
 // ColumnControl
 /**
  * @interface ColumnControl
+ * @extends Disposable
  * @classdesc
  *
  * A handle used by {@link SimpleDataTableListener} to open and close controls in response to click events on column headers. 
  * Client code can define custom controls by implementing this interface and returning instances via an implementation of
  * {@link ColumnControlFactory}.
- */
+ */ 
 /**
  * Index of the column this `ColumnControl` handles.
  *
@@ -47,59 +47,53 @@
  * @function ColumnControl#close
  */
 /**
- * Called by {@link SimpleDataTable#processTable} to obtain a {@link FilterDescriptor} based upon the current state of this
- * `ColumnControl`. If this control is in a state in which no filtering should be performed, it is permissible to return nothing
- * (i.e. a value that is convertible to `false`).
+ * Called by {@link SimpleDataTableListener#processTable} to obtain a {@link FilterDescriptor} based upon the current state of this
+ * `ColumnControl`. If this control is in a state in which no filtering should be performed, it is permissible to return {@link Nothing}.
  *
  * @function ColumnControl#getFilterDescriptor
  * @returns {FilterDescriptor} 
- *   A {@link FilterDescriptor} based upon the state of this ColumnControl or nothing if no filtering should be performed.
+ *   A {@link FilterDescriptor} based upon the state of this `ColumnControl` or {@link Nothing} if no filtering should be performed.
  */
 /**
- * Called by {@link SimpleDataTable#processTable} to obtain a {@link SortDescriptor} based upon the current state of this
- * `ColumnControl`. If this control is in a state in which no sorting should be performed, it is permissible to return nothing
- * (i.e. a value that is convertible to `false`).
+ * Called by {@link SimpleDataTableListener#processTable} to obtain a {@link SortDescriptor} based upon the current state of this
+ * `ColumnControl`. If this control is in a state in which no sorting should be performed, it is permissible to return {@link Nothing}.
  *
  * @function ColumnControl#getSortDescriptor
  * @returns {SortDescriptor}
- *   A {@link SortDescriptor} based upon the state of this ColumnControl or nothing if no sorting should be performed.
+ *   A {@link SortDescriptor} based upon the state of this `ColumnControl` or {@link Nothing} if no sorting should be performed.
  */
-/**
- * Optional function to be called when the owning {@link SimpleDataTableListener} is {@link SimpleDataTableListener#dispose disposed}.
- *
- * @function ColumnControl#dispose
- */
+
  
  
 
 // Constructor
 /**
  * @constructor
+ * @implements Disposable
  * @param {(HTMLTableElement|SimpleDataTable)} table Table element or {@link SimpleDataTable} backing this listener.
  * @param {ColumnControlFactory} [columnControlFactory] Optional factory if custom column controls are needed.
  * @classdesc
  *
  * Facilitates communication between the API-level {@link SimpleDataTable} and the UI-level {@link ColumnControl}. In addition to the constraints
- * placed on the backing table element in {@link SimpleDataTable}, this class requires the backing table to also define a table header section
+ * placed on the backing table element in {@link SimpleDataTable}, this class also requires it to define a table header section
  * (`<thead>`) with the first row's cells defining the column headers of this table. Although the table can define more than one row in its table
  * header section, only the first row will be processed by this class.
  * 
  * Upon {@link SimpleDataTableListener#init initialization}, this class will add itself as a listener for click events on
- * all cells in the first row of the backing `HTMLTableElement`'s table header section. The class name
- * {@link SimpleDataTableListener.processedColumnHeader} will be added to each cell for which this type registers itself.
+ * all cells in the first row of the backing `HTMLTableElement`'s table header section, as well as add the class name
+ * {@link SimpleDataTableListener.processedColumnHeader} to each cell.
  * 
- * In response to click events, the appropriate {@link ColumnControl} will be created using the given {@link ColumnControlFactory}
+ * In response to click events, the appropriate {@link ColumnControl} will be created using the given {@link ColumnControlFactory},
  * if defined, or will fall back to {@link SimpleDataTableControl} in the case no {@link ColumnControlFactory} is defined, or
- * the call to {@link ColumnControlFactory#getColumnControl} does not return a value. {@link ColumnControl}s are cached after created, and will 
- * be used for subsequent click events.
+ * the call to {@link ColumnControlFactory#getColumnControl} returns {@link Nothing}. {@link ColumnControl}s are cached after created, and will 
+ * be reused for subsequent click events.
  * 
  * {@link ColumnControl}s can make calls back to {@link SimpleDataTableListener#processTable} to trigger table-wide
  * sorting and filtering in response to user-triggered events on the control that would be expected to update the state of the 
- * bacing table. Upon a call to {@link SimpleDataTableListener#processTable}, {@link ColumnControl#getFilterDescriptor} and 
- * {@link ColumnControl#getSortDescriptor} are called for each cached {@link ColumnControl}. Each non-null (defined) result is stored, 
- * and ultimately passed to {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort}. If no {@link FilterDescriptor} or 
- * {@link SortDescriptor} is obtained, {@link SimpleDataTable#clearFilter} and/or {@link SimpleDataTable#clearSort} is/are instead 
- * called, respectively.
+ * backing table. Upon a call to {@link SimpleDataTableListener#processTable}, {@link ColumnControl#getFilterDescriptor} and 
+ * {@link ColumnControl#getSortDescriptor} are called for each cached {@link ColumnControl}. Each result that is not {@link Nothing} is stored, 
+ * and ultimately passed to {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort}. (Implicit to this, calls to {@link SimpleDataTableListener#processTable}
+ * should not be made in {@link ColumnControl#getFilterDescriptor} and {@link ColumnControl#getSortDescriptor}, as such would cause infinite recursion).
  */
 function SimpleDataTableListener(table, columnControlFactory) {
 	'use strict';
@@ -135,7 +129,7 @@ function SimpleDataTableListener(table, columnControlFactory) {
 // Static fields.
 /**
  * Class name added to `HTMLTableCellElement`s upon which `SimpleDataTableListener` instances are registered for
- * click events. Default value is 'data-table-column-header'.
+ * click events. Default value is `'data-table-column-header'`.
  *
  */
 SimpleDataTableListener.processedColumnHeader = 'data-table-column-header';
@@ -146,17 +140,12 @@ SimpleDataTableListener.processedColumnHeader = 'data-table-column-header';
  *
  * @member {SimpleDataTable} SimpleDataTableListener#dataTable
  */
-/**
- * Backing table element.
- *
- * @member {HTMLTableElement} SimpleDataTableListener#table
- */
 
 // Instance Methods
 /**
- * Initializes this SimpleDataTableListener. This SimpleDataTableListener will be added as a click listener for each 
- * HTMLTableCellElement in the first row of the backing table's header (i.e. `this.table.tHead.rows[0].cells`). 
- * The class name {@link SimpleDataTableListener.processedColumnHeader} will also be added to each cell.
+ * Initializes this `SimpleDataTableListener`. This `SimpleDataTableListener` will be added as a click listener for each `HTMLTableCellElement` 
+ * in the first row of the backing table's header section. The class name {@link SimpleDataTableListener.processedColumnHeader} will also be added to
+ * each cell.
  */
 SimpleDataTableListener.prototype.init = function () {
 	'use strict';
@@ -178,8 +167,8 @@ SimpleDataTableListener.prototype.init = function () {
 };
 
 /**
- * Disposes this SimpleDataTableListener. This SimpleDataTableListener will remove itself as a click listener for any
- * HTMLTableCellElements upon which it has registered itself, and the {@link SimpleDataTableListener.processedColumnHeader}
+ * Disposes this `SimpleDataTableListener`. This `SimpleDataTableListener` will remove itself as a click listener for any
+ * `HTMLTableCellElement`s upon which it has registered itself, and the {@link SimpleDataTableListener.processedColumnHeader}
  * class name will be removed. Additionally, if any cached {@link ColumnControl}s define a {@link ColumnControl#dispose dispose}
  * function, it will be called as well.
  */
@@ -240,12 +229,12 @@ SimpleDataTableListener.prototype.handleEvent = function (event) {
 };
 
 /**
- * Opens the {@link ColumnControl} for the given columnIndex. Delegates to {@link SimpleDataTableListener#getColumnControl}
+ * Opens the {@link ColumnControl} for the given `columnIndex`. Delegates to {@link SimpleDataTableListener#getColumnControl}
  * to obtain the {@link ColumnControl} to be opened. After obtained, {@link ColumnControl#open} will be called on it, and 
  * {@link ColumnControl#close} on all others.
  *
- * @param {number} columnIndex Index of the column upon who a {@link ColumnControl} is to be opened.
- * @throws {RangeError} If columnIndex is greater than or equal to the number of columns in the backing table.
+ * @param {number} columnIndex Index of the column upon which a {@link ColumnControl} is to be opened.
+ * @throws {RangeError} If `columnIndex` is greater than or equal to the number of columns in the backing table.
  */
 SimpleDataTableListener.prototype.openColumnControl = function (columnIndex) {
 	'use strict';
@@ -267,17 +256,21 @@ SimpleDataTableListener.prototype.openColumnControl = function (columnIndex) {
 
 /**
  * Obtains a {@link ColumnControl} for the given `columnIndex`. If one is cached (has been obtained before), it will be returned.
- * Otherwise it will be craeted using {@link SimpleDataTableListener#columnControlFactory} if defined. If defined, and its
- * {@link ColumnControlFactory#getColumnControl} returns a non-null (defined) value, it will be cached and returned. Failing that,
+ * Otherwise it will be craeted using the {@link ColumnControlFactory} passed to the constructor of this `SimpleDataTableListener`. If defined, and its
+ * {@link ColumnControlFactory#getColumnControl} returns a value that is not {@link Nothing}, it will be cached and returned. Failing that,
  * a new {@link SimpleDataTableControl} will be created and cached for this column, and be subsequently returned.
  *
- * @param {number} columnIndex Index of the column for whom a {@link ColumnControl} is to be obtained.
- * @throws {RangeError} If columnIndex is greater than or equal to the number of columns in the backing table.
+ * @param {number} columnIndex Index of the column for which a {@link ColumnControl} is to be obtained.
+ * @throws {RangeError} If `columnIndex` is greater than or equal to the number of columns in the backing table.
  */
 SimpleDataTableListener.prototype.getColumnControl = function (columnIndex) {
 	'use strict';
 	
-	var columnControls, columnControl, currentColumnControl, i, columnControlFactory, tableHeader;
+	var columnControls, columnControl, currentColumnControl, i, columnControlFactory, columnCount;
+	
+	if (columnIndex > (columnCount = this.tableHeaderCache.length)) {
+		throw new RangeError('The given columnIndex must be less than the number of columns in the backing table (' + columnCount + '): ' + columnIndex);
+	}
 	
 	columnControls = this.columnControls;
 	for (i = 0; i < columnControls.length; ++i) {
@@ -286,17 +279,15 @@ SimpleDataTableListener.prototype.getColumnControl = function (columnIndex) {
 			return currentColumnControl;
 		}
 	}
-	
-	
-	tableHeader = this.tableHeaderCache[columnIndex];
+
 	
 	columnControlFactory = this.columnControlFactory;
 	if (columnControlFactory) {
-		columnControl = columnControlFactory.getColumnControl(columnIndex, tableHeader, this);
+		columnControl = columnControlFactory.getColumnControl(columnIndex, this);
 	}
 	
 	if (!columnControl) {
-		columnControl = new SimpleDataTableControl(columnIndex, tableHeader, this);
+		columnControl = new SimpleDataTableControl(columnIndex, this);
 	}
 	
 	if (typeof columnControl.init === 'function') {
@@ -313,14 +304,9 @@ SimpleDataTableListener.prototype.getColumnControl = function (columnIndex) {
  * the state of cached {@link ColumnControl}s.
  *
  * The {@link ColumnControl#getFilterDescriptor} and {@link ColumnControl#getSortDescriptor} functions are called for each
- * cached {@link ColumnControl} in the order they are created. Each defined (convertible to `true`) result is stored in a distinct
+ * cached {@link ColumnControl} in the order they are created. Each result that is not {@link Nothing} is stored in a distinct
  * `Array` (one for {@link FiterDescriptor}s, another for {@link SortDescriptor}s), and subsequently passed to the backing
- * {@link SimpleDataTable}'s {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort} functions.
- *
- * Filtering is performed before sorting. In the case where no {@link FilterDescriptor}s are returned from calls to
- * {@link ColumnControl#getFilterDescriptor}, {@link SimpleDataTable#clearFilter} is called instead of
- * {@link SimpleDataTable#filter}; similarly the case for {@link ColumnControl#getSortDescriptor}, {@link SimpleDataTable#sort}
- * and {@link SimpleDataTable#clearSort}, respectively.
+ * {@link SimpleDataTable}'s {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort} functions. Filtering is performed before sorting. 
  *
  */
 SimpleDataTableListener.prototype.processTable = function () {
@@ -348,17 +334,8 @@ SimpleDataTableListener.prototype.processTable = function () {
 	
 	dataTable = this.dataTable;
 	
-	if (filterDescriptors.length) {
-		dataTable.filter(filterDescriptors);
-	} else {
-		dataTable.clearFilter();
-	}
-	
-	if (sortDescriptors.length) {
-		dataTable.sort(sortDescriptors);
-	} else {
-		dataTable.clearSort();
-	}
+	dataTable.filter(filterDescriptors);
+	dataTable.sort(sortDescriptors);
 };
 
 
@@ -367,4 +344,11 @@ SimpleDataTableListener.prototype.getDataTable = function () {
 	
 	return this.dataTable;
 };
+
+SimpleDataTableListener.prototype.getTableHeaderElement = function (columnIndex) {
+	'use strict';
+	
+	return this.dataTable.getTableElement().tHead.rows[0].cells[columnIndex];
+};
+
 

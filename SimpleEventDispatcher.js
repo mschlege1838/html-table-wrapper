@@ -109,7 +109,7 @@ SimpleEventDispatcher.processType = function (type) {
 
 // Instance methods
 /**
- * Adds the given `listener` for the given event `type`.
+ * Adds the given `listener` for the given event `type`, provided it is not already registered for that type.
  *
  * @param {string} type Event type for which the given `listener` is to be registered.
  * @param {(SimpleEventListener|function)} listener Listener to register.
@@ -160,7 +160,7 @@ SimpleEventDispatcher.prototype.addEventListener = function (type, listener, use
 SimpleEventDispatcher.prototype.removeEventListener = function (type, listener, useCapture) {
 	'use strict';
 	
-	var listeners, targetIndex;
+	var listeners, targetIndex;gh
 	
 	if (useCapture && console && console.warn) {
 		console.warn('Capture/bubble phase not supported by this event listener; events are simply dispatched to listeners in the order they are registered.');
@@ -229,14 +229,15 @@ SimpleEventDispatcher.prototype.dispatchEvent = function (event) {
 /**
  *
  * @constructor
+ * @implements SimpleEventIntf
  * @param {string} type Type of this event. N.B. no case conversion is performed in this constructor.
  * @param {object} target Target of this event.
  * @classdesc
  *
- * Simple implementation of {@link SimpleEventIntf} that also includes the DOM standard
- * target and currentTarget properties. Note target remains constant as this event dispatcher 
- * implementation does not support bubbling. The currentTarget property is also set to the
- * given target.
+ * Simplistic, yet effective implementation of {@link SimpleEventIntf} that also includes the standard DOM 
+ * `target` and `currentTarget` properties. Note `target` remains constant, as this event dispatcher 
+ * implementation does not support bubbling. The `currentTarget` property is also set to the
+ * given `target`.
  *
  * 
  * <div class="see-also-section">
@@ -257,9 +258,6 @@ SimpleEventDispatcher.prototype.dispatchEvent = function (event) {
 SimpleEventDispatcher.SimpleEvent = function (type, target) {
 	'use strict';
 	
-	/**
-	 * Type of this event.
-	 */
 	this.type = type;
 	
 	/**

@@ -2,7 +2,6 @@
 // Constructor
 /**
  * @constructor
- * @param {boolean} [useArray=false] Whether to maintain the underlying string as an Array. If false, will use string concatenation.
  * @classdesc
  *
  * Simplistic implementation of a builder for XML strings. All tags, attributes, attribute values and content
@@ -10,11 +9,11 @@
  * necessary (with the exception of calls to {@link XMLBuilder#appendDirect} in which the given value is appended as-is).
  *
  * By default, the underlying data is maintained using string concatenation, however if the execution environment
- * handles array-based concatenation more efficiently, passing the value true to this constructor enables this.
+ * handles array-based concatenation more efficiently, set {@link XMLBuilder.useArray} to `true`.
  *
  * This implementation is state-based, and therefore, not thread-safe.
  */
-function XMLBuilder(useArray) {
+function XMLBuilder() {
 	'use strict';
 	
 	/**
@@ -26,7 +25,7 @@ function XMLBuilder(useArray) {
 	this.stack = [];
 	
 	/**
-	 * Current state of this XMLBuilder. Corresponds to one of the STATE_* static members of this class.
+	 * Current state of this XMLBuilder. Corresponds to one of the `STATE_*` static members of this class.
 	 *
 	 * @private
 	 * @type {number}
@@ -34,20 +33,12 @@ function XMLBuilder(useArray) {
 	this.state = XMLBuilder.STATE_INITIAL;
 	
 	/**
-	 * Whether or not to use an Array to store the text content of this XMLBuilder.
-	 *
-	 * @private
-	 * @type {boolean}
-	 */
-	this.useArray = !!useArray;
-	
-	/**
-	 * The raw text of this XMLBuilder. If {@link XMLBuilder#useArray} is true, it will be an Array, otherwise a string.
+	 * The raw text of this `XMLBuilder`. If {@link XMLBuilder.useArray} is `true`, it will be an `Array`, otherwise a `string`.
 	 *
 	 * @private
 	 * @type {(string|Array)}
 	 */
-	this.text = useArray ? [] : ''
+	this.text = XMLBuilder.useArray ? [] : ''
 }
 
 // Static fields
@@ -93,6 +84,14 @@ XMLBuilder.ESCAPE_CHARACTER_MAPPING = {
 	, '>': '&gt;'
 };
 
+
+/**
+ * Whether or not to use an `Array` to store the text content `XMLBuilder` instances.
+ *
+ * @private
+ * @type {boolean}
+ */
+XMLBuilder.useArray = false;
 
 // Static methods
 /**
@@ -141,9 +140,7 @@ XMLBuilder.escape = function (val) {
 XMLBuilder.prototype.startTag = function (name) {
 	'use strict';
 	
-	var tag, useArray;
-	
-	useArray = this.useArray;
+	var tag;
 	
 	if (this.state == XMLBuilder.STATE_TAG) {
 		this.appendDirect('>');
@@ -260,7 +257,7 @@ XMLBuilder.prototype.closeTag = function (requiresBody) {
 XMLBuilder.prototype.appendDirect = function (val) {
 	'use strict';
 	
-	if (this.useArray) {
+	if (XMLBuilder.useArray) {
 		this.text.push(val);
 	} else {
 		this.text += val;
@@ -275,7 +272,7 @@ XMLBuilder.prototype.appendDirect = function (val) {
 XMLBuilder.prototype.clear = function () {
 	'use strict';
 	
-	if (this.useArray) {
+	if (XMLBuilder.useArray) {
 		this.text = []
 	} else {
 		this.text = '';
@@ -291,7 +288,7 @@ XMLBuilder.prototype.clear = function () {
 XMLBuilder.prototype.toString = function () {
 	'use strict';
 	
-	return this.useArray ? this.text.join('') : this.text;
+	return XMLBuilder.useArray ? this.text.join('') : this.text;
 };
 
 

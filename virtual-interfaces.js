@@ -47,7 +47,7 @@
  */
 /**
  * Optional function to dispose this object. The object should not be relied upon to be useable after calling this function, however
- * whether it actually is or not is entirely implementation-dependant.
+ * whether it actually is or not is entirely implementation-dependent.
  *
  * @function Disposable#dispose
  */
