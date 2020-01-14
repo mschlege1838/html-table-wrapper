@@ -105,7 +105,7 @@ SimpleDataTableControl.SORT_ORDER_DESCENDING = 3;
 
 
 SimpleDataTableControl.CLICK_TARGETS_SELECTOR = 
-		'input.column-type, input.sort-direction, input.filter-by-value-operator, input[name="filter-option-ignore-case"], input[name="clear-filter-button"], input[name="select-all-cell-values"], input.column-value, .close-button';
+		'input.column-type, input.sort-direction, input.filter-by-value-operator, input.filter-option-ignore-case, input[name="clear-filter-button"], input[name="select-all-cell-values"], input.column-value, .close-button';
 
 /**
  * A 'mapping' object whose property values correspond to labels printed on the dialogue presented to the end-user.
@@ -154,7 +154,7 @@ SimpleDataTableControl.i18nStrings = {
 	filterDescriptionGreaterThanOrEqualTo: 'Select cells whose value is greater than or equal to the entered value:',
 	filterDescriptionContains: 'Select cells whose value contain the entered value:',
 	
-	clearSearchFilters: 'Reset Filters',
+	clearSearchFilters: 'Reset Column',
 	
 	toolTipCloseDialogue: 'Close'
 };
@@ -180,21 +180,42 @@ SimpleDataTableControl.getIdBase = function () {
 	return 'dataTable_' + SimpleDataTableControl.idCounter++ + '_';
 };
 
+/**
+ * Returns `true` if any input in the given set of `inputs` is not `checked`, otherwise `false`. Of note, whether each input
+ * is of type checkbox, radio, etc. (i.e. an input where the `checked` attribute is appropriate) is not evaluated; the `checked`
+ * attribute of each `input` is simply inspected.
+ *
+ * @param {MinimalList} inputs Inputs to inspect.
+ * @returns `true` if at least one input in `inputs` has a `checked` attribute of `false`, otherwise `false`.
+ */
+SimpleDataTableControl.hasUnchecked = function (inputs) {
+	'use strict';
+	
+	var i;
+	
+	for (i = 0; i < inputs.length; ++i) {
+		if (!inputs[i].checked) {
+			return true;
+		}
+	}
+	
+	return false;
+};
 
 /**
- * Sets the first `HTMLInputElement`'s `checked` attribute in the given set of `inputs` whose `name` is the given `name`.
+ * Sets the first `HTMLInputElement`'s `checked` attribute in the given set of `inputs` whose `value` is the given `value`.
  *
  * @param {MinimalList} inputs Collection of inputs to process.
- * @param {string} name Name of the input whose checked attribute is to be set.
+ * @param {string} value Value of the input whose checked attribute is to be set.
  */
-SimpleDataTableControl.setChecked = function (inputs, name) {
+SimpleDataTableControl.setChecked = function (inputs, value) {
 	'use strict';
 	
 	var i, input;
 	
 	for (i = 0; i < inputs.length; ++i) {
 		input = inputs[i];
-		input.checked = input.name === name;
+		input.checked = input.value === value;
 	}
 };
 
@@ -233,7 +254,7 @@ SimpleDataTableControl.prototype.dispose = function () {
 	
 	controlElement = contextControl.getControlElement();
 	if (controlElement) {
-		controlElement.querySelector('input[name="filter-by-value-value"]').removeEventListener('keyup', this, false);
+		controlElement.querySelector('input.filter-by-value-value').removeEventListener('keyup', this, false);
 		
 		clickTargets = controlElement.querySelectorAll(SimpleDataTableControl.CLICK_TARGETS_SELECTOR);
 		for (i = 0; i < clickTargets.length; ++i) {
@@ -254,7 +275,7 @@ SimpleDataTableControl.prototype.dispose = function () {
 SimpleDataTableControl.prototype.handleEvent = function (event) {
 	'use strict';
 	
-	var target, sortOrder, operation, columnValues, value, checked, index;
+	var target, sortOrder, operation, columnValues, value, checked, index, controlElement;
 	
 	target = event.currentTarget;
 	
@@ -268,11 +289,14 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 			} else if (IE9Compatibility.hasClass(target, 'filter-by-value-operator')) {
 				this.contextControl.getControlElement().getElementsByClassName('filter-by-value-description')[0].textContent = this.getOperatorDescription();
 				this.updateParent();
+			} else if (IE9Compatibility.hasClass(target, 'column-value')) {
+				controlElement = this.contextControl.getControlElement();
+				controlElement.querySelector('input[name="select-all-cell-values"]').checked = !SimpleDataTableControl.hasUnchecked(controlElement.querySelectorAll('input.column-value'));
+				this.updateParent();
 			} else if (
 				IE9Compatibility.hasClass(target, 'column-type')
 				|| IE9Compatibility.hasClass(target, 'sort-direction')
 				|| IE9Compatibility.hasClass(target, 'filter-option-ignore-case')
-				|| IE9Compatibility.hasClass(target, 'column-value')
 			) {
 				this.updateParent();
 			} else {
@@ -322,18 +346,17 @@ SimpleDataTableControl.prototype.reset = function () {
 	
 	control = this.contextControl.getControlElement();
 	
-	columnValueInputs = control.querySelectorAll('input[name="column-value"]');
-	
 	SimpleDataTableControl.setChecked(control.querySelectorAll('input.column-type'), 'infer');
 	SimpleDataTableControl.setChecked(control.querySelectorAll('input.sort-direction'), 'none');
 	SimpleDataTableControl.setChecked(control.querySelectorAll('input.filter-by-value-operator'), 'contains');
-	control.querySelector('input[name="filter-option-ignore-case"]').checked = true;
+	control.querySelector('input.filter-option-ignore-case').checked = true;
+	control.querySelector('input.filter-by-value-value').value = '';
 	
+	
+	columnValueInputs = control.querySelectorAll('input.column-value');
 	for (i = 0; i < columnValueInputs.length; ++i) {
 		columnValueInputs[i].checked = true;
 	}
-	
-	this.setUpDescriptors();
 };
 
 /**
@@ -358,7 +381,7 @@ SimpleDataTableControl.prototype.selectAllColumnValues = function (checked) {
 	
 	var columnValues, columnValueInputs, columnValueInput, i;
 	
-	columnValueInputs = this.contextControl.getControlElement().querySelectorAll('input[name="column-value"]');
+	columnValueInputs = this.contextControl.getControlElement().querySelectorAll('input.column-value');
 	columnValues = [];
 	
 
@@ -377,13 +400,20 @@ SimpleDataTableControl.prototype.selectAllColumnValues = function (checked) {
 SimpleDataTableControl.prototype.getFilterDescriptor = function () {
 	'use strict';
 	
-	var controlElement, operator, compareValue, columnType, columnValueInputs, selectedValues, i, columnValueInput;
-
-	if (!this.contextControl.getControlElement()) {
+	var controlElement, compareValue;
+	
+	controlElement = this.contextControl.getControlElement();
+	
+	if (!controlElement) {
 		return null;
 	}
 	
-	return new SimpleDataTableControl.ColumnValueFilter(this.columnIndex, this.getOperator(), this.getCompareValue(), this.getColumnType(), this.getSelectedCellValues(), this.cellInterpreter);
+	compareValue = controlElement.querySelector('input.filter-by-value-value').value;
+	if (!compareValue) {
+		return null;
+	}
+	
+	return new SimpleDataTableControl.ColumnValueFilter(this.columnIndex, this.getOperator(), compareValue, this.getColumnType(), this.getSelectedCellValues(), this.cellInterpreter);
 };
 
 SimpleDataTableControl.prototype.getSortDescriptor = function () {
@@ -607,24 +637,6 @@ SimpleDataTableControl.prototype.getSelectedCellValues = function () {
 	return selectedValues;
 };
 
-/**
- * Returns the current `value` of the free-text filter input, or `null` if this control has not yet been opened.
- *
- * @returns {string} The current `value` of the free-text filter input, or `null` if this control has not yet been opened.
- */
-SimpleDataTableControl.prototype.getCompareValue = function () {
-	'use strict';
-	
-	var controlElement;
-	
-	controlElement = this.contextControl.getControlElement();
-	if (!controlElement) {
-		return null;
-	}
-	
-	return controlElement.querySelector('input[name="filter-by-value-value"]').value;
-};
-
 
 /**
  * Utility function to obtain the `value` of the first `checked` input element within this control's backing `HTMLElement` matching the given query
@@ -806,7 +818,7 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 		.closeTag()
 	.closeTag()
 	.startTag('div').attribute('class', 'section filter-by-value-container')
-		.startTag('input').attribute('name', 'filter-by-value-value').attribute('id', filterByValueInputId).closeTag()
+		.startTag('input').attribute('class', 'filter-by-value-value').attribute('id', filterByValueInputId).closeTag()
 	.closeTag()
 	.startTag('div').attribute('class', 'section filter-by-cell-values-container')
 		.startTag('h5').attribute('class', 'section-title').content(i18nStrings.filterTypeCellValue).closeTag()
@@ -835,7 +847,7 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	
 	
 	// Register events.
-	container.querySelector('input[name="filter-by-value-value"]').addEventListener('keyup', this, false);
+	container.querySelector('input.filter-by-value-value').addEventListener('keyup', this, false);
 	
 	clickTargets = container.querySelectorAll(SimpleDataTableControl.CLICK_TARGETS_SELECTOR);
 	for (i = 0; i < clickTargets.length; ++i) {

@@ -103,7 +103,7 @@
 	padding: .5em;
 }
 
-.data-table-column-options input[name="filter-by-value-value"] {
+.data-table-column-options input.filter-by-value-value {
 	width: 100%;
 }
 
