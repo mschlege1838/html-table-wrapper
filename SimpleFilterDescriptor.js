@@ -48,7 +48,7 @@ function SimpleFilterDescriptor(columnIndex, compareValue, operation, columnType
 
 // Default Instance Properties
 /**
- * Operation this ValueFilter is to use when determining whether to filter a cell. Valid values are described
+ * Operation this `SimpleFilterDescriptor` is to perform when determining whether to filter a cell. Valid values are described
  * in this class' description.
  *
  * @type {string}
