@@ -16,18 +16,11 @@
  * @member {number} SortDescriptor#columnIndex
  */
 /**
- * Optional; if true, the value returned from this sort descriptor will be reversed (multiplied by -1)
- * in processing {@link SimpleDataTable#sort} calls.
- *
- * @member {boolean} SortDescriptor#descending
- */
-/**
  * Callback comparator function that compares one cell to another.
  *
  * @function SortDescriptor#compare
  * @param {HTMLCellElement} cellA Reference cell.
  * @param {HTMLCellElement} cellB Compare cell.
- * @returns {number} 
  * @returns {number} 
  *		A value greater than 0 if cellA should be sorted below cellB, less than 0 for above, 0 for 
  *		no preference.
@@ -51,9 +44,8 @@
  * the containing row will be filtered.
  *
  * @function FilterDescriptor#include
- * @param {HTMLCellElement} cell to be considered for inclusion.
- * @returns {boolean} false if this cell's row is to be filtered.
- * @returns {boolean} false if this cell's row is to be filtered.
+ * @param {HTMLCellElement} cell Cell to be considered for inclusion.
+ * @returns {boolean} `false` if the given `cell`'s row is to be filtered.
  */
 
 
@@ -180,8 +172,8 @@ SimpleDataTable.getColumn = function (row, columnIndex) {
  * Array of {@link SortDescriptor}s or in a variatric manner.
  *
  * @param {...SortDescriptor} args 
- *		{@link SortDescriptor}s to process. If the first argument is an Array, it will be used and subsequent arguments
- *		will be ignored.
+ *   {@link SortDescriptor}s to process. If the first argument is an Array, it will be used and subsequent arguments
+ *   will be ignored.
  */
 SimpleDataTable.prototype.sort = function () {
 	'use strict';
@@ -241,7 +233,7 @@ SimpleDataTable.prototype.sort = function () {
 			
 			// Allowing type coercion if (for whatever reason) the compare function does not return an integer.
 			if (compareValue != 0) {
-				return sortDescriptor.descending ? -1 * compareValue : compareValue;
+				return compareValue;
 			}
 			
 		}
@@ -264,8 +256,8 @@ SimpleDataTable.prototype.sort = function () {
  * `Array` of {@link FilterDescriptor}s or in a variatric manner.
  *
  * @param {...FilterDescriptor} args 
- *		{@link FilterDescriptor}s to process. If the first argument is an `Array`, it will be used and subsequent arguments
- *		will be ignored.
+ *   {@link FilterDescriptor}s to process. If the first argument is an `Array`, it will be used and subsequent arguments
+ *   will be ignored.
  */
 SimpleDataTable.prototype.filter = function () {
 	'use strict';
@@ -332,7 +324,7 @@ SimpleDataTable.prototype.clearFilter = function () {
 	
 	var i, rows;
 	
-	rows = this.table.tBodies[0].rows;
+	rows = this.getRows();
 	
 	for (i = 0; i < rows.length; ++i) {
 		IE9Compatibility.removeClass(rows[i], SimpleDataTable.filteredClassName);
@@ -364,7 +356,30 @@ SimpleDataTable.prototype.clearSort = function () {
 };
 
 
+SimpleDataTable.prototype.getHeaders = function () {
+	'use strict';
+	
+	return this.table.tHead.rows[0];
+};
 
-
-
-
+SimpleDataTable.prototype.getRows = function (includeFiltered) {
+	'use strict';
+	
+	var rows, row, i, result;
+	
+	rows = this.table.tBodies[0].rows;
+	
+	if (includeFiltered) {
+		return rows;
+	}
+	
+	result = [];
+	for (i = 0; i < rows.length; ++i) {
+		row = rows[i];
+		if (!IE9Compatibility.hasClass(row, SimpleDataTable.filteredClassName)) {
+			result.push(row);
+		}
+	}
+	
+	return row;
+};

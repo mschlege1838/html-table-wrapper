@@ -6,9 +6,10 @@
  * @param {number} columnIndex Column index to which this descriptor is to apply.
  * @param {boolean} [descending=false] true if the result of this descriptor is to be inverted.
  * @param {number} [columnType={@link SimpleDataTableUtils.COLUMN_TYPE_INFER}] 
- *		How this column is to be sorted. Default is infer, set to {@link SimpleDataTableUtils.COLUMN_TYPE_TEXT} to sort as text only.
+ *   How this column is to be sorted. Default is infer, set to {@link SimpleDataTableUtils.COLUMN_TYPE_TEXT} to sort as text only.
  * @classdesc
- *		Simple/direct implementation of {@link SortDescriptor}. 
+ *
+ * Simple/direct implementation of {@link SortDescriptor}. 
  */
 function SimpleSortDescriptor(columnIndex, descending, columnType) {
 	'use strict';
@@ -39,13 +40,14 @@ SimpleSortDescriptor.prototype.columnType = SimpleDataTableUtils.COLUMN_TYPE_INF
 
 
 // Instance Methods
-SimpleDataTableUtils.prototype.compare = function (cellA, cellB) {
+SimpleSortDescriptor.prototype.compare = function (cellA, cellB) {
 	'use strict';
 	
-	var aVal, bVal;
+	var aVal, bVal, result;
 	
 	aVal = cellA.textContent.trim();
 	bVal = cellB.textContent.trim();
 	
-	return SimpleDataTableUtils.doCompare(aVal, bVal, this.columnType);
+	result = SimpleDataTableUtils.doCompare(aVal, bVal, this.columnType);
+	return this.descending ? -1 * result : result;
 };

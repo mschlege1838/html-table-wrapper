@@ -3,63 +3,65 @@
 /**
  * @interface ColumnControlFactory
  * @classdesc
- *		Can be used with {@link SimpleDataTableListener} to create custom {@link ColumnControl}s if client-defined controls are 
- *		needed. If given to a {@link SimpleDataTableListener}, it will call {@link ColumnControlFactory#getColumnControl}
- *		when it determines a new control needs to be created for a column. If the call returns a non-null (defined) value, it will
- *		be used as the control for that column.
+ *
+ * Can be used with {@link SimpleDataTableListener} to create custom {@link ColumnControl}s if client-defined controls are 
+ * needed. If given to a {@link SimpleDataTableListener}, it will call {@link ColumnControlFactory#getColumnControl}
+ * when it determines a new control needs to be created for a column. If the call returns a value, it will
+ * be used as the control for that column.
  */
 /**
- * Called by {@link SimpleDataTable} to obtain a {@link ColumnControl} for a given column. If a non-null (defined) value is returned,
- * it will be used as the control for that column. If a null (undefined) value is returned, a new {@link SimpleDataTableControl}
+ * Called by {@link SimpleDataTable} to obtain a {@link ColumnControl} for a given column. If a value is returned,
+ * it will be used as the control for that column. If no value is returned, a new {@link SimpleDataTableControl}
  * will be created and used for that column.
  *
  * @function ColumnControlFactory#getColumnControl
  * @param {number} columnIndex Column index for which a {@link ColumnControl} is needed.
  * @param {HTMLTableHeaderElement} header Table header for the given columnIndex.
  * @param {SimpleDataTableListener} parent The {@link SimpleDataTableListener} requesting a control.
- * @returns {ColumnControl} A {@link ColumnControl} if a client-defined control is needed for the given columnIndex, otherwise null.
+ * @returns {ColumnControl} A {@link ColumnControl} if a client-defined control is needed for the given columnIndex, otherwise nothing.
  */
 
 
 /**
  * @interface ColumnControl
  * @classdesc
- *		A handle used by {@link SimpleDataTableListener} to open and close controls in response to click events on column headers. 
- *		Client code can define custom controls by implementing this interface and returning instances via an implementation of
- *		{@link ColumnControlFactory}.
+ *
+ * A handle used by {@link SimpleDataTableListener} to open and close controls in response to click events on column headers. 
+ * Client code can define custom controls by implementing this interface and returning instances via an implementation of
+ * {@link ColumnControlFactory}.
  */
 /**
- * Index of the column this ColumnControl handles.
+ * Index of the column this `ColumnControl` handles.
  *
  * @member {number} ColumnControl#columnIndex
  */
 /**
- * Opens this ColumnControl such that it is visible to the end-user.
+ * Opens this `ColumnControl` such that it is visible to the end-user.
  *
  * @function ColumnControl#open
  */
 /**
- * Closes this ColumnControl such that it is hidden from the end-user.
+ * Closes this `ColumnControl` such that it is hidden from the end-user.
  *
  * @function ColumnControl#close
  */
 /**
  * Called by {@link SimpleDataTable#processTable} to obtain a {@link FilterDescriptor} based upon the current state of this
- * ColumnControl. A null (undefined) value can be returned if this control is in a state in which no filtering should be
- * performed.
+ * `ColumnControl`. If this control is in a state in which no filtering should be performed, it is permissible to return nothing
+ * (i.e. a value that is convertible to `false`).
  *
  * @function ColumnControl#getFilterDescriptor
  * @returns {FilterDescriptor} 
- *		A {@link FilterDescriptor} based upon the state of this ColumnControl or null if no filtering should be performed.
+ *   A {@link FilterDescriptor} based upon the state of this ColumnControl or nothing if no filtering should be performed.
  */
 /**
  * Called by {@link SimpleDataTable#processTable} to obtain a {@link SortDescriptor} based upon the current state of this
- * ColumnControl. A null (undefined) value can be returned if this control is in a state in which no sorting should be
- * performed.
+ * `ColumnControl`. If this control is in a state in which no sorting should be performed, it is permissible to return nothing
+ * (i.e. a value that is convertible to `false`).
  *
  * @function ColumnControl#getSortDescriptor
  * @returns {SortDescriptor}
- *		A {@link SortDescriptor} based upon the state of this ColumnControl or null if no sorting should be performed.
+ *   A {@link SortDescriptor} based upon the state of this ColumnControl or nothing if no sorting should be performed.
  */
 /**
  * Optional function to be called when the owning {@link SimpleDataTableListener} is {@link SimpleDataTableListener#dispose disposed}.
@@ -75,24 +77,25 @@
  * @param {(HTMLTableElement|SimpleDataTable)} table Table element or {@link SimpleDataTable} backing this listener.
  * @param {ColumnControlFactory} [columnControlFactory] Optional factory if custom column controls are needed.
  * @classdesc
- *		<p>Facilitates communication between the API-level {@link SimpleDataTable} and the UI-level {@link ColumnControl}.</p>
- *		
- *		<p>Upon {@link SimpleDataTable#init initialization}, this class will add itself as a listener for click events on
- *		all cells in the first row of the backing HTMLTableElement's table header section. The class name
- *		{@link SimpleDataTable.processedColumnHeader} will be added to each cell for which this type registers itself.</p>
  *
- *		<p>In response to click events, the appropriate {@link ColumnControl} will be created using the given {@link ColumnControlFactory}
- *		if defined, or will fall back to {@link SimpleDataTableControl} in the case no {@link ColumnControlFactory} is defined, or
- *		the call to {@link ColumnControlFactory#getColumnControl} returns null. {@link ColumnControl}s are cached after created, and will 
- *		be used for subsequent click events.</p>
- *
- *		<p>{@link ColumnControl}s can make calls back to {@link SimpleDataTableListener#processTable} to trigger table-wide
- *		sorting and filtering in response to user-triggered events on the control that would be expected to update the state of the 
- *		bacing table. Upon a call to {@link SimpleDataTableListener#processTable}, {@link ColumnControl#getFilterDescriptor} and 
- *		{@link ColumnControl#getSortDescriptor} are called for each cached {@link ColumnControl}. Each non-null (defined) result is stored, 
- *		and ultimately passed to {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort}. If no {@link FilterDescriptor} or 
- *		{@link SortDescriptor} is obtained, {@link SimpleDataTable#clearFilter} and/or {@link SimpleDataTable#clearSort} is/are instead 
- *		called, respectively.</p>
+ * Facilitates communication between the API-level {@link SimpleDataTable} and the UI-level {@link ColumnControl}.
+ * 
+ * Upon {@link SimpleDataTableListener#init initialization}, this class will add itself as a listener for click events on
+ * all cells in the first row of the backing `HTMLTableElement`'s table header section. The class name
+ * {@link SimpleDataTableListener.processedColumnHeader} will be added to each cell for which this type registers itself.
+ * 
+ * In response to click events, the appropriate {@link ColumnControl} will be created using the given {@link ColumnControlFactory}
+ * if defined, or will fall back to {@link SimpleDataTableControl} in the case no {@link ColumnControlFactory} is defined, or
+ * the call to {@link ColumnControlFactory#getColumnControl} does not return a value. {@link ColumnControl}s are cached after created, and will 
+ * be used for subsequent click events.
+ * 
+ * {@link ColumnControl}s can make calls back to {@link SimpleDataTableListener#processTable} to trigger table-wide
+ * sorting and filtering in response to user-triggered events on the control that would be expected to update the state of the 
+ * bacing table. Upon a call to {@link SimpleDataTableListener#processTable}, {@link ColumnControl#getFilterDescriptor} and 
+ * {@link ColumnControl#getSortDescriptor} are called for each cached {@link ColumnControl}. Each non-null (defined) result is stored, 
+ * and ultimately passed to {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort}. If no {@link FilterDescriptor} or 
+ * {@link SortDescriptor} is obtained, {@link SimpleDataTable#clearFilter} and/or {@link SimpleDataTable#clearSort} is/are instead 
+ * called, respectively.
  */
 function SimpleDataTableListener(table, columnControlFactory) {
 	'use strict';
@@ -113,7 +116,7 @@ function SimpleDataTableListener(table, columnControlFactory) {
 	this.columnControlFactory = columnControlFactory;
 	
 	/**
-	 * Cache of HTMLTableCellElements for which this class is registered for click events.
+	 * Cache of `HTMLTableCellElement`s for which this class is registered for click events.
 	 *
 	 * @private
 	 */
@@ -129,7 +132,7 @@ function SimpleDataTableListener(table, columnControlFactory) {
 
 // Static fields.
 /**
- * Class name added to HTMLTableCellElements upon which SimpleDataTableListener instances are registered for
+ * Class name added to `HTMLTableCellElement`s upon which `SimpleDataTableListener` instances are registered for
  * click events. Default value is 'data-table-column-header'.
  *
  */
@@ -137,7 +140,7 @@ SimpleDataTableListener.processedColumnHeader = 'data-table-column-header';
 
 // Instance Properties
 /**
- * Backing {@link SimpleDataTable}. Wraps {@link SimpleDataTableListener#table}.
+ * Backing {@link SimpleDataTable}.
  *
  * @member {SimpleDataTable} SimpleDataTableListener#dataTable
  */
@@ -150,7 +153,7 @@ SimpleDataTableListener.processedColumnHeader = 'data-table-column-header';
 // Instance Methods
 /**
  * Initializes this SimpleDataTableListener. This SimpleDataTableListener will be added as a click listener for each 
- * HTMLTableCellElement in the first row of the backing table's header (i.e. <code>this.table.tHead.rows[0].cells</code>). 
+ * HTMLTableCellElement in the first row of the backing table's header (i.e. `this.table.tHead.rows[0].cells`). 
  * The class name {@link SimpleDataTableListener.processedColumnHeader} will also be added to each cell.
  */
 SimpleDataTableListener.prototype.init = function () {
@@ -200,7 +203,7 @@ SimpleDataTableListener.prototype.dispose = function () {
 };
 
 /**
- * Implementation of DOM EventListener.
+ * Implementation of DOM `EventListener`.
  *
  * @param {Event} event Event being dispatched.
  */
@@ -260,7 +263,7 @@ SimpleDataTableListener.prototype.openColumnControl = function (columnIndex) {
 };
 
 /**
- * Obtains a {@link ColumnControl} for the given columnIndex. If one is cached (has been obtained before), it will be returned.
+ * Obtains a {@link ColumnControl} for the given `columnIndex`. If one is cached (has been obtained before), it will be returned.
  * Otherwise it will be craeted using {@link SimpleDataTableListener#columnControlFactory} if defined. If defined, and its
  * {@link ColumnControlFactory#getColumnControl} returns a non-null (defined) value, it will be cached and returned. Failing that,
  * a new {@link SimpleDataTableControl} will be created and cached for this column, and be subsequently returned.
@@ -293,24 +296,28 @@ SimpleDataTableListener.prototype.getColumnControl = function (columnIndex) {
 		columnControl = new SimpleDataTableControl(columnIndex, tableHeader, this);
 	}
 	
+	if (typeof columnControl.init === 'function') {
+		columnControl.init();
+	}
+	
 	columnControls.push(columnControl);
 	return columnControl;
 };
 
 
 /**
- * <p>{@link SimpleDataTable#filter Filters} and {@link SimpleDataTable#filter filters} the backing table based upon
- * the state of cached {@link ColumnControl}s.</p>
+ * {@link SimpleDataTable#filter Filters} and {@link SimpleDataTable#sort sorts} the backing table based upon
+ * the state of cached {@link ColumnControl}s.
  *
- * <p>The {@link ColumnControl#getFilterDescriptor} and {@link ColumnControl#getSortDescriptor} functions are called for each
- * cached {@link ColumnControl} in the order they are created. Each non-null (defined) result of each is stored in a distinct
- * Array (one for {@link FiterDescriptor}s, another for {@link SortDescriptor}s), and subsequently passed to the backing
- * {@link SimpleDataTable}s {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort} functions.</p>
+ * The {@link ColumnControl#getFilterDescriptor} and {@link ColumnControl#getSortDescriptor} functions are called for each
+ * cached {@link ColumnControl} in the order they are created. Each defined (convertible to `true`) result is stored in a distinct
+ * `Array` (one for {@link FiterDescriptor}s, another for {@link SortDescriptor}s), and subsequently passed to the backing
+ * {@link SimpleDataTable}'s {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort} functions.
  *
- * <p>Filtering is performed before sorting. In the case where no {@link FilterDescriptor}s are returned from calls to
+ * Filtering is performed before sorting. In the case where no {@link FilterDescriptor}s are returned from calls to
  * {@link ColumnControl#getFilterDescriptor}, {@link SimpleDataTable#clearFilter} is called instead of
  * {@link SimpleDataTable#filter}; similarly the case for {@link ColumnControl#getSortDescriptor}, {@link SimpleDataTable#sort}
- * and {@link SimpleDataTable#clearSort}, respectively.</p>
+ * and {@link SimpleDataTable#clearSort}, respectively.
  *
  */
 SimpleDataTableListener.prototype.processTable = function () {

@@ -6,7 +6,8 @@
  * @class
  * @augments IEGeneralCompatibility
  * @classdesc
- *		Utility functions for MS Internet Explorer 9 compatibility.
+ *
+ * Utility functions for MS Internet Explorer 9 compatibility.
  */
 var IE9Compatibility = {
 	

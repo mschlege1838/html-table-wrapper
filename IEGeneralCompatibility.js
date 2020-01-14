@@ -5,7 +5,8 @@
  *
  * @class
  * @classdesc
- * 		Utility functions for general MS Internet Explorer compatibility.
+ *
+ * Utility functions for general MS Internet Explorer compatibility.
  */
 var IEGeneralCompatibility = {};
 
