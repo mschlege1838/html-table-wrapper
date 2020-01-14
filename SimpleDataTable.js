@@ -22,8 +22,7 @@
  * @param {HTMLCellElement} cellA Reference cell.
  * @param {HTMLCellElement} cellB Compare cell.
  * @returns {number} 
- *   A value greater than 0 if cellA should be sorted below cellB, less than 0 for above, 0 for 
- *   no preference.
+ *   A value greater than 0 if `cellA` should be sorted below `cellB`, less than 0 for above, 0 for no preference.
  */
 
 
@@ -56,22 +55,21 @@
  * 
  * @constructor 
  * @param {HTMLTableElement} table Table element this `SimpleDataTable` is to process.
- * @throws {ReferenceError} 
- *   If `table` is not defined, `table` does not define table body section, if `table` does not define a table header section, or if `table`'s table
- *   header section has no rows.
+ * @throws {ReferenceError} If `table` is not defined, or does not have any table body sections.
  * @classdesc
  *
- * Wrapper for 'simply defined' `HTMLTableElement`s that provides extended functionality, most notably {@link SimpleDataTable#sort sorting}
- * and {@link SimpleDataTable#filter filtering}. The tables this class processes are 'simply defined' in that they define a table header section (`<thead>`)
- * whose first row's cells define the table's column headers, and a single table body section (`<tbody>`) whose rows contain the table's data.
+ * Wrapper for `HTMLTableElement`s that provides a limited set of extended functionality, most notably the capibility of {@link SimpleDataTable#sort sorting} and 
+ * {@link SimpleDataTable#filter filtering} the first table body section.
  *
- * Although the backing table can define more than one row in the table header section, and/or more than one table body section, only the first row in the table
- * header section and the first table body section will be processed by this class.
+ * As the description implies, the given `table` must define at least one table body section, and that section should contain the table's primary data set
+ * (any subsequent table body sections will be ignored). It is also assumed all the cells for each column are aligned (they all define the same `colSpan`;
+ * any misaligned rows will likely result in `RangeError`s). 
+ *
  */
 function SimpleDataTable(table) {
 	'use strict';
 	
-	if (!table || !table.tBodies || !table.tBodies.length || !table.tHead || !table.tHead.rows.length) {
+	if (!table || !table.tBodies || !table.tBodies.length) {
 		throw new ReferenceError('Table must be an defined and have a body.');
 	}
 	
@@ -129,44 +127,13 @@ SimpleDataTable.copy = function (src) {
 
 
 
-/**
- * Utility function for obtaining a cell within a column that considers the `colSpan` attribute of a row's cells. Cells with a 
- * `colSpan` greater than 1 are considered to span multiple column indicies.
- *
- * @private
- * @param {HTMLTableRowElement} row Row from which to extract a column.
- * @param {number} columnIndex Column index of the cell to be extracted.
- * @returns {HTMLCellElement} Cell corresponding to the given `columnIndex`.
- * @throws {RangeError} If `columnIndex` is greater than the number of columns spanned by the given `row`.
- */
-SimpleDataTable.getColumn = function (row, columnIndex) {
-	'use strict';
-	
-	var i, j, cells, cell, currentIndex;
-	
-	cells = row.cells;
-	currentIndex = 0;
-	
-	for (i = 0; i < cells.length; ++i) {
-		cell = cells[i];
-		for (j = 0; j < cell.colSpan; ++j) {
-			if (currentIndex++ == columnIndex) {
-				return cell;
-			}
-		}
-	}
-	
-	throw new RangeError('Attempt to retrieve column index ' + columnIndex + ' from a row with only ' + currentIndex + ' identified columns.');
-};
-
-
 
 
 
 // Instance methods
 /**
- * Sorts the backing table according to the given {@link SortDescriptor}s. This function can be called with a single
- * Array of {@link SortDescriptor}s or in a variatric manner.
+ * Sorts the first table body section of the backing table according to the given {@link SortDescriptor}s. This function can be called with a single
+ * `Array` of {@link SortDescriptor}s or in a variatric manner.
  *
  * @param {...SortDescriptor} args 
  *   {@link SortDescriptor}s to process. If the first argument is an Array, it will be used and subsequent arguments
@@ -223,8 +190,8 @@ SimpleDataTable.prototype.sort = function () {
 			
 			columnIndex = sortDescriptor.columnIndex;
 			
-			cellA = SimpleDataTable.getColumn(rowA, columnIndex);
-			cellB = SimpleDataTable.getColumn(rowB, columnIndex);
+			cellA = rowA[columnIndex];
+			cellB = rowB[columnIndex];
 			
 			compareValue = sortDescriptor.compare(cellA, cellB);
 			
@@ -249,7 +216,7 @@ SimpleDataTable.prototype.sort = function () {
 };
 
 /**
- * Filters the backing table according to the given {@link FilterDescriptor}s. This function can be called with a single
+ * Filters the first table body section of the backing table according to the given {@link FilterDescriptor}s. This function can be called with a single
  * `Array` of {@link FilterDescriptor}s or in a variatric manner.
  *
  * @param {...FilterDescriptor} args 
@@ -298,7 +265,7 @@ SimpleDataTable.prototype.filter = function () {
 		for (j = 0; j < filterDescriptors.length; ++j) {
 			filterDescriptor = filterDescriptors[j];
 			
-			if (!filterDescriptor.include(SimpleDataTable.getColumn(row, filterDescriptor.columnIndex))) {
+			if (!filterDescriptor.include(row[filterDescriptor.columnIndex])) {
 				filter = true;
 				break;
 			}
@@ -330,8 +297,7 @@ SimpleDataTable.prototype.clearFilter = function () {
 };
 
 /**
- * Clears the sorting for all columns. The original order (at the time this `SimpleDataTable` was constructed) for all
- * rows is restored.
+ * Clears the sorting for all columns. The original order for all rows (at the time this `SimpleDataTable` was constructed) is restored.
  */
 SimpleDataTable.prototype.clearSort = function () {
 	'use strict';
@@ -352,42 +318,24 @@ SimpleDataTable.prototype.clearSort = function () {
 	
 };
 
-SimpleDataTable.prototype.getColumn = function (row, columnIndex) {
-	'use strict';
-	
-	var headers, cells, i, numColumns;
-	
-	headers = this.table.tHead.rows[0].cells;
-	cells = row.cells;
-	
-	for (i = 0; i < headers.length; ++i) {
-		numColumns += headers[i].colSpan;
-	}
-	
-	if (columnIndex >= numColumns) {
-		throw new RangeError();
-	}
-	
-	
-};
 
 /**
- * Returns the `HTMLTableCellElement`s defining the column headers of this table.
+ * Returns the `HTMLTableElement` backing this `SimpleDataTable`.
  *
- * @returns {MinimalList} The `HTMLTableCellElement`s defining the column headers of this table.
+ * @returns {MinimalList} The `HTMLTableElement` backing this `SimpleDataTable`.
  */
-SimpleDataTable.prototype.getHeaders = function () {
+SimpleDataTable.prototype.getTableElement = function () {
 	'use strict';
 	
-	return this.table.tHead.rows[0];
+	return this.table;
 };
 
 /**
- * Returns the `HTMLTableRowElement`s containing the data of this table. Rows that have been filtered are excluded unless
+ * Returns the `HTMLTableRowElement`s of the first table body section of the backing table. Rows that have been filtered are excluded unless
  * `includeFiltered` is `true`.
  *
  * @param {boolean} [includeFiltered=false] Whether to include rows that are filtered in the result.
- * @returns {MinimalList} `HTMLTableRowElement`s containing the data of this table.
+ * @returns {MinimalList} `HTMLTableRowElement`s of the first table body section of the backing table.
  */
 SimpleDataTable.prototype.getRows = function (includeFiltered) {
 	'use strict';

@@ -79,7 +79,10 @@
  * @param {ColumnControlFactory} [columnControlFactory] Optional factory if custom column controls are needed.
  * @classdesc
  *
- * Facilitates communication between the API-level {@link SimpleDataTable} and the UI-level {@link ColumnControl}.
+ * Facilitates communication between the API-level {@link SimpleDataTable} and the UI-level {@link ColumnControl}. In addition to the constraints
+ * placed on the backing table element in {@link SimpleDataTable}, this class requires the backing table to also define a table header section
+ * (`<thead>`) with the first row's cells defining the column headers of this table. Although the table can define more than one row in its table
+ * header section, only the first row will be processed by this class.
  * 
  * Upon {@link SimpleDataTableListener#init initialization}, this class will add itself as a listener for click events on
  * all cells in the first row of the backing `HTMLTableElement`'s table header section. The class name
@@ -103,10 +106,8 @@ function SimpleDataTableListener(table, columnControlFactory) {
 	
 	if (table instanceof SimpleDataTable) {
 		this.dataTable = dataTable;
-		this.table = dataTable.table;
 	} else {
 		this.dataTable = new SimpleDataTable(table);
-		this.table = table;
 	}
 	
 	/**
@@ -160,9 +161,10 @@ SimpleDataTableListener.processedColumnHeader = 'data-table-column-header';
 SimpleDataTableListener.prototype.init = function () {
 	'use strict';
 	
-	var tableHeaders, tableHeaderCache, i, tableHeader;
+	var table, tableHeaders, tableHeaderCache, i, tableHeader;
 	
-	tableHeaders = this.table.tHead.rows[0].cells;
+	table = this.dataTable.getTableElement();
+	tableHeaders = table.tHead.rows[0].cells;
 	tableHeaderCache = this.tableHeaderCache = [];
 	
 	
@@ -359,4 +361,10 @@ SimpleDataTableListener.prototype.processTable = function () {
 	}
 };
 
+
+SimpleDataTableListener.prototype.getDataTable = function () {
+	'use strict';
+	
+	return this.dataTable;
+};
 

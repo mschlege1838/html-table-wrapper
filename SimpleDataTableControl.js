@@ -34,14 +34,14 @@
 /**
  * @constructor
  * @implements ColumnControl
- * @param {number} columnIndex
+ * @param {number} columnIndex 
  * @param {HTMLTableCellElement} tableHeader
  * @param {SimpleDataTableListener} parent
  * @classdesc
  *
  * The default {@link ColumnControl} used by {@link SimpleDataTableListener}. Defines a UI where an end-user
- * can select a column's type and sort order, as well as define filters based upon user-entered values and
- * individual cell values. Uses a backing {@link ContextControl}.
+ * can select a column's type and sort order, and define filters based upon a custom, user-entered value as well as seletion from a list of
+ * individual cell values (similar to the column filtering dialogue in MS Excel). Uses a backing {@link ContextControl}.
  */
 function SimpleDataTableControl(columnIndex, tableHeader, parent, cellInterpreter) {
 	'use strict';
@@ -442,10 +442,10 @@ SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 	columnIndex = this.columnIndex;
 	
 	result = [];
-	rows = this.table.tBodies[0].rows;
+	rows = this.parent.getDataTable().getRows();
 	
 	for (i = 0; i < rows.length; ++i) {
-		cell = SimpleDataTable.getColumn(rows[i], columnIndex);
+		cell = rows[i][columnIndex];
 		if (callback) {
 			if (callback.populateCellValues) {
 				callback.populateCellValues(cell, result);

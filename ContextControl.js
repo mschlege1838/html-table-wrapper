@@ -27,17 +27,20 @@
  * will listen for this event and populate the control element with desired content. The control element can be obtained in such a listener via
  * `{@link ContextControl#getControlElement event.target.getControlElement()}`.
  * 
- * The control enters and exits 'mobile view' state based upon the percentage of the viewport its backing element occupies. When not in the mobile view state, the `left` and
- * `top` `CSSStyleDeclaration` properties of the control's backing element are set based upon the offset element last passed to the {@link ContextControl#open} function,
- * as well as the {@link ContextControl#horizontalOffset} and {@link ContextControl#verticalOffset} properties. When in the mobile view state, the `left` and `top` properties
+ * The control enters and exits the 'mobile view' state based upon the percentage of the window its backing element occupies. When not in mobile view state, the `left` and
+ * `top` `CSSStyleDeclaration` properties of the control's backing element are set based upon the position of the offset element last passed to the {@link ContextControl#open} function,
+ * and the {@link ContextControl#horizontalOffset} and {@link ContextControl#verticalOffset} properties of this class. When in mobile view state, the `left` and `top` properties
  * are removed from the element's `CSSStyleDeclaration`, and the class name {@link ContextControl.mobileViewClassName} is added to the element as well as `document.body`. When
  * the control exists mobile view state, the class name is removed (from both the element and `document.body`), and the `left` and `top` CSS properties are re-set in the manner
  * stated previously.
  * 
- * **TODO Transition from non-mobile to mobile view state if multiple `ContextControl`s are opened**
- *
  * Upon being {@link ContextControl#open opened}, this class will begin listening for window resize events and {@link ContextControl#position position} itself upon
  * receiving them. Upon being {@link ContextControl#close closed}, this class will stop listening for resize events.
+ *
+ * Due to the fact `ContextControl` relies only on the window's size for determining mobile view state, it gives rise to the possiblity that more than one `ContextControl`
+ * could be opened in non-mobile view state, but the window is resized such that mobile view state is entered. In this case, both `ContextControl`s would enter mobile view state,
+ * but (assuming default styling), only one would be visible. Due to the unlikelihood of this scenario, it is not handled by this class, however if it is determined to be more
+ * likely for a particular application, that application should implement communication between `ContextControl`s to handle this situation appropritely.
  * 
  * Of note, this class *only* sets element class names, and a limited set of CSS properties; most styling should be handled by dedicated stylesheets. A baseline 
  * stylesheet is provided at **TODO default style link here**.
@@ -130,46 +133,6 @@ ContextControl.defaultVerticalOffset = 10;
 
 
 // Static Methods
-/**
- * Utiltiy function to obtain how far right the window is scrolled.
- *
- * @private
- * @returns {number} How far right the window is scrolled.
- */
-ContextControl.getWindowScrollX = function () {
-	'use strict';
-	
-	if (typeof window.scrollX === 'number') {
-		return window.scrollX;
-	}
-	
-	if (typeof window.pageXOffset === 'number') {
-		return window.pageXOffset;
-	}
-	
-	return document.documentElement.scrollLeft;
-};
-
-/**
- * Utility function to obtain how far down the window is scrolled.
- *
- * @private
- * @returns {number} How far down the window is scrolled.
- */
-ContextControl.getWindowScrollY = function () {
-	'use strict';
-	
-	if (typeof window.scrollY === 'number') {
-		return window.scrollY;
-	}
-	
-	if (typeof window.pageYOffset === 'number') {
-		return window.pageYOffset;
-	}
-	
-	return document.documentElement.scrollTop;
-};
-
 /**
  * Creates an empty control element.
  *
@@ -352,7 +315,7 @@ ContextControl.prototype.open = function (offsetElement) {
 
 
 /**
- * Evaluates the percentage of the viewport this control's backing element occupies, and enters/exits mobile view state as necessary, based upon
+ * Evaluates the percentage of the window this control's backing element occupies, and enters/exits mobile view state as necessary, based upon
  * {@link ContextControl.mobileThresholdRatio}. If it is determined mobile view state should not be entered, the element's `left` and `top` 
  * `CSSStyleDeclaration` properties will be set based upon the position of the current offset element (last passed to {@link ContextControl#open})
  * and the {@link ContextControl#horizontalOffset} and {@link ContextControl#verticalOffset} properties of this control. If it is determined mobile
@@ -481,16 +444,28 @@ ContextControl.prototype.getControlElement = function () {
 ContextControl.MobileViewState = function (controlElement) {
 	'use strict';
 	
-	
+	/**
+	 * @private
+	 * @type {HTMLElement}
+	 */
 	this.controlElement = controlElement;
+	
+	/**
+	 * @package
+	 * @type {number}
+	 */
 	this.initialWidth = controlElement.offsetWidth;
+	
+	/**
+	 * @package
+	 * @type {number}
+	 */
 	this.initialHeight = controlElement.offsetHeight;
-	this.scrollX = ContextControl.getWindowScrollX();
-	this.scrollY = ContextControl.getWindowScrollY();
 };
 
 /**
- * Performs `CSSStyleDeclaration`/classname assignments necessary to enter mobile view state.
+ * Removes the `left` and `top` `CSSStyleDeclaration` properties from the backing element; assigns the
+ * {@link ContextControl.mobileViewClassName} class name to the backing element and `document.body`.
  *
  * @package
  */
@@ -507,12 +482,12 @@ ContextControl.MobileViewState.prototype.setupMobileView = function () {
 	
 	IE9Compatibility.addClass(controlElement, ContextControl.mobileViewClassName);
 	IE9Compatibility.addClass(document.body, ContextControl.mobileViewClassName);
-	
-	window.scrollTo(0, 0);
 };
 
 /**
- * Performs `CSSStyleDeclaration`/classname assignments necessary to exit mobile view state.
+ * Removes the {@link ContextControl.mobileViewClassName} class name from the backing element and `document.body`.
+ * It is assumed the `left` and `top` `CSSStyleDeclaration` properties will be calculated and assigned by calling
+ * code.
  *
  * @package
  */
@@ -525,9 +500,8 @@ ContextControl.MobileViewState.prototype.restoreDefaultView = function () {
 		
 	IE9Compatibility.removeClass(controlElement, ContextControl.mobileViewClassName);
 	IE9Compatibility.removeClass(document.body, ContextControl.mobileViewClassName);
-	
-	window.scrollTo(this.scrollX, this.scrollY);
 };
+
 
 
 // OffsetCoordinates
@@ -538,7 +512,7 @@ ContextControl.MobileViewState.prototype.restoreDefaultView = function () {
  * @constructor
  * @classdesc
  *
- * Generic class representing the x, y viewport offset coordinates of an `HTMLElement`.
+ * Generic class representing the x, y window offset coordinates of an `HTMLElement`.
  *
  */
 ContextControl.OffsetCoordinates = function () {

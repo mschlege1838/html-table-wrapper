@@ -48,6 +48,7 @@ IEGeneralCompatibility.parseFloat = function (val) {
  * Adds compatibility for the `Number.isNaN` function.
  *
  * @param {*} val Value to be tested.
+ * @returns {boolean} `true` if (and only if) `val` is `NaN`, otherwise `false`.
  */
 IEGeneralCompatibility.isNaN = function (val) {
 	'use strict';
