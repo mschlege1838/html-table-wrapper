@@ -117,8 +117,8 @@ SimpleDataTableControl.CLICK_TARGETS_SELECTOR =
  * @type {object}
  */
 SimpleDataTableControl.i18nStrings = {
-	columnOptionsLabel: 'Column Options',
-	sortOptionsLabel: 'Sort Options',
+	columnOptionsLabel: 'Column Type',
+	sortOptionsLabel: 'Sort Order',
 	
 	inferDataType: 'Infer',
 	textOnlyDataType: 'Text Only',
@@ -379,28 +379,21 @@ SimpleDataTableControl.prototype.updateParent = function () {
 SimpleDataTableControl.prototype.selectAllColumnValues = function (checked) {
 	'use strict';
 	
-	var columnValues, columnValueInputs, columnValueInput, i;
+	var columnValueInputs, columnValueInput, i;
 	
 	columnValueInputs = this.contextControl.getControlElement().querySelectorAll('input.column-value');
-	columnValues = [];
-	
 
 	for (i = 0; i < columnValueInputs.length; ++i) {
-		columnValueInput = columnValueInputs[i];
-		columnValueInput.checked = checked;
-		if (checked) {
-			columnValues.push(columnValueInput.value)
-		}
+		columnValueInputs[i].checked = checked;
 	}
 	
-	this.filterDescriptor.columnValues = columnValues;
 };
 
 
 SimpleDataTableControl.prototype.getFilterDescriptor = function () {
 	'use strict';
 	
-	var controlElement, compareValue;
+	var controlElement, compareValue, columnValueInputs, i, selectedValues, columnValueInput;
 	
 	controlElement = this.contextControl.getControlElement();
 	
@@ -409,17 +402,27 @@ SimpleDataTableControl.prototype.getFilterDescriptor = function () {
 	}
 	
 	compareValue = controlElement.querySelector('input.filter-by-value-value').value;
-	if (!compareValue) {
+	
+	columnValueInputs = controlElement.querySelectorAll('input.column-value');
+	selectedValues = [];
+	for (i = 0; i < columnValueInputs.length; ++i) {
+		columnValueInput = columnValueInputs[i];
+		if (columnValueInput.checked) {
+			selectedValues.push(columnValueInput.value);
+		}
+	}
+	
+	if (!compareValue && selectedValues.length === columnValueInputs.length) {
 		return null;
 	}
 	
-	return new SimpleDataTableControl.ColumnValueFilter(this.columnIndex, this.getOperator(), compareValue, this.getColumnType(), this.getSelectedCellValues(), this.cellInterpreter);
+	return new SimpleDataTableControl.ColumnValueFilter(this.columnIndex, this.getOperator(), compareValue, this.getColumnType(), selectedValues, this.cellInterpreter);
 };
 
 SimpleDataTableControl.prototype.getSortDescriptor = function () {
 	'use strict';
 	
-	var controlElement, sortOrder, columnType;
+	var sortOrder, columnType;
 	
 	if (!this.contextControl.getControlElement()) {
 		return null;
@@ -606,35 +609,6 @@ SimpleDataTableControl.prototype.getSortOrder = function () {
 		default:
 			return null;
 	}
-};
-
-
-/**
- * Returns an `Array` containing current selected individual cell values for this column (i.e. the selected values in the MS Excel-like filtering feature
- * offered by this control), or `null` if this control has not yet been opened.
- *
- * @returns {Array} The current selected individual cell values for this column, or `null` if this control has not yet been opened.
- */
-SimpleDataTableControl.prototype.getSelectedCellValues = function () {
-	'use strict';
-	
-	var controlElement, columnValueInputs, selectedValues, i, columnValueInput;
-	
-	controlElement = this.contextControl.getControlElement();
-	if (!controlElement) {
-		return null;
-	}
-	
-	columnValueInputs = controlElement.querySelectorAll('input.column-value');
-	selectedValues = [];
-	for (i = 0; i < columnValueInputs.length; ++i) {
-		columnValueInput = columnValueInputs[i];
-		if (columnValueInput.checked) {
-			selectedValues.push(columnValueInput.value);
-		}
-	}
-	
-	return selectedValues;
 };
 
 
