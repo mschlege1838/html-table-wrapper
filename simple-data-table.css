@@ -10,8 +10,7 @@
 .data-table-column-options {
 	background-color: white;
 	border: 1px solid black;
-	width: 260px;
-	height: 527px;
+	width: 20em;
 	padding: .5em;
 	box-sizing: border-box;
 }
@@ -30,6 +29,7 @@
 	height: 12em;
 	overflow-y: scroll;
 	padding: 0;
+	margin: 0;
 }
 
 .data-table-column-options .filter-by-cell-values li {
