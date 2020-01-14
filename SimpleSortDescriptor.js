@@ -45,16 +45,16 @@ SimpleSortDescriptor.prototype.compare = function (cellA, cellB) {
 	
 	var aVal, bVal, result, columnType, aNum, aNaN, bNum, bNaN;
 	
-	aVal = cellA.textContent.trim();
-	bVal = cellB.textContent.trim();
+	aVal = IE8Compatibility.getTextContent(cellA).trim();
+	bVal = IE8Compatibility.getTextContent(cellB).trim();
 	
 	columnType = this.columnType;
 	switch (columnType) {
 		case SimpleDataTableUtils.COLUMN_TYPE_INFER:
 			aNum = SimpleDataTableUtils.getNumber(aVal, true);
-			aNaN = IEGeneralCompatibility.isNaN(aNum);
+			aNaN = IE8Compatibility.isNaN(aNum);
 			bNum = SimpleDataTableUtils.getNumber(bVal, true);
-			bNaN = IEGeneralCompatibility.isNaN(bNum);
+			bNaN = IE8Compatibility.isNaN(bNum);
 			
 			if (aNaN && bNaN) {
 				result = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);

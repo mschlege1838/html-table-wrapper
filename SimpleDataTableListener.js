@@ -168,8 +168,8 @@ SimpleDataTableListener.prototype.init = function () {
 	
 	for (i = 0; i < tableHeaders.length; ++i) {
 		tableHeader = tableHeaders[i];
-		tableHeader.addEventListener('click', this, false);
-		IE9Compatibility.addClass(tableHeader, SimpleDataTableListener.processedColumnHeader);
+		IE8Compatibility.addEventListener(tableHeader, 'click', this, false);
+		IE8Compatibility.addClass(tableHeader, SimpleDataTableListener.processedColumnHeader);
 		tableHeaderCache.push(tableHeader);
 	}
 	
@@ -189,8 +189,8 @@ SimpleDataTableListener.prototype.dispose = function () {
 	tableHeaderCache = this.tableHeaderCache;
 	for (i = 0; i < tableHeaderCache.length; ++i) {
 		tableHeader = tableHeaderCache[i];
-		tableHeader.removeEventListener('click', this, false);
-		IE9Compatibility.removeClass(tableHeader, SimpleDataTableListener.processedColumnHeader)
+		IE8Compatibility.removeEventListener(tableHeader, 'click', this, false);
+		IE8Compatibility.removeClass(tableHeader, SimpleDataTableListener.processedColumnHeader)
 	}
 	
 	columnControls = this.columnControls;
@@ -223,7 +223,7 @@ SimpleDataTableListener.prototype.handleEvent = function (event) {
 	}
 	
 	// Get column index.
-	target = event.target;
+	target = IE8Compatibility.getEventTarget(event);
 	columnIndex = this.tableHeaderCache.indexOf(target);
 	if (columnIndex === -1) {
 		if (console && console.warn) {

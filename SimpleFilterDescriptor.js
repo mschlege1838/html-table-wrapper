@@ -99,7 +99,7 @@ SimpleFilterDescriptor.prototype.include = function (cell) {
 			break;
 	}
 	
-	columnValue = cell.textContent.trim();
+	columnValue = IE8Compatibility.getTextContent(cell).trim();
 	
 	return SimpleDataTableUtils.shouldInclude(columnValue, operation, this.compareValue, this.columnType);
 };

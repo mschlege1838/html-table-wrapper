@@ -91,9 +91,9 @@ SimpleDataTableUtils.getNumber = function (val, strict) {
 	}
 	
 	if (/^\d+$/.test(val)) {
-		return IEGeneralCompatibility.parseInt(val);
+		return IE8Compatibility.parseInt(val);
 	} else if (/^\d+(?:\.\d*)?(?:[eE]\d*)?$/.test(val)) {
-		return IEGeneralCompatibility.parseFloat(val);
+		return IE8Compatibility.parseFloat(val);
 	} else {
 		return strict ? Number.NaN : val;
 	}

@@ -188,7 +188,7 @@ ContextControl._getOffset = function (el, coordinates) {
 
 
 // Extension
-ContextControl.prototype = Object.create(SimpleEventDispatcher.prototype);
+ContextControl.prototype = IE8Compatibility.extend(SimpleEventDispatcher.prototype);
 
 
 
@@ -297,18 +297,18 @@ ContextControl.prototype.open = function (offsetElement) {
 	
 	
 	// Begin opening sequence.
-	IE9Compatibility.removeClass(controlElement, ContextControl.dialogueClosedClassName);
+	IE8Compatibility.removeClass(controlElement, ContextControl.dialogueClosedClassName);
 	
 	
 	// Position control.
 	this.position();
 	
 	// Register for resize events (for re-positioning).
-	window.addEventListener('resize', this, false);
+	IE8Compatibility.addEventListener(window, 'resize', this, false);
 	
 	
 	// Finish opening sequence.
-	IE9Compatibility.addClass(controlElement, ContextControl.dialogueOpenedClassName);
+	IE8Compatibility.addClass(controlElement, ContextControl.dialogueOpenedClassName);
 	
 	return controlElement;
 };
@@ -395,7 +395,7 @@ ContextControl.prototype.close = function () {
 		return;
 	}
 	
-	IE9Compatibility.removeClass(controlElement, ContextControl.dialogueOpenedClassName);
+	IE8Compatibility.removeClass(controlElement, ContextControl.dialogueOpenedClassName);
 	
 	
 	if (mobileViewState = this.mobileViewState) {
@@ -403,10 +403,10 @@ ContextControl.prototype.close = function () {
 		this.mobileViewState = null;
 	}
 	
-	window.removeEventListener('resize', this, false);
+	IE8Compatibility.removeEventListener(window, 'resize', this, false);
 	
 	
-	IE9Compatibility.addClass(controlElement, ContextControl.dialogueClosedClassName);
+	IE8Compatibility.addClass(controlElement, ContextControl.dialogueClosedClassName);
 };
 
 
@@ -480,8 +480,8 @@ ContextControl.MobileViewState.prototype.setupMobileView = function () {
 	controlStyle.removeProperty('left');
 	controlStyle.removeProperty('top');
 	
-	IE9Compatibility.addClass(controlElement, ContextControl.mobileViewClassName);
-	IE9Compatibility.addClass(document.body, ContextControl.mobileViewClassName);
+	IE8Compatibility.addClass(controlElement, ContextControl.mobileViewClassName);
+	IE8Compatibility.addClass(document.body, ContextControl.mobileViewClassName);
 };
 
 /**
@@ -498,8 +498,8 @@ ContextControl.MobileViewState.prototype.restoreDefaultView = function () {
 	
 	controlElement = this.controlElement;
 		
-	IE9Compatibility.removeClass(controlElement, ContextControl.mobileViewClassName);
-	IE9Compatibility.removeClass(document.body, ContextControl.mobileViewClassName);
+	IE8Compatibility.removeClass(controlElement, ContextControl.mobileViewClassName);
+	IE8Compatibility.removeClass(document.body, ContextControl.mobileViewClassName);
 };
 
 

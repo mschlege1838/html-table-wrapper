@@ -274,9 +274,9 @@ SimpleDataTable.prototype.filter = function () {
 		}
 		
 		if (filter) {
-			IE9Compatibility.addClass(row, SimpleDataTable.filteredClassName);
+			IE8Compatibility.addClass(row, SimpleDataTable.filteredClassName);
 		} else {
-			IE9Compatibility.removeClass(row, SimpleDataTable.filteredClassName);
+			IE8Compatibility.removeClass(row, SimpleDataTable.filteredClassName);
 		}
 	}
 };
@@ -293,7 +293,7 @@ SimpleDataTable.prototype.clearFilter = function () {
 	rows = this.table.tBodies[0].rows;
 	
 	for (i = 0; i < rows.length; ++i) {
-		IE9Compatibility.removeClass(rows[i], SimpleDataTable.filteredClassName);
+		IE8Compatibility.removeClass(rows[i], SimpleDataTable.filteredClassName);
 	}
 	
 };
@@ -356,7 +356,7 @@ SimpleDataTable.prototype.getRows = function (includeFiltered) {
 	result = [];
 	for (i = 0; i < rows.length; ++i) {
 		row = rows[i];
-		if (!IE9Compatibility.hasClass(row, SimpleDataTable.filteredClassName)) {
+		if (!IE8Compatibility.hasClass(row, SimpleDataTable.filteredClassName)) {
 			result.push(row);
 		}
 	}

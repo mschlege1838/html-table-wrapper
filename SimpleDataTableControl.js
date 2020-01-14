@@ -241,7 +241,7 @@ SimpleDataTableControl.checkCellInterpreter = function (callback) {
 SimpleDataTableControl.prototype.init = function () {
 	'use strict';
 	
-	this.contextControl.addEventListener('create', this, false);
+	IE8Compatibility.addEventListener(this.contextControl, 'create', this, false);
 };
 
 
@@ -254,15 +254,15 @@ SimpleDataTableControl.prototype.dispose = function () {
 	
 	controlElement = contextControl.getControlElement();
 	if (controlElement) {
-		controlElement.querySelector('input.filter-by-value-value').removeEventListener('keyup', this, false);
+		IE8Compatibility.removeEventListener(controlElement.querySelector('input.filter-by-value-value'), 'keyup', this, false);
 		
 		clickTargets = controlElement.querySelectorAll(SimpleDataTableControl.CLICK_TARGETS_SELECTOR);
 		for (i = 0; i < clickTargets.length; ++i) {
-			clickTargets[i].removeEventListener('click', this, false);
+			IE8Compatibility.removeEventListener(clickTargets[i], 'click', this, false);
 		}
 	}
 	
-	contextControl.removeEventListener('create', this, false);
+	IE8Compatibility.removeEventListener(contextControl, 'create', this, false);
 	contextControl.dispose();
 };
 
@@ -277,26 +277,26 @@ SimpleDataTableControl.prototype.handleEvent = function (event) {
 	
 	var target, sortOrder, operation, columnValues, value, checked, index, controlElement;
 	
-	target = event.currentTarget;
+	target = IE8Compatibility.getEventTarget(event);
 	
 	switch (event.type) {
 		case 'create':
 			this.defineContent(target.getControlElement());
 			break;
 		case 'click':
-			if (IE9Compatibility.hasClass(target, 'close-button')) {
+			if (IE8Compatibility.hasClass(target, 'close-button')) {
 				this.contextControl.close();
-			} else if (IE9Compatibility.hasClass(target, 'filter-by-value-operator')) {
-				this.contextControl.getControlElement().getElementsByClassName('filter-by-value-description')[0].textContent = this.getOperatorDescription();
+			} else if (IE8Compatibility.hasClass(target, 'filter-by-value-operator')) {
+				IE8Compatibility.setTextContent(this.contextControl.getControlElement().querySelector('.filter-by-value-description'), this.getOperatorDescription());
 				this.updateParent();
-			} else if (IE9Compatibility.hasClass(target, 'column-value')) {
+			} else if (IE8Compatibility.hasClass(target, 'column-value')) {
 				controlElement = this.contextControl.getControlElement();
 				controlElement.querySelector('input[name="select-all-cell-values"]').checked = !SimpleDataTableControl.hasUnchecked(controlElement.querySelectorAll('input.column-value'));
 				this.updateParent();
 			} else if (
-				IE9Compatibility.hasClass(target, 'column-type')
-				|| IE9Compatibility.hasClass(target, 'sort-direction')
-				|| IE9Compatibility.hasClass(target, 'filter-option-ignore-case')
+				IE8Compatibility.hasClass(target, 'column-type')
+				|| IE8Compatibility.hasClass(target, 'sort-direction')
+				|| IE8Compatibility.hasClass(target, 'filter-option-ignore-case')
 			) {
 				this.updateParent();
 			} else {
@@ -471,7 +471,7 @@ SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 				callback(cell, result);
 			}
 		} else {
-			value = cell.textContent.trim();
+			value = IE8Compatibility.getTextContent(cell).trim();
 			if (result.indexOf(value) === -1) {
 				result.push(value);
 			}
@@ -691,7 +691,7 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	columnIndex = this.columnIndex;
 	columnValues = this.getColumnValues();
 	
-	IE9Compatibility.addClass(container, SimpleDataTableControl.controlClassName)
+	IE8Compatibility.addClass(container, SimpleDataTableControl.controlClassName)
 	
 	// Compose content.
 	builder = new XMLBuilder();
@@ -820,11 +820,11 @@ SimpleDataTableControl.prototype.defineContent = function (container) {
 	
 	
 	// Register events.
-	container.querySelector('input.filter-by-value-value').addEventListener('keyup', this, false);
+	IE8Compatibility.addEventListener(container.querySelector('input.filter-by-value-value'), 'keyup', this, false);
 	
 	clickTargets = container.querySelectorAll(SimpleDataTableControl.CLICK_TARGETS_SELECTOR);
 	for (i = 0; i < clickTargets.length; ++i) {
-		clickTargets[i].addEventListener('click', this, false);
+		IE8Compatibility.addEventListener(clickTargets[i], 'click', this, false);
 	}
 	
 };
@@ -937,7 +937,7 @@ SimpleDataTableControl.ColumnValueFilter.prototype.include = function (cell) {
 		currentCellCache.length = 0;
 		return false;
 	} else {
-		return this.shouldInclude(cell.textContent.trim());
+		return this.shouldInclude(IE8Compatibility.getTextContent(cell).trim());
 	}
 	
 };

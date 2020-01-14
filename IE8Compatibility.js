@@ -51,7 +51,7 @@ IE8Compatibility.allRegisteredListeners = null;
 IE8Compatibility.addEventListener = function (target, type, listener, useCapture) {
 	'use strict';
 	
-	var nominalListener, allRegisteredListeners;
+	var nominalListener, allRegisteredListeners, nominalType;
 	
 	if (target.addEventListener) {
 		target.addEventListener(type, listener, useCapture);
@@ -69,15 +69,15 @@ IE8Compatibility.addEventListener = function (target, type, listener, useCapture
 			allRegisteredListeners = IE8Compatibility.allRegisteredListeners = [];
 		}
 		
-		if (IE8Compatibility.getListenerIndex(listener) !== -1) {
+		nominalType = type.toLowerCase();
+		if (IE8Compatibility.getListenerIndex(target, nominalType, listener) !== -1) {
 			return;
 		}
 		
 		nominalListener = function (event) {
 			listener.handleEvent(event)
 		};
-		nominalListener.srcListener = listener;
-		allRegisteredListeners.push(nominalListener);
+		allRegisteredListeners.push(new IE8Compatibility.IE8EventHandler(target, nominalType, nominalListener));
 	} else {
 		nominalListener = listener;
 	}
@@ -97,7 +97,7 @@ IE8Compatibility.addEventListener = function (target, type, listener, useCapture
 IE8Compatibility.removeEventListener = function (target, type, listener, useCapture) {
 	'use strict';
 	
-	var nominalListener, allRegisteredListeners, listenerIndex;
+	var nominalListener, allRegisteredListeners, listenerIndex, nominalType, registeredListener;
 	
 	if (target.removeEventListener) {
 		target.removeEventListener(target, type, listener, useCapture);
@@ -109,20 +109,41 @@ IE8Compatibility.removeEventListener = function (target, type, listener, useCapt
 	}
 	
 	if (listener && typeof listener.handleEvent === 'function') {
+		nominalType = type.toLowerCase();
+		
 		allRegisteredListeners = IE8Compatibility.allRegisteredListeners;
-		if (!allRegisteredListeners || (listenerIndex = IE8Compatibility.getListenerIndex(listener)) === -1) {
+		if (!allRegisteredListeners || (listenerIndex = IE8Compatibility.getListenerIndex(target, nominalType, listener)) === -1) {
 			return;
 		}
 		
-		nominalListener = allRegisteredListeners[listenerIndex];
-		delete nominalListener.srcListener;
+		registeredListener = allRegisteredListeners[listenerIndex];
+		nominalListener = registeredListener.srcListener;
+		
 		allRegisteredListeners.splice(listenerIndex, 1);
+		registeredListener.dispose();
 	} else {
 		nominalListener = listener;
 	}
 	
 	target.detachEvent('on' + type, nominalListener);
 };
+
+/**
+ * Adds compatibility for the DOM `Event.target` property. If `target` not a defined property of the given `event`, returns `event.srcElement`.
+ *
+ * @param {Event} event
+ * @returns The `event.target` property of `event` if `target` is a defined property, otherwise `event.srcElement`.
+ */
+IE8Compatibility.getEventTarget = function (event) {
+	'use strict';
+	
+	if ('target' in event) {
+		return event.target;
+	}
+	
+	return event.srcElement;
+};
+
 
 /**
  * Adds compatibility for `Object.create` for the specific use-case of prototype-based inheritance.
@@ -201,6 +222,55 @@ IE8Compatibility.getTextContent = function (node) {
 };
 
 /**
+ * The corresponding setter function for {@link IE8Compatibility.getTextContent}.
+ *
+ * @param {Node} node Node whose text content is to be set.
+ * @param {string} text Text content to set on `node`.
+ * @see https://dom.spec.whatwg.org/#dom-node-textcontent
+ */
+IE8Compatibility.setTextContent = function (node, text) {
+	'use strict';
+	
+	var children;
+	
+	if ('textContent' in node) {
+		node.textContent = text;
+		return;
+	}
+	
+	switch (node.nodeType) {
+		case 1: // ELEMENT_NODE
+		case 11: // DOCUMENT_FRAGMENT_NODE
+			children = node.childNodes;
+			while (children.length) {
+				node.removeChild(children[0]);
+			}
+			
+			node.appendChild(document.createTextNode(text));
+			break;
+			
+		case 3: // TEXT_NODE
+		case 4: // CDATA_SECTION_NODE
+		case 7: // PROCESSING_INSTRUCTION_NODE
+		case 8: // COMMENT_NODE
+			node.nodeValue = text;
+			break;
+			
+		case 2: // ATTRIBUTE_NODE (Deprecated)
+			node.value = text;
+			break;
+		
+		// Default includes:
+		//   5/ENTITY_REFERENCE_NODE (Deprecated)
+		//   6/ENTITY_NODE (Deprecated)
+		//   9/DOCUMENT_NODE
+		//   10/DOCUMENT_TYPE_NODE
+		//   12/NOTATION_NODE (Deprecated)
+		default:
+	}
+};
+
+/**
  * Recursive helper for {@link IE8Compatibility.getTextContent}. Returns the concatenation of all descendant child nodes that are
  * of type `TEXT_NODE` (3). A depth-first traversal is performed, as is specified in the DOM living standard for `Node.textContent`.
  *
@@ -233,20 +303,26 @@ IE8Compatibility._getTextContent = function (nodeList) {
 };
 
 /**
- * Finds the index of the given `listener` in {@link IE8Compatibility.allRegisteredListeners}. Returns -1 if not found.
+ * Finds the index of the corresponding {@link IE8Compatibility.IE8EventHandler} for the given `target`, `type` and `listener` in 
+ * {@link IE8Compatibility.allRegisteredListeners}. Returns -1 if not found.
  *
  * @private
- * @param {EventListener} listener `EventListener` whose index is to be retrieved.
- * @returns {number} Index of the given `listener` in {@link IE8Compatibility.allRegisteredListeners} or -1 if not found.
+ * @param {EventTarget} target Target whose corresponding {@link IE8Compatibility.IE8EventHandler} is to be obtained.
+ * @param {string} type Event type whose corresponding {@link IE8Compatibility.IE8EventHandler} is to be obtained.
+ * @param {EventListener} listener `EventListener` registered on the given `target` for the given event `type`.
+ * @returns {number} 
+ *   Index of the corresponding {@link IE8Compatibility.IE8EventHandler} for the given `target`, `type` and `listener`, or -1
+ *   if no matching {@link IE8Compatibility.IE8EventHandler} could be found.
  */
-IE8Compatibility.getListenerIndex = function (listener) {
+IE8Compatibility.getListenerIndex = function (target, type, listener) {
 	'use strict';
 	
-	var listeners, i;
+	var listeners, listener, i;
 	
 	listeners = IE8Compatibility.allRegisteredListeners;
 	for (i = 0; i < listeners.length; ++i) {
-		if (listeners[i].srcListener === listener) {
+		listener = listeners[i];
+		if (listener.target === target && listener.type === type && listener.srcListener === listener) {
 			return i;
 		}
 	}
@@ -255,6 +331,52 @@ IE8Compatibility.getListenerIndex = function (listener) {
 };
 
 
+
+
+/**
+ *
+ * @constructor
+ * @param {EventTarget} target `EventTarget` to which the given `listener` is registered.
+ * @param {string} type Event type for which the given `listener` is registered.
+ * @param {EventListener} listener `EventListener` registered on `target` for the given event `type`.
+ * @private
+ * @extends Disposable
+ * @classdesc
+ *   Container object representing a registered `EventListener`. Holds the `EventTarget` upon which the `EventListener` is
+ *   registered, as well as the type of event for which it listens.
+ */
+IE8Compatibility.IE8EventHandler = function (target, type, srcListener) {
+	'use strict';
+	
+	/**
+	 * `EventTarget` to which {@link IE8Compatibility.IE8EventHandler#srcListener} is registered.
+	 *
+	 * @type {EventTarget}
+	 */
+	this.target = target;
+	
+	/**
+	 * Event type for which {@link IE8Compatibility.IE8EventHandler#srcListener} is registered.
+	 *
+	 * @type {string}
+	 */
+	this.type = type;
+	
+	/**
+	 * `EventListener` registered on {@link IE8Compatibility.IE8EventHandler#target} for events of type
+	 * {@link IE8Compatibility.IE8EventHandler#type}.
+	 *
+	 * @type {EventListener}
+	 */
+	this.srcListener = srcListener;
+};
+
+IE8Compatibility.IE8EventHandler.prototype.dispose = function () {
+	'use strict';
+	
+	delete this.target;
+	delete this.srcListener;
+};
 
 
 
