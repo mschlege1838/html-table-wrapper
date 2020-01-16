@@ -101,7 +101,7 @@ IE8Compatibility.removeEventListener = function (target, type, listener, useCapt
 	var handlerFunction, allRegisteredHandlers, listenerIndex, nominalType, handler;
 	
 	if (target.removeEventListener) {
-		target.removeEventListener(target, type, listener, useCapture);
+		target.removeEventListener(type, listener, useCapture);
 		return;
 	}
 	
