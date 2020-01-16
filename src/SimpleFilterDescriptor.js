@@ -3,10 +3,11 @@
 /**
  * @constructor
  * @implements FilterDescriptor
- * @param {number} columnIndex Column index this FilterDescriptor describes.
+ * @param {number} columnIndex Column index this `SimpleFilterDescriptor` describes.
  * @param {*} compareValue Value to which cells are to be compared.
  * @param {(string)} [operation='='] 
- *   String indicating the operation this filter is to perform. Must be one of the following: '=', '!=' '&lt', '&gt;' '&lt;=', '&gt;=', or '~'.
+ *   String indicating the operation this filter is to perform. Must be one of the following: '`='`, '`!=`' '`&lt;`', '`&gt;`' '`&lt;=`', 
+ *   '`&gt;=`', '`~`', or '`~~`'.
  * @param {number} [columnType={@link SimpleDataTableUtils.COLUMN_TYPE_INFER}] How the values of cells in this column are to be determined.
  * @classdesc
  *
@@ -20,8 +21,8 @@
  * - `'>='` (Greater Than Or Equal To)
  * - `'<='` (Less Than Or Equal To)
  * - `'!='` (Not Equals)
- * - `'%'` (Contains, Ignore Case)
- * - `'%%'` (Contains, Case Sensitive)
+ * - `'~'` (Contains, Ignore Case)
+ * - `'~~'` (Contains, Case Sensitive)
  * 
  */
 function SimpleFilterDescriptor(columnIndex, compareValue, operation, columnType) {
@@ -91,10 +92,10 @@ SimpleFilterDescriptor.prototype.include = function (cell) {
 		case '!=':
 			operation = SimpleDataTableUtils.FILTER_FLAG_NOT | SimpleDataTableUtils.FILTER_OP_EQUALS;
 			break;
-		case '%':
+		case '~':
 			operation = SimpleDataTableUtils.FILTER_OP_CONTAINS | SimpleDataTableUtils.FILTER_FLAG_IGNORE_CASE;
 			break;
-		case '%%':
+		case '~~':
 			operation = SimpleDataTableUtils.FILTER_OP_CONTAINS;
 			break;
 	}

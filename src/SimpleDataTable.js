@@ -137,7 +137,7 @@ SimpleDataTable.copy = function (src) {
  * {@link SimpleDataTable#clearSort} is implicitly called.
  *
  * @param {...SortDescriptor} args 
- *   {@link SortDescriptor}s to process. If the first argument is an Array, it will be used and subsequent arguments
+ *   {@link SortDescriptor}s to process. If the first argument is an `Array`, it will be used and subsequent arguments
  *   will be ignored.
  */
 SimpleDataTable.prototype.sort = function () {
@@ -324,7 +324,7 @@ SimpleDataTable.prototype.clearSort = function () {
 /**
  * Returns the `HTMLTableElement` backing this `SimpleDataTable`.
  *
- * @returns {MinimalList} The `HTMLTableElement` backing this `SimpleDataTable`.
+ * @returns {HTMLTableElement} The `HTMLTableElement` backing this `SimpleDataTable`.
  */
 SimpleDataTable.prototype.getTableElement = function () {
 	'use strict';

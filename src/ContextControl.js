@@ -23,14 +23,14 @@
  * Simple implementation of an HTML DOM based context control. This class (lazily) creates a blank `HTMLDivElement` to hold the control's content, and applies class
  * names corresponding to when the control is opened, closed or should take on the 'mobile view' state.
  * 
- * The first time this control is {@link ContextControl#open opened}, the {@link ContextControl#event:create create} event is fired. It is expected client code
- * will listen for this event and populate the control element with desired content. The control element can be obtained in such a listener via
+ * The first time a control is {@link ContextControl#open opened}, the {@link ContextControl#event:create create} event is fired. It is expected client code
+ * will listen for this event and populate the control's element with desired content. The control's element can be obtained in such a listener via
  * `{@link ContextControl#getControlElement event.target.getControlElement()}`.
  * 
  * The control enters and exits the 'mobile view' state based upon the percentage of the window its backing element occupies. When not in mobile view state, the `left` and
  * `top` `CSSStyleDeclaration` properties of the control's backing element are set based upon the position of the offset element last passed to the {@link ContextControl#open} function,
  * and the {@link ContextControl#horizontalOffset} and {@link ContextControl#verticalOffset} properties of this class. When in mobile view state, the `left` and `top` properties
- * are removed from the element's `CSSStyleDeclaration`, and the class name {@link ContextControl.mobileViewClassName} is added to the element as well as `document.body`. When
+ * of the element's `CSSStyleDeclaration` are both set to `0`, and the class name {@link ContextControl.mobileViewClassName} is added to the element as well as `document.body`. When
  * the control exists mobile view state, the class name is removed (from both the element and `document.body`), and the `left` and `top` CSS properties are re-set in the manner
  * stated previously.
  * 
@@ -43,7 +43,7 @@
  * likely for a particular application, that application should implement communication between `ContextControl`s to handle this situation appropritely.
  * 
  * Of note, this class *only* sets element class names, and a limited set of CSS properties; most styling should be handled by dedicated stylesheets. A baseline 
- * stylesheet is provided at **TODO default style link here**.
+ * stylesheet (based on default class names) is provided <a href="..\..\style\context-control.css">here</a>.
  */
 function ContextControl(horizontalOffset, verticalOffset) {
 	'use strict';
@@ -102,7 +102,7 @@ ContextControl.dialogueOpenedClassName = 'context-control-opened';
 ContextControl.dialogueClosedClassName = 'context-control-closed';
 
 /**
- * Class name added to control elements when the mobile view state is entered. Default value is `'context-control-mobile-view'`.
+ * Class name added to control elements and `document.body` when the mobile view state is entered. Default value is `'context-control-mobile-view'`.
  * 
  * @type {string}
  */
@@ -110,21 +110,21 @@ ContextControl.mobileViewClassName = 'context-control-mobile-view';
 
 /**
  * Decimal percentage of the screen a `ContextControl`'s element should occupy to trigger entry into mobile view state. Default value
- * is 0.35.
+ * is `0.35`.
  *
  * @type {number}
  */
 ContextControl.mobileThresholdRatio = 0.35;
 
 /**
- * Default horizontal offset in pixels. Default value is 10.
+ * Default horizontal offset in pixels. Default value is `10`.
  *
  * @type {number}
  */
 ContextControl.defaultHorizontalOffset = 10;
 
 /**
- * Default vertical offset in pixels. Default value is 10.
+ * Default vertical offset in pixels. Default value is `10`.
  *
  * @type {number}
  */
@@ -320,7 +320,7 @@ ContextControl.prototype.open = function (offsetElement) {
  * `CSSStyleDeclaration` properties will be set based upon the position of the current offset element (last passed to {@link ContextControl#open})
  * and the {@link ContextControl#horizontalOffset} and {@link ContextControl#verticalOffset} properties of this control. If it is determined mobile
  * view state should be entered, the {@link ContextControl.mobileViewClassName} class is added to both the element and  `document.body`, and the 
- * `left` and `top` CSS properties are removed from the element.
+ * `left` and `top` CSS properties are set to `0`.
  */
 ContextControl.prototype.position = function () {
 	'use strict';
@@ -445,18 +445,24 @@ ContextControl.MobileViewState = function (controlElement) {
 	'use strict';
 	
 	/**
+	 * Parent {@link ContextControl}'s backing element.
+	 *
 	 * @private
 	 * @type {HTMLElement}
 	 */
 	this.controlElement = controlElement;
 	
 	/**
+	 * Width of the backing element at the time mobile-view state was entered.
+	 *
 	 * @package
 	 * @type {number}
 	 */
 	this.initialWidth = controlElement.offsetWidth;
 	
 	/**
+	 * Height of the backing element at the time mobile-view state was entered.
+	 *
 	 * @package
 	 * @type {number}
 	 */
@@ -518,12 +524,12 @@ ContextControl.OffsetCoordinates = function () {
 	'use strict';
 	
 	/**
-	 * Offset x (left) coordinate.
+	 * Offset x (`left`) coordinate.
 	 */
 	this.x = 0;
 	
 	/**
-	 * Offset y (top) coordinate.
+	 * Offset y (`top`) coordinate.
 	 */
 	this.y = 0;
 };

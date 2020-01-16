@@ -1,15 +1,18 @@
 
 // Constructor
 /**
+ * Default constructor.
+ *
  * @constructor
  * @classdesc
  *
- * Simplistic implementation of a builder for XML strings. All tags, attributes, attribute values and content
+ * Simplistic implementation of a builder for XML strings. The values for all tags, attributes, attribute values and content
  * have reserved characters replaced with their corresponding XML entity, regardless if such replacement is explicitly
- * necessary (with the exception of calls to {@link XMLBuilder#appendDirect} in which the given value is appended as-is).
+ * necessary (with the exception of calls to {@link XMLBuilder#appendDirect} in which the given value is appended to the
+ * underlying data as-is).
  *
  * By default, the underlying data is maintained using string concatenation, however if the execution environment
- * handles array-based concatenation more efficiently, set {@link XMLBuilder.useArray} to `true`.
+ * handles `Array`-based concatenation more efficiently, set {@link XMLBuilder.useArray} to `true`.
  *
  * This implementation is state-based, and therefore, not thread-safe.
  */
@@ -25,7 +28,7 @@ function XMLBuilder() {
 	this.stack = [];
 	
 	/**
-	 * Current state of this XMLBuilder. Corresponds to one of the `STATE_*` static members of this class.
+	 * Current state of this `XMLBuilder`. Corresponds to one of the `STATE_*` static members of this class.
 	 *
 	 * @private
 	 * @type {number}
@@ -52,7 +55,7 @@ function XMLBuilder() {
 XMLBuilder.STATE_INITIAL = 0;
 
 /**
- * Within tag (i.e. attribute definitions) state constant.
+ * Within-tag (i.e. attribute definitions) state constant.
  *
  * @const
  * @private
@@ -61,7 +64,7 @@ XMLBuilder.STATE_INITIAL = 0;
 XMLBuilder.STATE_TAG = 1;
 
 /**
- * Between tag state constant.
+ * Between-tag state constant.
  *
  * @const
  * @private
@@ -86,7 +89,7 @@ XMLBuilder.ESCAPE_CHARACTER_MAPPING = {
 
 
 /**
- * Whether or not to use an `Array` to store the text content `XMLBuilder` instances.
+ * Whether or not to use an `Array` to store the underlying data within `XMLBuilder` instances.
  *
  * @private
  * @type {boolean}
@@ -95,10 +98,10 @@ XMLBuilder.useArray = false;
 
 // Static methods
 /**
- * Replaces all occurences of XML reserved characters in val with their corresponding XML entity.
+ * Replaces all occurences of XML reserved characters in `val` with their corresponding XML entity.
  *
  * @param {string} val Value to escape.
- * @returns {string} The given value with XML reserved characters replaced with their corresponding entities.
+ * @returns {string} The given `val` with XML reserved characters replaced with their corresponding entities.
  */
 XMLBuilder.escape = function (val) {
 	'use strict';
@@ -130,12 +133,12 @@ XMLBuilder.escape = function (val) {
 // Instance methods
 /**
  * Starts an XML tag. Subsequent calls to {@link XMLBuilder#attribute} will define attributes on this
- * tag. Calling {@link XMLBuilder#content} will close this tag opening (i.e. append the '>' character),
+ * tag. Calling {@link XMLBuilder#content} will close this tag opening (i.e. append the '`>`' character),
  * and begin defining the content of this tag's body. Calling {@link XMLBuilder#startTag} again will
  * also close this tag's opening, but start another tag as a child of this tag.
  *
  * @param {string} name Name of the tag to be started.
- * @returns {XMLBuilder} This XMLBuilder.
+ * @returns {XMLBuilder} This `XMLBuilder`.
  */
 XMLBuilder.prototype.startTag = function (name) {
 	'use strict';
@@ -157,13 +160,15 @@ XMLBuilder.prototype.startTag = function (name) {
 };
 
 /**
- * Adds an attribute with the given name and, optionally, the given value to the current tag. If no value is specified,
- * the given attribute is added as a 'boolean' attribute (i.e. no equals sign). If not called subsequent to a call to
- * {@link XMLBuilder#startTag}, an Error will be thrown.
+ * Adds an attribute with the given `name` and, optionally, the given `value` to the current tag. If {@link Nothing} is passed for `value`,
+ * the given attribute is added as a 'boolean' attribute (i.e. no equals sign). If it is desired an attribute value be explicitly set to
+ * a value that is otherwise {@link Nothing}, convert `value` to a string prior to passage to this function.
+ *
+ * If not called subsequent to a call to {@link XMLBuilder#startTag}, an `Error` will be thrown.
  *
  * @param {string} name Attribute name to add.
  * @param {string} [value=''] Attribute value.
- * @returns {XMLBuilder} This XMLBuilder.
+ * @returns {XMLBuilder} This `XMLBuilder`.
  * @throws {Error} If not called subsequent to a call to {@link XMLBuilder#startTag}.
  */
 XMLBuilder.prototype.attribute = function (name, value) {
@@ -188,10 +193,10 @@ XMLBuilder.prototype.attribute = function (name, value) {
 };
 
 /**
- * Defines content (i.e. text) for the current tag.
+ * Adds content (i.e. text) to the current tag.
  *
  * @param {string} value Content to append to the current tag's content.
- * @returns {XMLBuilder} This XMLBuilder.
+ * @returns {XMLBuilder} This `XMLBuilder`.
  */
 XMLBuilder.prototype.content = function (value) {
 	'use strict';
@@ -207,12 +212,12 @@ XMLBuilder.prototype.content = function (value) {
 };
 
 /**
- * Closes the current tag. If the tag has content, or requiresBody is true, will close in the 'traditional' manner
- * (i.e. '</tagName>'), otherwise will close as a no-body tag (i.e. ' />'). If there is no current tag, will throw
- * an Error.
+ * Closes the current tag. If the tag has content, or `requiresBody` is `true`, the tag will be closed in the 'traditional' manner
+ * (i.e. '`</tagName>`'), otherwise the tag will be closed as a no-body tag (i.e. '` />`'). If there is no current tag, an `Error`
+ * will be thrown.
  *
  * @param {boolean} [requiresBody=false] Whether the tag being closed requires a body.
- * @returns {XMLBuilder} This XMLBuilder.
+ * @returns {XMLBuilder} This `XMLBuilder`.
  * @throws {Error} If there is no current tag.
  */
 XMLBuilder.prototype.closeTag = function (requiresBody) {
@@ -248,11 +253,11 @@ XMLBuilder.prototype.closeTag = function (requiresBody) {
 };
 
 /**
- * Appends the given value directly to this XMLBuilder without reserved character escaping or concern for
- * this builders current state.
+ * Appends the given `value` directly to this `XMLBuilder` without the escaping of reserved characters, nor concern for
+ * this builder's current state.
  *
  * @param {string} value Value to append.
- * @returns {XMLBuilder} This XMLBuilder.
+ * @returns {XMLBuilder} This `XMLBuilder`.
  */
 XMLBuilder.prototype.appendDirect = function (val) {
 	'use strict';
@@ -267,7 +272,7 @@ XMLBuilder.prototype.appendDirect = function (val) {
 };
 
 /**
- * Clears this XMLBuilder.
+ * Clears this `XMLBuilder`.
  */
 XMLBuilder.prototype.clear = function () {
 	'use strict';
@@ -281,9 +286,9 @@ XMLBuilder.prototype.clear = function () {
 };
 
 /**
- * Returns this XMLBuilder's current content as a string.
+ * Returns this `XMLBuilder`'s current content as a string.
  *
- * @returns {string} This XMLBuilder's content.
+ * @returns {string} This `XMLBuilder`'s content.
  */
 XMLBuilder.prototype.toString = function () {
 	'use strict';

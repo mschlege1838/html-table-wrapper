@@ -3,10 +3,10 @@
 /**
  * @constructor
  * @implements SortDescriptor
- * @param {number} columnIndex Column index to which this descriptor is to apply.
- * @param {boolean} [descending=false] true if the result of this descriptor is to be inverted.
+ * @param {number} columnIndex Column index for which this descriptor applies.
+ * @param {boolean} [descending=false] `true` if the result of this descriptor is to be inverted.
  * @param {number} [columnType={@link SimpleDataTableUtils.COLUMN_TYPE_INFER}] 
- *   How this column is to be sorted. Default is infer, set to {@link SimpleDataTableUtils.COLUMN_TYPE_TEXT} to sort as text only.
+ *   `SimpleDataTableUtils.COLUMN_TYPE_*` constant indicating how this column is to be sorted.
  * @classdesc
  *
  * Simple/direct implementation of {@link SortDescriptor}. 

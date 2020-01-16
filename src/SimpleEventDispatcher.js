@@ -6,7 +6,7 @@
  * @classdesc
  *
  * Simplified definition of a DOM `Event` for the purposes of {@link SimpleEventDispatcher} that only contains the `type` attribute.
- * Although it is unlikely standard DOM events will be used with {@link SimpleEventDispatcher}, they do implement this interface.
+ * Although it is unlikely standard DOM events will be used with {@link SimpleEventDispatcher}, they do, nonetheless, implement this interface.
  *
  *
  * <div class="see-also-section">
@@ -37,7 +37,7 @@
  * 
  * <div class="see-also">
  * <span class="label">See Also:</span>
- * <a href="https://dom.spec.whatwg.org/#callbackdef-eventlistener>https://dom.spec.whatwg.org/#callbackdef-eventlistener</a>
+ * <a href="https://dom.spec.whatwg.org/#callbackdef-eventlistener">https://dom.spec.whatwg.org/#callbackdef-eventlistener</a>
  * </div>
  * 
  * </div>
@@ -62,7 +62,7 @@
  * @classdesc
  *
  * Simple implementation of an event dispatcher that supports the registration of multiple listeners for various events. Although 
- * this type can be used on its own, it is often more conveninet to extend it.
+ * this type can be used on its own, it is often more convenient to extend it.
  * 
  * This type is designed to have (loose) consistency with the DOM `EventTarget`, however events are simply dispatched to listeners in the 
  * order they are registered. I.e. there is no support for bubbling, cancelling, etc.
@@ -109,7 +109,7 @@ SimpleEventDispatcher.processType = function (type) {
 
 // Instance methods
 /**
- * Adds the given `listener` for the given event `type`, provided it is not already registered for that type.
+ * Adds the given `listener` for the given event `type`, provided it is not already registered for that `type`.
  *
  * @param {string} type Event type for which the given `listener` is to be registered.
  * @param {(SimpleEventListener|function)} listener Listener to register.
@@ -148,12 +148,12 @@ SimpleEventDispatcher.prototype.addEventListener = function (type, listener, use
 };
 
 /**
- * Removes the given `listener` for the given event `type`, provided it is currently registered for that type.
+ * Removes the given `listener` for the given event `type`, provided it is currently registered for that `type`.
  *
  * @param {string} type Event type for which the given `listener` is to be removed.
  * @param {(SimpleEventListener|function)} listener Listener to be removed.
  * @param {boolean} [useCapture=false] 
- *   Optional parameter added for consistency with the standard DOM `EventTarget.addEventListener` definition. If not {@link Nothing}, will print a warning on the console.
+ *   Optional parameter added for consistency with the standard DOM `EventTarget.removeEventListener` definition. If not {@link Nothing}, will print a warning on the console.
  * @throws {ReferenceError} If `type` is not defined or is a zero-length string.
  * @throws {TypeError} If `type` is not a string.
  */
@@ -230,14 +230,12 @@ SimpleEventDispatcher.prototype.dispatchEvent = function (event) {
  *
  * @constructor
  * @implements SimpleEventIntf
- * @param {string} type Type of this event. N.B. no case conversion is performed in this constructor.
+ * @param {string} type Type of this event. No case conversion is performed in this constructor; `type` is used as-given.
  * @param {object} target Target of this event.
  * @classdesc
  *
  * Simplistic, yet effective implementation of {@link SimpleEventIntf} that also includes the standard DOM 
- * `target` and `currentTarget` properties. Note `target` remains constant, as this event dispatcher 
- * implementation does not support bubbling. The `currentTarget` property is also set to the
- * given `target`.
+ * `target` and `currentTarget` properties. Both properties are set to the given `target`.
  *
  * 
  * <div class="see-also-section">

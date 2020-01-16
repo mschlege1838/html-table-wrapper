@@ -29,7 +29,7 @@ var IE8Compatibility = {};
  * Cache of {@link IE8Compatibility.IE8EventHandler}s containing `EventListener`s registered via `attachEvent`.
  *
  * @private
- * @type Array
+ * @type {IE8Compatibility.IE8EventHandler[]}
  */
 IE8Compatibility.allRegisteredHandlers = null;
 
@@ -130,10 +130,10 @@ IE8Compatibility.removeEventListener = function (target, type, listener, useCapt
 };
 
 /**
- * Adds compatibility for the DOM `Event.target` property. If `target` not a defined property of the given `event`, returns `event.srcElement`.
+ * Adds compatibility for the DOM `Event.target` property. If `target` is not a defined property of the given `event`, returns `event.srcElement`.
  *
- * @param {Event} event
- * @returns The `event.target` property of `event` if `target` is a defined property, otherwise `event.srcElement`.
+ * @param {Event} event Event whose target is to be determined.
+ * @returns The `event.target` property of `event` if `target` is a defined property on `event`, otherwise `event.srcElement`.
  */
 IE8Compatibility.getEventTarget = function (event) {
 	'use strict';
@@ -340,12 +340,13 @@ IE8Compatibility.getHandlerIndex = function (target, type, listener) {
  * @param {EventTarget} target `EventTarget` to which the given `listener` is registered.
  * @param {string} type Event type for which the given `listener` is registered.
  * @param {EventListener} listener `EventListener` registered on `target` for the given event `type`.
- * @param {function} handlerFunction
+ * @param {function} handlerFunction Closure-based handler function that is actually attached to `target`.
  * @private
  * @extends Disposable
  * @classdesc
- *   Container object representing a registered `EventListener`. Holds the `EventTarget` upon which the `EventListener` is
- *   registered, as well as the type of event for which it listens.
+ *   Container object representing a registered `EventListener`. Holds the information necessary to identify a particular
+ *   event listener given a target (`target`, `type`, and `listener`), as well as the closure-based `handlerFunction`, such that
+ *   the actual registered listener can be detached when it is no longer needed.
  */
 IE8Compatibility.IE8EventHandler = function (target, type, listener, handlerFunction) {
 	'use strict';

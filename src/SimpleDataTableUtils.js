@@ -118,20 +118,20 @@ SimpleDataTableUtils.getNumber = function (val, strict) {
  *
  * Comparisons are performed in two distinct steps. The first are the 'simple' comparisons, which correspond to the combination of the relational operator
  * bitfields: {@link SimpleDataTableUtils.FILTER_OP_EQUALS}, {@link SimpleDataTableUtils.FILTER_OP_LESS_THAN}, and {@link SimpleDataTableUtils.FILTER_OP_GREATER_THAN}.
- * The next is the contains comparison (corresponding to the {@link SimpleDataTableUtils.FILTER_OP_CONTAINS} bitfield). The contains comparison is only performed
- * if its corresponding flag is set, and the 'simple' (relational) comparisons fail, and/or none of their flags are set. That is to say this function will
+ * The next is the 'contains' comparison (corresponding to the {@link SimpleDataTableUtils.FILTER_OP_CONTAINS} bitfield). The 'contains' comparison is only performed
+ * if its corresponding flag is set, and the 'simple' (relational) comparisons fail, and/or none of their flags are set. I.e. this function will
  * return `true` on the first (requested) comparison that succeeds, otherwise `false`.
  * 
  * For the 'simple' relational comparisons (outlined above), if `columnType` is {@link SimpleDataTableUtils.COLUMN_TYPE_INFER}, the given values will be treated as 
  * numbers if they are so convertible, otherwise they will be compared as given; if {@link SimpleDataTableUtils.COLUMN_TYPE_TEXT}, they will be converted
- * to strings prior to comparison. For the contains comparison, the values are always converted to strings; `columnType` has no effect on the contains comparison.
+ * to strings prior to comparison. For the 'contains' comparison, the values are always converted to strings; `columnType` has no effect on the 'contains' comparison.
  *
  * If the {@link SimpleDataTableUtils.FILTER_FLAG_IGNORE_CASE} flag is set, it only affects the result of the 'simple' relational comparisons if the given `columnType`
- * is {@link SimpleDataTableUtils.COLUMN_TYPE_TEXT}. The flag will always, however, affect the contains comparison. In either case, though, the applicable values
- * are converted to a consistent case prior to comparison.
+ * is {@link SimpleDataTableUtils.COLUMN_TYPE_TEXT}, or the inferred value of a column is a string. The flag will always, however, affect the 'contains' comparison. 
+ * In either case, though, the applicable values are converted to a consistent case prior to comparison.
  * 
  * If the {@link SimpleDataTableUtils.FILTER_FLAG_NOT} flag is set, it forms the logical negation of the 'simple' relational comparisons. E.g. (in logical terms)
- * 'equals' becomes 'not equal to', 'less than' becomes 'greater than or equal to', etc. For the contains comparison, it simply causes the logical
+ * 'equals' becomes 'not equal to', 'less than' becomes 'greater than or equal to', etc. For the 'contains' comparison, it simply causes the logical
  * inverse of the result to be returned. Of note, the {@link SimpleDataTableUtils.FILTER_FLAG_NOT} flag *only* affects the operators, and has no effect on 
  * the {@link SimpleDataTableUtils.FILTER_FLAG_IGNORE_CASE} flag; if {@link SimpleDataTableUtils.FILTER_FLAG_IGNORE_CASE} is set, case will always be ignored for 
  * string-type comparisons, regardless of whether {@link SimpleDataTableUtils.FILTER_FLAG_NOT} is set. 
@@ -163,6 +163,14 @@ SimpleDataTableUtils.shouldInclude = function (cellValue, operation, compareValu
 		default:
 			convertedCellValue = SimpleDataTableUtils.getNumber(cellValue, false);
 			convertedCompareValue = SimpleDataTableUtils.getNumber(compareValue, false);
+			if (ignoreCase) {
+				if (typeof convertedCellValue === 'string') {
+					convertedCellValue = convertedCellValue.toUpperCase();
+				}
+				if (typeof convertedCompareValue === 'string') {
+					convertedCompareValue = convertedCompareValue.toUpperCase();
+				}
+			}
 			break;
 	}
 	

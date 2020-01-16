@@ -8,11 +8,11 @@
  *		Object-based implementation of {@link SimpleDataTableControl~populateCellValues}.
  */
 /**
- * Implementation of {@link SimpleDataTableControl~populateCellValues}. See documentation for the callback for further details.
+ * Implementation of {@link SimpleDataTableControl~populateCellValues}. See the callback's documentation for further details.
  *
  * @function CellInterpreter#populateCellValues
- * @param {HTMLCellElement} cell
- * @param {Array} values
+ * @param {HTMLCellElement} cell Cell element whose values are to be retrieved.
+ * @param {Array} values Values to populate.
  */
 
 // Callbacks
@@ -204,6 +204,8 @@ SimpleDataTableControl.hasUnchecked = function (inputs) {
 
 /**
  * Sets the first `HTMLInputElement`'s `checked` attribute in the given set of `inputs` whose `value` is the given `value`.
+ * Of note, whether each input is of type checkbox, radio, etc. (i.e. an input where the `checked` attribute is appropriate) 
+ * is not evaluated; the `checked` attribute is simply set.
  *
  * @param {MinimalList} inputs Collection of inputs to process.
  * @param {string} value Value of the input whose checked attribute is to be set.
@@ -229,7 +231,7 @@ SimpleDataTableControl.setChecked = function (inputs, value) {
 SimpleDataTableControl.checkCellInterpreter = function (callback) {
 	'use strict';
 	
-	if (callback && (typeof callback !== 'function' || typeof callback.populateCellValues !== 'function')) {
+	if (typeof callback !== 'function' || typeof callback.populateCellValues !== 'function') {
 		throw new TypeError('Callback must either define a populateCellValues function, or be a function itself.');
 	}
 };
@@ -448,6 +450,7 @@ SimpleDataTableControl.prototype.getSortDescriptor = function () {
  * By default, the result is sorted prior to being returned, unless the `noSort` parameter is not {@link Nothing}.
  *
  * @param {boolean} [noSort=false] Whether to return the result unsorted.
+ * @returns {Array} All the values within the column this `SimpleDataTableControl` controls.
  */
 SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 	'use strict';
@@ -455,7 +458,9 @@ SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 	var rows, i, cell, value, result, columnIndex, callback;
 	
 	callback = this.cellInterpreter;
-	SimpleDataTableControl.checkCellInterpreter(callback);
+	if (callback) {
+		SimpleDataTableControl.checkCellInterpreter(callback);
+	}
 	
 	columnIndex = this.columnIndex;
 	
@@ -619,6 +624,7 @@ SimpleDataTableControl.prototype.getSortOrder = function () {
  * `selector`, or this control has not yet been opened, `null` is returned.
  *
  * @private
+ * @param {string} selector Query selector string.
  * @return {string} 
  *   The `value` of the first `checked` element within this control matching the given `selector`, or `null` if no checked element is found, or this
  *   control has not yet been opened.
@@ -652,7 +658,7 @@ SimpleDataTableControl.prototype.getCheckedValue = function (selector) {
  * generated elements. Only intended to be called once (in response to {@link ContextControl#event:create} events).
  *
  * @private
- * @param {HTMLElement} Element upon which the content of this control is to be defined.
+ * @param {HTMLElement} container Element upon which the content of this control is to be defined.
  */
 SimpleDataTableControl.prototype.defineContent = function (container) {
 	'use strict';

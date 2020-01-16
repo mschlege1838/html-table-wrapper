@@ -22,11 +22,11 @@
  * @interface Disposable
  * @classdesc
  *
- * Represents an object that should be (optionally) {@link Disposable#init initialized} prior to use, and {@link Disposable#dispose disposed}
- * when no longer needed. Both functions are optional. Most useful for user-defined objects that make use of, and/or maintain references to, host objects, but any object 
- * can implement this interface.
+ * Represents an object that should be {@link Disposable#init initialized} prior to use, and {@link Disposable#dispose disposed} when no longer needed. Both functions 
+ * are optional. Most useful for user-defined objects that make use of, and/or maintain references to, host objects, but any object can implement this interface.
  *
- * As both {@link Disposable#init} and {@link Disposable#dispose} are optional, usage of a `Disposable` (absent any other knowledge) should be akin to the following:
+ * As both {@link Disposable#init} and {@link Disposable#dispose} are optional, usage of a `Disposable` (absent knowledge of their implementation on a specific target
+ * type) should be akin to the following:
  * ``` javascript
  * if (typeof disposable.init === 'function') {
  *     disposable.init()
@@ -46,8 +46,8 @@
  * @function Disposable#init
  */
 /**
- * Optional function to dispose this object. The object should not be relied upon to be useable after calling this function, however
- * whether it actually is or not is entirely implementation-dependent.
+ * Optional function to dispose this object. The object should not be relied upon to be usable after calling this function, however
+ * whether it actually is, or not, is entirely implementation-dependent.
  *
  * @function Disposable#dispose
  */
