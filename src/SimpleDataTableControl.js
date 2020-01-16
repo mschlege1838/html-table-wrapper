@@ -231,7 +231,7 @@ SimpleDataTableControl.setChecked = function (inputs, value) {
 SimpleDataTableControl.checkCellInterpreter = function (callback) {
 	'use strict';
 	
-	if (typeof callback !== 'function' || typeof callback.populateCellValues !== 'function') {
+	if (typeof callback !== 'function' && typeof callback.populateCellValues !== 'function') {
 		throw new TypeError('Callback must either define a populateCellValues function, or be a function itself.');
 	}
 };

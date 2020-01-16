@@ -1,19 +1,24 @@
+// Callbacks
+/**
+ * Called by {@link SimpleDataTableListener} to obtain a {@link ColumnControl} for a given column. If a value is returned, it will be used as the 
+ * control for that column. If {@link Nothing} is returned, the default control ({@link SimpleDataTableControl}) will be created and used 
+ * for that column.
+ *
+ * @callback SimpleDataTableListener~getColumnControl
+ * @param {number} columnIndex Column index for which a {@link ColumnControl} is needed.
+ * @param {SimpleDataTableListener} parent The {@link SimpleDataTableListener} requesting a control.
+ * @returns {ColumnControl} A {@link ColumnControl} if a client-defined control is needed for the given `columnIndex`, otherwise {@link Nothing}.
+ */
 
 // Virtual Interfaces
 // ColumnControlFactory
 /**
  * @interface ColumnControlFactory
  * @classdesc
- *
- * Can be used with {@link SimpleDataTableListener} to create custom {@link ColumnControl}s should such controls be deemed necessary.
- * If passed to a {@link SimpleDataTableListener}, the listener will call {@link ColumnControlFactory#getColumnControl}
- * when it determines a new control needs to be created for a column. If the call returns a value, it will
- * be used as the control for that column.
+ *   Object-based implementation of {@link SimpleDataTableListener~getColumnControl}.
  */
 /**
- * Called by {@link SimpleDataTableListener} to obtain a {@link ColumnControl} for a given column. If a value is returned, it will be used as the 
- * control for that column. If {@link Nothing} is returned, the default control ({@link SimpleDataTableControl}) will be created and used 
- * for that column.
+ * Implementation of {@link SimpleDataTableListener~getColumnControl}. See the callback's documentation for further details.
  *
  * @function ColumnControlFactory#getColumnControl
  * @param {number} columnIndex Column index for which a {@link ColumnControl} is needed.
@@ -71,7 +76,7 @@
  * @constructor
  * @implements Disposable
  * @param {(HTMLTableElement|SimpleDataTable)} table `HTMLTableElement` or {@link SimpleDataTable} backing this listener.
- * @param {ColumnControlFactory} [columnControlFactory] Optional factory if custom column controls are needed.
+ * @param {ColumnControlFactory|SimpleDataTableListener~getColumnControl} [columnControlFactory] Optional factory if custom column controls are needed.
  * @classdesc
  *
  * Facilitates communication between the API-level {@link SimpleDataTable} and the UI-level {@link ColumnControl}. In addition to the constraints
@@ -83,10 +88,10 @@
  * all cells in the first row of the backing `HTMLTableElement`'s table header section, as well as add the class name
  * {@link SimpleDataTableListener.processedColumnHeader} to each cell.
  * 
- * In response to click events, the appropriate {@link ColumnControl} will be created using the given {@link ColumnControlFactory},
- * if defined, or will fall back to {@link SimpleDataTableControl} in the case no {@link ColumnControlFactory} is defined, or
- * the call to {@link ColumnControlFactory#getColumnControl} returns {@link Nothing}. {@link ColumnControl}s are cached after they are created,
- * and are reused for subsequent click events.
+ * In response to click events, the appropriate {@link ColumnControl} will be created using the given {@link ColumnControlFactory} (or {@link SimpleDataTableListener~getColumnControl} 
+ * callback), if defined, or will fall back to {@link SimpleDataTableControl} in the case no {@link ColumnControlFactory} (or callback) is defined, or the call to 
+ * {@link ColumnControlFactory#getColumnControl} (or direct invocation of the {@link SimpleDataTableListener~getColumnControl} callback) returns {@link Nothing}. {@link ColumnControl}s 
+ * are cached after they are created, and are reused for subsequent click events.
  * 
  * {@link ColumnControl}s can make calls back to {@link SimpleDataTableListener#processTable} to trigger table-wide
  * sorting and filtering in response to user-triggered events on the control that would be expected to update the state of the 
@@ -296,7 +301,8 @@ SimpleDataTableListener.prototype.getColumnControl = function (columnIndex) {
 	
 	columnControlFactory = this.columnControlFactory;
 	if (columnControlFactory) {
-		columnControl = columnControlFactory.getColumnControl(columnIndex, this);
+		columnControl = typeof columnControlFactory.getColumnControl === 'function' ? 
+				columnControlFactory.getColumnControl(columnIndex, this) : columnControlFactory(columnIndex, this);
 	}
 	
 	if (!columnControl) {
