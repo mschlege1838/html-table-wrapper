@@ -1,0 +1,10 @@
+{
+  "name": "simple-data-table",
+  "version": "1.0.0",
+  "description": "SimpleDataTable.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marty Schlegel",
+  "license": "ISC"
+}
