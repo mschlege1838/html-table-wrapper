@@ -171,29 +171,31 @@ function copyPackage() {
 	return fs.createReadStream(OUT_PACKAGE_JSON).pipe(fs.createWriteStream(`${OUT_DIR}/package.json`));
 }
 
-function generateDoc(cb) {
+function generateDoc() {
 	'use strict';
 	
-	let p = child_process.spawn(
-		['.', 'node_modules', '.bin', 'jsdoc'].join(path.sep)
-		, ['-p', '-d', `${OUT_DIR}/doc`, '-c', 'jsdoc/jsdoc-conf.json', '-r', 'src']
-		, { shell: true} );
-	
-	let jsdocOut = '';
-	p.stdout.on('data', (data) => {
-		jsdocOut += `JSDOC OUT: ${data.toString()}`;
-	});
-	p.stderr.on('data', (data) => {
-		jsdocOut += `JSDOC ERR: ${data.toString()}`;
-	});
-	p.on('error', (err) => {
-		cb(err);
-	});
-	p.on('close', (code) => {
-		if (jsdocOut) {
-			console.log(jsdocOut);
-		}
-		cb();
+	return new Promise((resolve, reject) => {
+		let p = child_process.spawn(
+			['.', 'node_modules', '.bin', 'jsdoc'].join(path.sep)
+			, ['-p', '-d', `${OUT_DIR}/doc`, '-c', 'jsdoc/jsdoc-conf.json', '-r', 'src']
+			, { shell: true } );
+		
+		let jsdocOut = '';
+		p.stdout.on('data', (data) => {
+			jsdocOut += `JSDOC OUT: ${data.toString()}`;
+		});
+		p.stderr.on('data', (data) => {
+			jsdocOut += `JSDOC ERR: ${data.toString()}`;
+		});
+		p.on('error', (err) => {
+			reject(err);
+		});
+		p.on('close', (code) => {
+			if (jsdocOut) {
+				console.log(jsdocOut);
+			}
+			resolve()
+		});
 	});
 
 }
