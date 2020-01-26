@@ -177,7 +177,7 @@ function generateDoc() {
 	return new Promise((resolve, reject) => {
 		let p = child_process.spawn(
 			['.', 'node_modules', '.bin', 'jsdoc'].join(path.sep)
-			, ['-p', '-d', `${OUT_DIR}/doc`, '-c', 'jsdoc/jsdoc-conf.json', '-r', 'src']
+			, ['-p', '-d', 'docs', '-c', 'jsdoc/jsdoc-conf.json', '-r', 'src']
 			, { shell: true } );
 		
 		let jsdocOut = '';
@@ -196,6 +196,8 @@ function generateDoc() {
 			}
 			resolve()
 		});
+	}).then(() => {
+		gulp.src('docs/**').pipe(gulp.dest(`${OUT_DIR}/doc`));
 	});
 
 }

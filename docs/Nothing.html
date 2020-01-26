@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Interface: Nothing</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Interface: Nothing</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>Nothing</h2>
+        
+            <div class="class-description"><p>A marker 'interface' that represents anything convertible to <code>false</code> in a boolean expression<sup><a href="#footnote1">1</a></sup>. More specifically, all of the
+following 'implement' <code>Nothing</code>:</p>
+<ul>
+<li><code>false</code></li>
+<li><code>0</code> (The number 0)</li>
+<li><code>NaN</code></li>
+<li><code>''</code> (The empty string)</li>
+<li><code>null</code></li>
+<li><code>undefined</code> (Any undefined value<sup><a href="#footnote2">2</a></sup>)</li>
+</ul>
+<p>Anything that is not convertible to <code>false</code> (i.e. not one of the above values) does not implement this interface.</p>
+<p>Throughout this documentation, this interface is often used to indicate a return value from a function (typically a callback) is optional, and
+specific actions will be taken in the event that function returns a value convertible to <code>false</code>. To exemplify the concept, both the following functions
+are considered to return <code>Nothing</code>:</p>
+<pre class="prettyprint source lang-javascript"><code>// Literally returns nothing (though a call to it will implicitly return undefined).
+function foo() {
+    'use strict';
+}
+
+// Returns a value, but that value is convertible to false.
+// (undefined is technically returned in this case, but any of the values specified act to the same effect)
+function bar() {
+    'use strict';
+    return false || 0 || NaN || '' || null || undefined;
+}
+</code></pre>
+<div id="footnote1" class="footnote">
+<sup><a href="#footnote1">1</a></sup>More colloquially, this interface is referred to as 'falsy'. 
+<a href="https://developer.mozilla.org/en-US/docs/Glossary/Falsy">MDN</a> has an article defining the term in more detail.
+</div>
+<div id="footnote2" class="footnote">
+<sup><a href="#footnote2">2</a></sup><code>undefined</code> is not actually a reserved word, but a built-in variable defined on the Global Object,
+which implies it can be hidden in a local scope. Another widely recognized, yet 'maximally portable' way of specifying a literal undefined value is 
+the expression <code>void 0</code>. See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">MDN</a>'s 
+article on the subject for more details.
+</div></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="virtual-interfaces.js.html">virtual-interfaces.js</a>, <a href="virtual-interfaces.js.html#line57">line 57</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ContextControl.html">ContextControl</a></li><li><a href="ContextControl.MobileViewState.html">MobileViewState</a></li><li><a href="ContextControl.OffsetCoordinates.html">OffsetCoordinates</a></li><li><a href="IE8Compatibility.html">IE8Compatibility</a></li><li><a href="IE8Compatibility.IE8EventHandler.html">IE8EventHandler</a></li><li><a href="IE9Compatibility.html">IE9Compatibility</a></li><li><a href="IEGeneralCompatibility.html">IEGeneralCompatibility</a></li><li><a href="SimpleDataTable.html">SimpleDataTable</a></li><li><a href="SimpleDataTableControl.html">SimpleDataTableControl</a></li><li><a href="SimpleDataTableControl.ColumnValueFilter.html">ColumnValueFilter</a></li><li><a href="SimpleDataTableListener.html">SimpleDataTableListener</a></li><li><a href="SimpleDataTableUtils.html">SimpleDataTableUtils</a></li><li><a href="SimpleEventDispatcher.html">SimpleEventDispatcher</a></li><li><a href="SimpleEventDispatcher.SimpleEvent.html">SimpleEvent</a></li><li><a href="SimpleFilterDescriptor.html">SimpleFilterDescriptor</a></li><li><a href="SimpleSortDescriptor.html">SimpleSortDescriptor</a></li><li><a href="XMLBuilder.html">XMLBuilder</a></li></ul><h3>Interfaces</h3><ul><li><a href="CellInterpreter.html">CellInterpreter</a></li><li><a href="ColumnControl.html">ColumnControl</a></li><li><a href="ColumnControlFactory.html">ColumnControlFactory</a></li><li><a href="Disposable.html">Disposable</a></li><li><a href="FilterDescriptor.html">FilterDescriptor</a></li><li><a href="MinimalList.html">MinimalList</a></li><li><a href="Nothing.html">Nothing</a></li><li><a href="SimpleEventIntf.html">SimpleEventIntf</a></li><li><a href="SimpleEventListener.html">SimpleEventListener</a></li><li><a href="SortDescriptor.html">SortDescriptor</a></li></ul><h3>Events</h3><ul><li><a href="ContextControl.html#event:event:create">create</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Sun Jan 26 2020 10:04:47 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: SimpleEventDispatcher.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: SimpleEventDispatcher.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>
+// Virtual Interfaces
+/**
+ *
+ * @interface SimpleEventIntf
+ * @classdesc
+ *
+ * Simplified definition of a DOM `Event` for the purposes of {@link SimpleEventDispatcher} that only contains the `type` attribute.
+ * Although it is unlikely standard DOM events will be used with {@link SimpleEventDispatcher}, they do, nonetheless, implement this interface.
+ *
+ *
+ * &lt;div class="see-also-section">
+ * 
+ * &lt;div class="see-also">
+ * &lt;span class="label">See Also:&lt;/span>
+ * &lt;a href="https://dom.spec.whatwg.org/#interface-event">https://dom.spec.whatwg.org/#interface-event&lt;/a>
+ * &lt;/div>
+ * 
+ * &lt;/div>
+ */
+/**
+ * The type of this event.
+ *
+ * @member {string} SimpleEventIntf#type
+ */
+
+/**
+ * 
+ * @interface SimpleEventListener
+ * @classdesc
+ *
+ * Definition of an event listener for the purposes of {@link SimpleEventDispatcher}. Effectively identical to the standard DOM 
+ * `EventListener`.
+ *
+ *
+ * &lt;div class="see-also-section">
+ * 
+ * &lt;div class="see-also">
+ * &lt;span class="label">See Also:&lt;/span>
+ * &lt;a href="https://dom.spec.whatwg.org/#callbackdef-eventlistener">https://dom.spec.whatwg.org/#callbackdef-eventlistener&lt;/a>
+ * &lt;/div>
+ * 
+ * &lt;/div>
+ * 
+ */
+/**
+ * Callback function to handle events for which this listener is registered.
+ *
+ * @function SimpleEventListener#handleEvent
+ * @param {SimpleEvent} event
+ */
+
+
+
+
+
+// Constructor
+/**
+ * Default constructor.
+ *
+ * @constructor
+ * @classdesc
+ *
+ * Simple implementation of an event dispatcher that supports the registration of multiple listeners for various events. Although 
+ * this type can be used on its own, it is often more convenient to extend it.
+ * 
+ * This type is designed to have (loose) consistency with the DOM `EventTarget`, however events are simply dispatched to listeners in the 
+ * order they are registered. I.e. there is no support for bubbling, cancelling, etc.
+ * 
+ *
+ * &lt;div class="see-also-section">
+ *
+ * &lt;div class="see-also">
+ * &lt;span class="label">See Also:&lt;/span>
+ * &lt;a href="https://dom.spec.whatwg.org/#interface-eventtarget">https://dom.spec.whatwg.org/#interface-eventtarget&lt;/a>
+ * &lt;/div>
+ *
+ * &lt;/div>
+ */
+function SimpleEventDispatcher() {
+	'use strict';
+	
+	this.listeners = {};
+}
+
+// Static methods
+/**
+ * Utility function to validate an event type string, and convert it to a consistent case.
+ *
+ * @private
+ * @param {string} type An event type string.
+ * @returns The given type converted to a consistent case.
+ * @throws {ReferenceError} If type is not defined or is a zero-length string.
+ * @throws {TypeError} If type is not a string.
+ */
+SimpleEventDispatcher.processType = function (type) {
+	'use strict';
+	
+	if (!type) {
+		throw new ReferenceError('Event type must be defined (and have a length greater than 0).');
+	}
+	if (typeof type !== 'string' &amp;&amp; !(type instanceof String)) {
+		throw new TypeError('Event type must be a string.');
+	}
+	
+	return type.toLowerCase();
+};
+
+
+// Instance methods
+/**
+ * Adds the given `listener` for the given event `type`, provided it is not already registered for that `type`.
+ *
+ * @param {string} type Event type for which the given `listener` is to be registered.
+ * @param {(SimpleEventListener|function)} listener Listener to register.
+ * @param {boolean} [useCapture=false] 
+ *   Optional parameter added for consistency with the standard DOM `EventTarget.addEventListener` definition. If not {@link Nothing}, will print a warning on the console.
+ * @throws {ReferenceError} If `type` is not defined or is a zero-length string; if `listener` is not defined.
+ * @throws {TypeError} If type is not a `string`; if `listener` does not implement {@link SimpleEventListener} or is not a function.
+ */
+SimpleEventDispatcher.prototype.addEventListener = function (type, listener, useCapture) {
+	'use strict';
+	
+	var listeners;
+	
+	if (useCapture &amp;&amp; console &amp;&amp; console.warn) {
+		console.warn('Capture/bubble phase not supported by this event listener; events are simply dispatched to listeners in the order they are registered.');
+	}
+	
+	type = SimpleEventDispatcher.processType(type);
+	
+	if (!listener) {
+		throw new ReferenceError('Listener must be defined.');
+	}
+	if (typeof listener.handleEvent !== 'function' &amp;&amp; typeof listener !== 'function') {
+		throw new TypeError('Listener must either define a handleEvent function or be a function itself.');
+	}
+
+
+	listeners = this.listeners[type];
+	if (!listeners) {
+		listeners = this.listeners[type] = [];
+	}
+	
+	if (listeners.indexOf(listener) === -1) {
+		listeners.push(listener);
+	}
+};
+
+/**
+ * Removes the given `listener` for the given event `type`, provided it is currently registered for that `type`.
+ *
+ * @param {string} type Event type for which the given `listener` is to be removed.
+ * @param {(SimpleEventListener|function)} listener Listener to be removed.
+ * @param {boolean} [useCapture=false] 
+ *   Optional parameter added for consistency with the standard DOM `EventTarget.removeEventListener` definition. If not {@link Nothing}, will print a warning on the console.
+ * @throws {ReferenceError} If `type` is not defined or is a zero-length string.
+ * @throws {TypeError} If `type` is not a string.
+ */
+SimpleEventDispatcher.prototype.removeEventListener = function (type, listener, useCapture) {
+	'use strict';
+	
+	var listeners, targetIndex;gh
+	
+	if (useCapture &amp;&amp; console &amp;&amp; console.warn) {
+		console.warn('Capture/bubble phase not supported by this event listener; events are simply dispatched to listeners in the order they are registered.');
+	}
+	
+	type = SimpleEventDispatcher.processType(type);
+	
+	
+	listeners = this.listeners[type];
+	if (!listeners) {
+		return;
+	}
+	
+	targetIndex = listeners.indexOf(listener);
+	if (targetIndex === -1) {
+		return;
+	}
+	
+	listeners.splice(targetIndex, 1);
+};
+
+
+/**
+ * Dispatches the given `event` to registered listeners. Listeners are called in the order they are added.
+ *
+ * @param {SimpleEventIntf} event Event to dispatch.
+ * @throws {ReferenceError} If `event` is not defined.
+ * @throws {TypeError} If `event` does not implement {@link SimpleEventIntf}.
+ */
+SimpleEventDispatcher.prototype.dispatchEvent = function (event) {
+	'use strict';
+	
+	var listeners, listener, i;
+	
+	if (!event) {
+		throw new ReferenceError('Event must be defined.');
+	}
+	
+	if (typeof event.type !== 'string' &amp;&amp; !(event.type instanceof String)) {
+		throw new TypeError('Event must, at minimum, define a type property.');
+	}
+	
+	
+	listeners = this.listeners[event.type.toLowerCase()];
+	if (!listeners) {
+		return;
+	}
+	
+	for (i = 0; i &lt; listeners.length; ++i) {
+		listener = listeners[i];
+		
+		if (typeof listener.handleEvent === 'function') {
+			listener.handleEvent(event);
+		} else {
+			listener(event);
+		}
+	}
+	
+};
+
+
+
+
+
+// Nested types
+/**
+ *
+ * @constructor
+ * @implements SimpleEventIntf
+ * @param {string} type Type of this event. No case conversion is performed in this constructor; `type` is used as-given.
+ * @param {object} target Target of this event.
+ * @classdesc
+ *
+ * Simplistic, yet effective implementation of {@link SimpleEventIntf} that also includes the standard DOM 
+ * `target` and `currentTarget` properties. Both properties are set to the given `target`.
+ *
+ * 
+ * &lt;div class="see-also-section">
+ *
+ * &lt;div class="see-also">
+ * &lt;span class="label">See Also:&lt;/span>
+ * &lt;a href="https://dom.spec.whatwg.org/#dom-event-target">https://dom.spec.whatwg.org/#dom-event-target&lt;/a>
+ * &lt;/div>
+ *
+ * &lt;div class="see-also">
+ * &lt;span class="label">See Also:&lt;/span>
+ * &lt;a href="https://dom.spec.whatwg.org/#dom-event-currenttarget">https://dom.spec.whatwg.org/#dom-event-currenttarget&lt;/a>
+ * &lt;/div>
+ *
+ * &lt;/div>
+ *
+ */
+SimpleEventDispatcher.SimpleEvent = function (type, target) {
+	'use strict';
+	
+	this.type = type;
+	
+	/**
+	 * Target of this event.
+	 */
+	this.target = target;
+	
+	/**
+	 * Added for consistency with DOM event definition; same as {@link SimpleEventDispatcher.SimpleEvent#target}.
+	 */
+	this.currentTarget = target;
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ContextControl.html">ContextControl</a></li><li><a href="ContextControl.MobileViewState.html">MobileViewState</a></li><li><a href="ContextControl.OffsetCoordinates.html">OffsetCoordinates</a></li><li><a href="IE8Compatibility.html">IE8Compatibility</a></li><li><a href="IE8Compatibility.IE8EventHandler.html">IE8EventHandler</a></li><li><a href="IE9Compatibility.html">IE9Compatibility</a></li><li><a href="IEGeneralCompatibility.html">IEGeneralCompatibility</a></li><li><a href="SimpleDataTable.html">SimpleDataTable</a></li><li><a href="SimpleDataTableControl.html">SimpleDataTableControl</a></li><li><a href="SimpleDataTableControl.ColumnValueFilter.html">ColumnValueFilter</a></li><li><a href="SimpleDataTableListener.html">SimpleDataTableListener</a></li><li><a href="SimpleDataTableUtils.html">SimpleDataTableUtils</a></li><li><a href="SimpleEventDispatcher.html">SimpleEventDispatcher</a></li><li><a href="SimpleEventDispatcher.SimpleEvent.html">SimpleEvent</a></li><li><a href="SimpleFilterDescriptor.html">SimpleFilterDescriptor</a></li><li><a href="SimpleSortDescriptor.html">SimpleSortDescriptor</a></li><li><a href="XMLBuilder.html">XMLBuilder</a></li></ul><h3>Interfaces</h3><ul><li><a href="CellInterpreter.html">CellInterpreter</a></li><li><a href="ColumnControl.html">ColumnControl</a></li><li><a href="ColumnControlFactory.html">ColumnControlFactory</a></li><li><a href="Disposable.html">Disposable</a></li><li><a href="FilterDescriptor.html">FilterDescriptor</a></li><li><a href="MinimalList.html">MinimalList</a></li><li><a href="Nothing.html">Nothing</a></li><li><a href="SimpleEventIntf.html">SimpleEventIntf</a></li><li><a href="SimpleEventListener.html">SimpleEventListener</a></li><li><a href="SortDescriptor.html">SortDescriptor</a></li></ul><h3>Events</h3><ul><li><a href="ContextControl.html#event:event:create">create</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Sun Jan 26 2020 10:04:47 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

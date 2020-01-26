@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Interface: SortDescriptor</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Interface: SortDescriptor</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>SortDescriptor</h2>
+        
+            <div class="class-description"><p>Describes the information necessary to sort a table based upon a column.</p></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="SimpleDataTable.js.html">SimpleDataTable.js</a>, <a href="SimpleDataTable.js.html#line6">line 6</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="columnIndex"><span class="type-signature"></span>columnIndex<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Index of the column this <code>SortDescriptor</code> describes how to sort.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="SimpleDataTable.js.html">SimpleDataTable.js</a>, <a href="SimpleDataTable.js.html#line13">line 13</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="compare"><span class="type-signature"></span>compare<span class="signature">(cellA, cellB)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Callback comparator function that compares one cell to another.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>cellA</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLCellElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Reference cell.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cellB</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLCellElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Compare cell.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="SimpleDataTable.js.html">SimpleDataTable.js</a>, <a href="SimpleDataTable.js.html#line18">line 18</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A value greater than 0 if <code>cellA</code> should be sorted below <code>cellB</code>, less than 0 for above, 0 for no preference.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ContextControl.html">ContextControl</a></li><li><a href="ContextControl.MobileViewState.html">MobileViewState</a></li><li><a href="ContextControl.OffsetCoordinates.html">OffsetCoordinates</a></li><li><a href="IE8Compatibility.html">IE8Compatibility</a></li><li><a href="IE8Compatibility.IE8EventHandler.html">IE8EventHandler</a></li><li><a href="IE9Compatibility.html">IE9Compatibility</a></li><li><a href="IEGeneralCompatibility.html">IEGeneralCompatibility</a></li><li><a href="SimpleDataTable.html">SimpleDataTable</a></li><li><a href="SimpleDataTableControl.html">SimpleDataTableControl</a></li><li><a href="SimpleDataTableControl.ColumnValueFilter.html">ColumnValueFilter</a></li><li><a href="SimpleDataTableListener.html">SimpleDataTableListener</a></li><li><a href="SimpleDataTableUtils.html">SimpleDataTableUtils</a></li><li><a href="SimpleEventDispatcher.html">SimpleEventDispatcher</a></li><li><a href="SimpleEventDispatcher.SimpleEvent.html">SimpleEvent</a></li><li><a href="SimpleFilterDescriptor.html">SimpleFilterDescriptor</a></li><li><a href="SimpleSortDescriptor.html">SimpleSortDescriptor</a></li><li><a href="XMLBuilder.html">XMLBuilder</a></li></ul><h3>Interfaces</h3><ul><li><a href="CellInterpreter.html">CellInterpreter</a></li><li><a href="ColumnControl.html">ColumnControl</a></li><li><a href="ColumnControlFactory.html">ColumnControlFactory</a></li><li><a href="Disposable.html">Disposable</a></li><li><a href="FilterDescriptor.html">FilterDescriptor</a></li><li><a href="MinimalList.html">MinimalList</a></li><li><a href="Nothing.html">Nothing</a></li><li><a href="SimpleEventIntf.html">SimpleEventIntf</a></li><li><a href="SimpleEventListener.html">SimpleEventListener</a></li><li><a href="SortDescriptor.html">SortDescriptor</a></li></ul><h3>Events</h3><ul><li><a href="ContextControl.html#event:event:create">create</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Sun Jan 26 2020 10:04:47 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
