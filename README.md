@@ -55,18 +55,23 @@ The API Documentation for SimpleDataTable.js is hosted using [GitHub Pages]({{do
 
 ## A Simple Table
 (basic use case)
+(Gradebook)
 
 ## Changing How Cells Are Interpreted
 (use CellInterpreter)
+(Drink Recipes - ingredients in list, special format)
 
 ## Defining Custom Controls
 (use ColumnControlFactory)
+(Temperature measurements where temperature unit can change)
 
 ## Low-Level Processing
 (use utility)
+(Real-time scoreboard)
 
 ## An Entirely Custom Implementation
 (use core)
+(Windspeeds with off-table unit change, filter measurements by category)
 
 
 
