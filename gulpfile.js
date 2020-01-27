@@ -77,15 +77,6 @@ function pipeToTarget(targetName, arr) {
 			reject(err);
 		}
 		
-		
-		const target = fs.createWriteStream(targetName);
-		target.on('error', onError);
-		
-		
-		
-		let reader = null;
-		let i = 0;
-		
 		function nextReader() {
 			if (i >= arr.length) {
 				target.end();
@@ -97,23 +88,31 @@ function pipeToTarget(targetName, arr) {
 				reader.pipe(target, {end: false});
 			}
 		}
+		
+		
+		const target = fs.createWriteStream(targetName);
+		target.on('error', onError);
+		
+		let reader = null;
+		let i = 0;
 
 		nextReader();
-		
 	});
 }
 
 
 
 // Build Functions
-function ensureDir(cb) {
+function ensureDir() {
 	'use strict';
 	
-	return fs.mkdir(OUT_DIR, (err) => {
-		if (err && err.code !== 'EEXIST') {
-			cb(err);
-		}
-		cb();
+	return new Promise((resolve, reject) => {
+		fs.mkdir(OUT_DIR, (err) => {
+			if (err && err.code !== 'EEXIST') {
+				reject(err);
+			}
+			resolve();
+		});
 	});
 }
 
@@ -178,7 +177,7 @@ function generateDoc() {
 		let p = child_process.spawn(
 			['.', 'node_modules', '.bin', 'jsdoc'].join(path.sep)
 			, ['-p', '-d', `${OUT_DIR}/doc`, '-c', 'jsdoc/jsdoc-conf.json', '-r', 'src']
-			, { shell: true } );
+			, { shell: true });
 		
 		let jsdocOut = '';
 		p.stdout.on('data', (data) => {
@@ -194,7 +193,7 @@ function generateDoc() {
 			if (jsdocOut) {
 				console.log(jsdocOut);
 			}
-			resolve()
+			resolve();
 		});
 	});
 
