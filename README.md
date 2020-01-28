@@ -40,9 +40,9 @@ use-cases, but clients are, by no means, required to use them.
 
 ## Motivation
 Although true there are a multitude of other libraries in existence that perform similar functions to SimpleDataTable.js, most require the 
-importation of heavyweight supporting libraries (e.g. jQuery), are heavyweight themselves, lend themselves poorly to customization, and even 
-require payment for their usage. The motivation behind SimpleDataTable.js is to serve as a free, standalone, lightweight, and more flexible
-alternative to other HTML table processing libraries available.
+importation of supporting libraries, offer many unneeded features, with few required features, and lend themselves poorly to customization. 
+The motivation behind SimpleDataTable.js is to serve as a free, standalone, (semi-)lightweight, more flexible alternative to all the other 
+HTML table processing libraries available.
 
 
 ## Documentation
