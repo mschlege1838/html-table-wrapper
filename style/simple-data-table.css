@@ -8,10 +8,7 @@
 
 /* Controls/Associated States */
 .data-table-column-options {
-	background-color: white;
-	border: 1px solid black;
 	width: 20em;
-	padding: .5em;
 	box-sizing: border-box;
 }
 
