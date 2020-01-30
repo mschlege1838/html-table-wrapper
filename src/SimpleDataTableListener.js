@@ -118,14 +118,6 @@ function SimpleDataTableListener(table, columnControlFactory) {
 	this.columnControlFactory = columnControlFactory;
 	
 	/**
-	 * Cache of `HTMLTableCellElement`s for which this class is registered for click events.
-	 *
-	 * @private
-	 * @type {HTMLTableCellElement[]}
-	 */
-	this.tableHeaderCache = [];
-	
-	/**
 	 * {@link ColumnControl} cache.
 	 *
 	 * @private
@@ -150,7 +142,15 @@ SimpleDataTableListener.processedColumnHeader = 'data-table-column-header';
  * @private
  */
  
- 
+
+/**
+ * Cache of `HTMLTableCellElement`s for which this class is registered for click events.
+ *
+ * @private
+ * @type {HTMLTableCellElement[]}
+ */
+SimpleDataTableListener.prototype.tableHeaderCache = null;
+
 /**
  * Current column-order in which to apply sort descriptors. Initially `null`, initialized on first call to {@link SimpleDataTableListener#processTable}.
  *
