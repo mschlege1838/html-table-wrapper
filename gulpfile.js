@@ -50,6 +50,7 @@ const UTIL_SRC_ORDER = [
 	, 'src/IE9Compatibility.js'
 	, 'src/IE8Compatibility.js'
 	, 'src/SimpleDataTable.js'
+	, 'src/SimpleDataTableUtils.js'
 	, 'src/SimpleFilterDescriptor.js'
 	, 'src/SimpleSortDescriptor.js'
 ];
