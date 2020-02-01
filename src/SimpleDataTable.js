@@ -11,18 +11,25 @@
  * Describes the information necessary to sort a table based upon a column.
  */
 /**
- * Index of the column this `SortDescriptor` describes how to sort.
+ * Optional property indicating the index of the column this `SortDescriptor` describes how to sort. If this property
+ * is not a positive number, it will be assumed this `SortDescriptor` describes how to sort entire rows.
  *
  * @member {number} SortDescriptor#columnIndex
  */
 /**
- * Callback comparator function that compares one cell to another.
+ * Callback comparator function that compares one cell or row to another. If {@link SortDescriptor#columnIndex} is defined, and
+ * a postiive number, `HTMLTableCellElement`s in the approprite position within the rows being compared will be passed to this
+ * function corresponding to this `SortDescriptor`'s {@link SortDescriptor#columnIndex} property, otherwise the `HTMLTableRowElement`s
+ * undergoing comparison will be passed.
+ *
+ * If this function returns a value greater than 0, the relevant row corresponding to the first given item will be sorted below the second,
+ * if a value less than 0, the first will be sorted above the second, and if 0, no preference will be applied.
  *
  * @function SortDescriptor#compare
- * @param {HTMLCellElement} cellA Reference cell.
- * @param {HTMLCellElement} cellB Compare cell.
+ * @param {HTMLCellElement|HTMLTableRowElement} itemA Reference cell or row.
+ * @param {HTMLCellElement|HTMLTableRowElement} itemB Compare cell or row.
  * @returns {number} 
- *   A value greater than 0 if `cellA` should be sorted below `cellB`, less than 0 for above, 0 for no preference.
+ *   A value greater than 0 if `itemA` should be sorted below `itemB`, less than 0 for above, 0 for no preference.
  */
 
 
@@ -34,17 +41,22 @@
  * Describes the information necessary to filter a table based upon a column.
  */
 /**
- * Index of the column this `FilterDescriptor` describes how to filter.
+ * Optional property indicating the index of the column this `FilterDescriptor` describes how to filter. If this property
+ * is not a positive number, it will be assumed this `FilterDescriptor` describes how to filter entire rows.
  * 
  * @member {number} FilterDescriptor#columnIndex
  */
 /**
- * Callback function to determine whether the given cell's row should be filtered. If this function returns `false`,
- * the containing row will be filtered.
+ * Callback function to determine whether the given row or cell's parent row should be filtered. If {@link FilterDescriptor#columnIndex}
+ * is defined, and a postiive number, the `HTMLTableCellElement` in the approprite position within the row being considered will be passed
+ * to this function corresponding to this `FilterDescriptor`'s {@link FilterDescriptor#columnIndex} property, otherwise the `HTMLTableRowElement`
+ * being considered will be passed directly. 
+ *
+ * If this function returns `false`, the relevant row will be filtered.
  *
  * @function FilterDescriptor#include
- * @param {HTMLCellElement} cell Cell to be considered for inclusion.
- * @returns {boolean} `false` if the given `cell`'s row should be filtered.
+ * @param {HTMLCellElement|HTMLTableRowElement} item Cell or Row to be considered for inclusion.
+ * @returns {boolean} `false` if the given `item` should be filtered.
  */
 
 
@@ -161,13 +173,6 @@ SimpleDataTable.prototype.sort = function () {
 			throw new ReferenceError('Invalid reference supplied for sort descriptor at index ' + i + ': ' + sortDescriptor);
 		}
 		
-		if (typeof sortDescriptor.columnIndex !== 'number') {
-			throw new TypeError('Sort descriptor does not define the columnIndex property (of type number) at index ' + i);
-		}
-		if (sortDescriptor.columnIndex < 0) {
-			throw new RangeError('Sort descriptor defines a column index less than 0 at index ' + i + ': ' + sortDescriptor.columnIndex);
-		}
-		
 		if (typeof sortDescriptor.compare !== 'function') {
 			throw new TypeError('Sort descriptor does not define define the compare property (of type function) at index ' + i);
 		}
@@ -189,10 +194,15 @@ SimpleDataTable.prototype.sort = function () {
 			
 			columnIndex = sortDescriptor.columnIndex;
 			
-			cellA = rowA.cells[columnIndex];
-			cellB = rowB.cells[columnIndex];
+			if (typeof columnIndex === 'number' && columnIndex > 0) {
+				cellA = rowA.cells[columnIndex];
+				cellB = rowB.cells[columnIndex];
+				compareValue = sortDescriptor.compare(cellA, cellB);
+			} else {
+				compareValue = sortDescriptor.compare(rowA, rowB);
+			}
 			
-			compareValue = sortDescriptor.compare(cellA, cellB);
+			
 			
 			// Allowing type coercion if (for whatever reason) the compare function does not return an integer.
 			if (compareValue != 0) {
@@ -226,7 +236,7 @@ SimpleDataTable.prototype.sort = function () {
 SimpleDataTable.prototype.filter = function () {
 	'use strict';
 	
-	var filterDescriptors, filterDescriptor, i, rows, row, filter, j, cells;
+	var filterDescriptors, filterDescriptor, i, rows, row, filter, j, cells, columnIndex, shouldInclude;
 	
 	// Initialization.
 	filterDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
@@ -242,13 +252,6 @@ SimpleDataTable.prototype.filter = function () {
 		
 		if (!filterDescriptor) {
 			throw new ReferenceError('Invalid reference supplied for filter descriptor at index ' + i);
-		}
-		
-		if (typeof filterDescriptor.columnIndex !== 'number') {
-			throw new TypeError('Filter descriptor does not define the columnIndex property (of type number) at index ' + i);
-		}
-		if (filterDescriptor.columnIndex < 0) {
-			throw new RangeError('Filter descriptor defines a column index less than 0 at index ' + i + ': ' + filterDescriptor.columnIndex);
 		}
 		
 		if (typeof filterDescriptor.include !== 'function') {
@@ -267,7 +270,15 @@ SimpleDataTable.prototype.filter = function () {
 		for (j = 0; j < filterDescriptors.length; ++j) {
 			filterDescriptor = filterDescriptors[j];
 			
-			if (!filterDescriptor.include(cells[filterDescriptor.columnIndex])) {
+			columnIndex = filterDescriptor.columnIndex;
+			
+			if (typeof columnIndex === 'number' && columnIndex > 0) {
+				shouldInclude = filterDescriptor.include(cells[columnIndex]);
+			} else {
+				shouldInclude = filterDescriptor.include(row);
+			}
+			
+			if (!shouldInclude) {
 				filter = true;
 				break;
 			}
