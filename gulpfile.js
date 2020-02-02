@@ -39,10 +39,12 @@ const FULL_SRC_ORDER = [
 const FULL_STYLE_ORDER = [
 	'style/context-control.css'
 	, 'style/simple-data-table.css'
+	, 'style/simple-data-table-listener.css'
 ];
 
 // Util Distribution
 const UTIL_SRC_NAME = `${OUT_DIR}/simple-data-table-util.js`;
+const UTIL_STYLE_NAME = `${OUT_DIR}/simple-data-table-util.css`;
 
 const UTIL_SRC_ORDER = [
 	'src/polyfill.js'
@@ -55,8 +57,11 @@ const UTIL_SRC_ORDER = [
 	, 'src/SimpleSortDescriptor.js'
 ];
 
+const UTIL_STYLE_ORDER = ['style/simple-data-table.css'];
+
 // Min Distribution
 const MIN_SRC_NAME = `${OUT_DIR}/simple-data-table-core.js`;
+const MIN_STYLE_NAME = `${OUT_DIR}/simple-data-table-core.css`;
 
 const MIN_SRC_ORDER = [
 	'src/polyfill.js'
@@ -66,7 +71,7 @@ const MIN_SRC_ORDER = [
 	, 'src/SimpleDataTable.js'
 ];
 
-
+const MIN_STYLE_ORDER = ['style/simple-data-table.css'];
 
 // Utility Functions
 function pipeToTarget(targetName, arr) {
@@ -126,13 +131,13 @@ function catFull() {
 function catUtil() {
 	'use strict';
 	
-	return pipeToTarget(UTIL_SRC_NAME, UTIL_SRC_ORDER);
+	return Promise.all([pipeToTarget(UTIL_SRC_NAME, UTIL_SRC_ORDER), pipeToTarget(UTIL_STYLE_NAME, UTIL_STYLE_ORDER)]);
 }
 
 function catMin() {
 	'use strict';
 	
-	return pipeToTarget(MIN_SRC_NAME, MIN_SRC_ORDER);
+	return Promise.all([pipeToTarget(MIN_SRC_NAME, MIN_SRC_ORDER), pipeToTarget(MIN_STYLE_NAME, MIN_STYLE_ORDER)]);
 }
 
 function minifySrc() {
@@ -147,7 +152,7 @@ function minifySrc() {
 function minifyStyle() {
 	'use strict';
 	
-	return gulp.src([FULL_STYLE_NAME])
+	return gulp.src([FULL_STYLE_NAME, UTIL_STYLE_NAME, MIN_STYLE_NAME])
 		.pipe(uglifycss())
 		.pipe(rename({ extname: '.min.css'}))
 		.pipe(gulp.dest(OUT_DIR));
