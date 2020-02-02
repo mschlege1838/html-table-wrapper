@@ -13,6 +13,7 @@
  * @function CellInterpreter#populateCellValues
  * @param {HTMLCellElement} cell Cell element whose values are to be retrieved.
  * @param {Array} values Values to populate.
+ * @returns `true` to trigger default column value processing, otherwise {@link Nothing}.
  */
 
 // Callbacks
@@ -21,11 +22,13 @@
 /**
  * Optional callback for {@link SimpleDataTableControl} to customize how cell values are interpreted. Based upon the given `cell`,
  * should determine the individual cell value/values, and add them to the given `Array`. Note, duplicate values are permitted; 
- * if distinct values are desired, this function should test for their presence in the `Array` prior to adding.
+ * if distinct values are desired, this function should test for their presence in the `Array` prior to adding. If `true` is returned
+ * from a call to this function, default processing, as defined in {@link SimpleDataTableControl#getColumnValues} will be triggered.
  *
  * @callback SimpleDataTableControl~populateCellValues
  * @param {HTMLTableCellElement} cell Cell element whose values are to be retrieved.
  * @param {Array} values Values to populate.
+ * @returns `true` to trigger default column value processing, otherwise {@link Nothing}.
  */
 
 
@@ -36,6 +39,8 @@
  * @implements ColumnControl
  * @param {number} columnIndex Index of the column this `SimpleDataTableControl` controls.
  * @param {SimpleDataTableListener} parent Parent {@link SimpleDataTableListener}.
+ * @param {CellInterpreter|SimpleDataTableControl~populateCellValues} [cellInterpreter] 
+ *   Optional interpreter for cell values to use with calls to {@link SimpleDataTableControl#getColumnValues}.
  * @classdesc
  *
  * The default {@link ColumnControl} used by {@link SimpleDataTableListener}. Defines a UI where an end-user
@@ -237,6 +242,8 @@ SimpleDataTableControl.checkCellInterpreter = function (callback) {
 };
 
 
+// Instance fields.
+SimpleDataTableControl.prototype.cellInterpreter = null;
 
 
 // Instance Methods
@@ -445,7 +452,7 @@ SimpleDataTableControl.prototype.getSortDescriptor = function () {
  * Returns and `Array` containting all the individual cell values of the column with which this `SimpleDataTableControl` is associated.
  * If this `SimpleDataTableControl` has a {@link CellInterpreter} or {@link SimpleDataTableControl~populateCellValues} callback
  * configured, it will be used to obtain the values of individual cells, otherwise, returns the unique set of each cell's trimmed
- * `textContent`.
+ * `textContent`. If any call to a defined interpreter returns `true`, the cell's trimmed `textContent` is also used.
  *
  * By default, the result is sorted prior to being returned, unless the `noSort` parameter is not {@link Nothing}.
  *
@@ -455,7 +462,7 @@ SimpleDataTableControl.prototype.getSortDescriptor = function () {
 SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 	'use strict';
 	
-	var rows, i, cell, value, result, columnIndex, callback;
+	var rows, i, cell, value, result, columnIndex, callback, defaultProcessing;
 	
 	callback = this.cellInterpreter;
 	if (callback) {
@@ -471,16 +478,21 @@ SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 		cell = rows[i].cells[columnIndex];
 		if (callback) {
 			if (callback.populateCellValues) {
-				callback.populateCellValues(cell, result);
+				defaultProcessing = callback.populateCellValues(cell, result);
 			} else {
-				callback(cell, result);
+				defaultProcessing = callback(cell, result);
 			}
 		} else {
+			defaultProcessing = true;
+		}
+		
+		if (defaultProcessing) {
 			value = IE8Compatibility.getTextContent(cell).trim();
 			if (result.indexOf(value) === -1) {
 				result.push(value);
 			}
 		}
+		
 	}
 	
 	if (!noSort) {

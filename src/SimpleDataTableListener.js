@@ -77,6 +77,8 @@
  * @implements Disposable
  * @param {(HTMLTableElement|SimpleDataTable)} table `HTMLTableElement` or {@link SimpleDataTable} backing this listener.
  * @param {ColumnControlFactory|SimpleDataTableListener~getColumnControl} [columnControlFactory] Optional factory if custom column controls are needed.
+ * @param {CellInterpreter|SimpleDataTableControl~populateCellValues} [cellInterpreter]
+ *   Interpreter to use when falling back to the default {@link SimpleDataTableControl} on calls to {@link SimpleDataTableListener#getColumnControl}.
  * @classdesc
  *
  * Facilitates communication between the API-level {@link SimpleDataTable} and the UI-level {@link ColumnControl}. In addition to the constraints
@@ -91,7 +93,7 @@
  * In response to click events, the appropriate {@link ColumnControl} will be created using the given {@link ColumnControlFactory} (or {@link SimpleDataTableListener~getColumnControl} 
  * callback), if defined, or will fall back to {@link SimpleDataTableControl} in the case no {@link ColumnControlFactory} (or callback) is defined, or the call to 
  * {@link ColumnControlFactory#getColumnControl} (or direct invocation of the {@link SimpleDataTableListener~getColumnControl} callback) returns {@link Nothing}. {@link ColumnControl}s 
- * are cached after they are created, and are reused for subsequent click events.
+ * are cached after they are created, and are reused for subsequent click events. The given `cellInterpreter` is used when falling back to {@link SimpleDataTableControl}.
  * 
  * {@link ColumnControl}s can make calls back to {@link SimpleDataTableListener#processTable} to trigger table-wide
  * sorting and filtering in response to user-triggered events on the control that would be expected to update the state of the 
@@ -100,7 +102,7 @@
  * and ultimately passed to {@link SimpleDataTable#filter} and {@link SimpleDataTable#sort}. (Implicit to this, calls to {@link SimpleDataTableListener#processTable}
  * should not be made in {@link ColumnControl#getFilterDescriptor} and {@link ColumnControl#getSortDescriptor}, as such would cause infinite recursion).
  */
-function SimpleDataTableListener(table, columnControlFactory) {
+function SimpleDataTableListener(table, columnControlFactory, cellInterpreter) {
 	'use strict';
 	
 	if (table instanceof SimpleDataTable) {
@@ -109,13 +111,13 @@ function SimpleDataTableListener(table, columnControlFactory) {
 		this.dataTable = new SimpleDataTable(table);
 	}
 	
-	/**
-	 * {@link ColumnControlFactory} to use when creating controls.
-	 *
-	 * @type ColumnControlFactory
-	 * @private
-	 */
-	this.columnControlFactory = columnControlFactory;
+	if (columnControlFactory) {
+		this.columnControlFactory = columnControlFactory;
+	}
+	
+	if (cellInterpreter) {
+		this.cellInterpreter = cellInterpreter;
+	}
 	
 	/**
 	 * {@link ColumnControl} cache.
@@ -158,6 +160,20 @@ SimpleDataTableListener.prototype.tableHeaderCache = null;
  * @type {number[]}
  */
 SimpleDataTableListener.prototype.sortDescriptorOrder = null;
+
+
+/**
+ * {@link ColumnControlFactory} to use when creating controls.
+ *
+ * @type ColumnControlFactory
+ * @private
+ */
+SimpleDataTableListener.prototype.columnControlFactory = null;
+
+
+SimpleDataTableListener.prototype.cellInterpreter = null;
+
+
 
 // Instance Methods
 /**
@@ -272,10 +288,10 @@ SimpleDataTableListener.prototype.openColumnControl = function (columnIndex) {
 };
 
 /**
- * Obtains a {@link ColumnControl} for the given `columnIndex`. If one is cached (has been obtained before), it will be returned.
- * Otherwise it will be created using the {@link ColumnControlFactory} passed to the constructor of this `SimpleDataTableListener`. If defined, and its
- * {@link ColumnControlFactory#getColumnControl} function returns a value that is not {@link Nothing}, that value will be cached and returned. Failing that,
- * a new {@link SimpleDataTableControl} will be cached and returned.
+ * Obtains a {@link ColumnControl} for the given `columnIndex`. If one is cached (has been obtained before), it will be returned. Otherwise it will be created using the 
+ * {@link ColumnControlFactory} passed to the constructor of this `SimpleDataTableListener`. If defined, and its {@link ColumnControlFactory#getColumnControl} (or its 
+ * direct invocation if a {@link SimpleDataTableListener~getColumnControl}) function returns a value that is not {@link Nothing}, that value will be cached and returned. 
+ * Failing that, a new {@link SimpleDataTableControl} will be cached and returned.
  *
  * @param {number} columnIndex Index of the column for which a {@link ColumnControl} is to be obtained.
  * @throws {RangeError} If `columnIndex` is greater than or equal to the number of columns in the backing table.
@@ -306,7 +322,7 @@ SimpleDataTableListener.prototype.getColumnControl = function (columnIndex) {
 	}
 	
 	if (!columnControl) {
-		columnControl = new SimpleDataTableControl(columnIndex, this);
+		columnControl = new SimpleDataTableControl(columnIndex, this, this.cellInterpreter);
 	}
 	
 	if (typeof columnControl.init === 'function') {
