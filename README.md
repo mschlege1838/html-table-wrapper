@@ -132,3 +132,22 @@ The full example can be found [here](examples/basic/gradebook.html).
 ## Contributing
 
 ## Building
+SimpleDataTable.js uses [Gulp](https://gulpjs.com/) to build its distribution package. All build dependencies are listed in SimpleDataTable.js's 
+source repository package.json, with the only exception of the gulp-cli, which it assumes is installed globally. I.e. the following should be 
+sufficient for a first time setup (it is also assumed [node.js](https://nodejs.org) is installed):
+
+```
+> npm i -g gulp-cli
+> npm i
+```
+
+From there, gulp can be ran directly to build SimpleDataTable.js's distribution package:
+
+```
+> gulp
+```
+
+As you can see, SimpleDataTable.js does not follow the typical conventions of an NPM package in that its distribution package is not the same as 
+its build package; the build produces a new directory containing the distribution package. This choice was made in preference to maintaining an
+nmpignore file for clarity and conciceness; no files need to be inspected to see what is, or is not included the distribution. The distribution
+is, simply, the newly created package.
