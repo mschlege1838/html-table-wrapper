@@ -26,6 +26,8 @@ const FULL_SRC_ORDER = [
 	, 'src/IE9Compatibility.js'
 	, 'src/IE8Compatibility.js'
 	, 'src/SimpleEventDispatcher.js'
+	, 'src/IterationValue.js'
+	, 'src/ColumnValueSet.js'
 	, 'src/ContextControl.js'
 	, 'src/SimpleDataTable.js'
 	, 'src/SimpleDataTableControl.js'
