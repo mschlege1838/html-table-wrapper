@@ -12,7 +12,7 @@
  *
  * @function CellInterpreter#populateCellValues
  * @param {HTMLCellElement} cell Cell element whose values are to be retrieved.
- * @param {Array} values Values to populate.
+ * @param {ColumnValueSet} values Values to populate.
  * @returns `true` to trigger default column value processing, otherwise {@link Nothing}.
  */
 
@@ -21,13 +21,12 @@
 // populateCellValues
 /**
  * Optional callback for {@link SimpleDataTableControl} to customize how cell values are interpreted. Based upon the given `cell`,
- * should determine the individual cell value/values, and add them to the given `Array`. Note, duplicate values are permitted; 
- * if distinct values are desired, this function should test for their presence in the `Array` prior to adding. If `true` is returned
+ * should determine the individual cell value/values, and add them to the given {@link ColumnValueSet}. If `true` is returned
  * from a call to this function, default processing, as defined in {@link SimpleDataTableControl#getColumnValues} will be triggered.
  *
  * @callback SimpleDataTableControl~populateCellValues
  * @param {HTMLTableCellElement} cell Cell element whose values are to be retrieved.
- * @param {Array} values Values to populate.
+ * @param {ColumnValueSet} values Values to populate.
  * @returns `true` to trigger default column value processing, otherwise {@link Nothing}.
  */
 
@@ -462,7 +461,7 @@ SimpleDataTableControl.prototype.getSortDescriptor = function () {
 SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 	'use strict';
 	
-	var rows, i, cell, value, result, columnIndex, callback, defaultProcessing;
+	var rows, i, cell, values, result, columnIndex, callback, defaultProcessing, itr, itrVal;
 	
 	callback = this.cellInterpreter;
 	if (callback) {
@@ -471,29 +470,33 @@ SimpleDataTableControl.prototype.getColumnValues = function (noSort) {
 	
 	columnIndex = this.columnIndex;
 	
-	result = [];
+	values = new ColumnValueSet();
 	rows = this.parent.getDataTable().getRows(true);
 	
 	for (i = 0; i < rows.length; ++i) {
 		cell = rows[i].cells[columnIndex];
 		if (callback) {
 			if (callback.populateCellValues) {
-				defaultProcessing = callback.populateCellValues(cell, result);
+				defaultProcessing = callback.populateCellValues(cell, values);
 			} else {
-				defaultProcessing = callback(cell, result);
+				defaultProcessing = callback(cell, values);
 			}
 		} else {
 			defaultProcessing = true;
 		}
 		
 		if (defaultProcessing) {
-			value = IE8Compatibility.getTextContent(cell).trim();
-			if (result.indexOf(value) === -1) {
-				result.push(value);
-			}
+			values.add(IE8Compatibility.getTextContent(cell));
 		}
 		
 	}
+	
+	result = [];
+	itr = values.iterator();
+	while (!(itrVal = itr.next()).done) {
+		result.push(itrVal.value);
+	}
+	
 	
 	if (!noSort) {
 		result.sort();
@@ -907,7 +910,7 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, comp
 	if (cellInterpreter) {
 		SimpleDataTableControl.checkCellInterpreter(cellInterpreter);
 		this.cellInterpreter = cellInterpreter;
-		this.currentCellCache = [];
+		this.currentCellCache = new ColumnValueSet();
 	}
 };
 
@@ -920,12 +923,12 @@ SimpleDataTableControl.ColumnValueFilter = function (columnIndex, operator, comp
 SimpleDataTableControl.ColumnValueFilter.prototype.cellInterpreter = null;
 
 /**
- * `Array` to use with the configured {@link SimpleDataTableControl.ColumnValueFilter#cellInterpreter}, if present. (Prevents the need to create a new
- * `Array` on each call to {@link SimpleDataTableControl.ColumnValueFilter#include} when filtering). This property is `null` if no `cellInterpreter`
+ * `ColumnValueSet` to use with the configured {@link SimpleDataTableControl.ColumnValueFilter#cellInterpreter}, if present. (Prevents the need to create a new
+ * `ColumnValueSet` on each call to {@link SimpleDataTableControl.ColumnValueFilter#include} when filtering). This property is `null` if no `cellInterpreter`
  * is configured.
  *
  * @private
- * @type {Array}
+ * @type {ColumnValueSet}
  */
 SimpleDataTableControl.ColumnValueFilter.prototype.currentCellCache = null;
 
@@ -933,7 +936,7 @@ SimpleDataTableControl.ColumnValueFilter.prototype.currentCellCache = null;
 SimpleDataTableControl.ColumnValueFilter.prototype.include = function (cell) {
 	'use strict';
 	
-	var cellInterpreter, currentCellCache, i;
+	var cellInterpreter, currentCellCache, itr, itrVal;
 	
 	cellInterpreter = this.cellInterpreter;
 	
@@ -945,14 +948,15 @@ SimpleDataTableControl.ColumnValueFilter.prototype.include = function (cell) {
 			cellInterpreter(cell, currentCellCache);
 		}
 		
-		for (i = 0; i < currentCellCache.length; ++i) {
-			if (this.shouldInclude(currentCellCache[i])) {
-				currentCellCache.length = 0;
+		itr = currentCellCache.iterator();
+		while (!(itrVal = itr.next()).done) {
+			if (this.shouldInclude(itrVal.value)) {
+				currentCellCache.clear();
 				return true;
 			}
 		}
 		
-		currentCellCache.length = 0;
+		currentCellCache.clear();
 		return false;
 	} else {
 		return this.shouldInclude(IE8Compatibility.getTextContent(cell).trim());
