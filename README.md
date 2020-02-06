@@ -12,7 +12,8 @@ HTML table elements. The easiest way to get up-and-running with SimpleDataTable.
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 	'use strict';
-	new SimpleDataTableListener(document.getElementById('myTable').init();
+	
+	new SimpleDataTableListener(document.getElementById('myTable')).init();
 });
 </script>
 ```
