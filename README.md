@@ -83,6 +83,8 @@ use the traditional syntax.
 
 ## License
 
+SimpleDataTable.js is licenced under the MIT and BSD 3-Clause Free Software Licenses. A full copy can be found [here](LICENSE).
+
 ## Reporting Issues
 
 ## Contributing
