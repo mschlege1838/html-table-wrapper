@@ -1,8 +1,6 @@
 
 # SimpleDataTable.js
 
----------------------------------------------------------------------------------------------------------------------------------------
-
 SimpleDataTable.js is a standalone, lightweight, completely pluggable library for the arbitrary sorting and filtering of "typical"
 HTML table elements. The easiest way to get up-and-running with SimpleDataTable.js is to use its "full" distribution:
 
@@ -52,8 +50,6 @@ The API Documentation for SimpleDataTable.js is hosted using [GitHub Pages]({{do
 
 # Usage Examples
 
----------------------------------------------------------------------------------------------------------------------------------------
-
 Usage examples are in the README.md files of their respective subdirectories. Their links are below. Links to the working webpages are also provided.
 Of note, although SimpleDataTable.js is compatible with IE back to version 8, the examples are not; they require a modern browser with an up-to-date
 DOM and ES6 implementation. Due, however, to the relative novelty of the added ES6 syntax elements, a version of the source code for the examples is 
@@ -78,8 +74,6 @@ use the traditional syntax.
 
 
 # Administrivia
-
----------------------------------------------------------------------------------------------------------------------------------------
 
 ## License
 
