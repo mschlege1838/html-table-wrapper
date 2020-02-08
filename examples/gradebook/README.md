@@ -31,14 +31,14 @@ Adding the default sort/filter dialogue to the table is as simple as adding some
 <!DOCTYPE html>
 <html>
 <head>
-<title>SimpleDataTable.js - Gradebook</title>
-<script src="../simple-data-table.min.js"></script>
+<title>HTMLTableWrapper.js - Gradebook</title>
+<script src="../html-table-wrapper.min.js"></script>
 <script>
 
 document.addEventListener('DOMContentLoaded', () => {
 	'use strict';
 	
-	new SimpleDataTableListener(document.getElementById('grades')).init();
+	new HTMLTableWrapperListener(document.getElementById('grades')).init();
 });
 
 </script>

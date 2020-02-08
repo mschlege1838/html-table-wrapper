@@ -1,0 +1,7 @@
+{
+  "name": "html-table-wrapper",
+  "version": "1.0.0",
+  "description": "A standalone sort/filter utility for HTMLTableElements.",
+  "author": "Marty Schlegel",
+  "license": "MIT AND BSD-3-Clause"
+}

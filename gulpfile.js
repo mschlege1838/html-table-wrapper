@@ -12,13 +12,13 @@ const path = require('path');
 // Config
 
 // General
-const OUT_DIR = 'simple-data-table';
-const OUT_PACKAGE_JSON = 'simple-data-table.json';
+const OUT_DIR = 'html-table-wrapper';
+const OUT_PACKAGE_JSON = 'html-table-wrapper.json';
 
 
 // Full Distribution
-const FULL_SRC_NAME = `${OUT_DIR}/simple-data-table.js`;
-const FULL_STYLE_NAME = `${OUT_DIR}/simple-data-table.css`;
+const FULL_SRC_NAME = `${OUT_DIR}/html-table-wrapper.js`;
+const FULL_STYLE_NAME = `${OUT_DIR}/html-table-wrapper.css`;
 
 const FULL_SRC_ORDER = [
 	'src/polyfill.js'
@@ -29,10 +29,10 @@ const FULL_SRC_ORDER = [
 	, 'src/IterationValue.js'
 	, 'src/ColumnValueSet.js'
 	, 'src/ContextControl.js'
-	, 'src/SimpleDataTable.js'
-	, 'src/SimpleDataTableControl.js'
-	, 'src/SimpleDataTableListener.js'
-	, 'src/SimpleDataTableUtils.js'
+	, 'src/HTMLTableWrapper.js'
+	, 'src/HTMLTableWrapperControl.js'
+	, 'src/HTMLTableWrapperListener.js'
+	, 'src/HTMLTableWrapperUtils.js'
 	, 'src/SimpleFilterDescriptor.js'
 	, 'src/SimpleSortDescriptor.js'
 	, 'src/XMLBuilder.js'
@@ -40,40 +40,40 @@ const FULL_SRC_ORDER = [
 
 const FULL_STYLE_ORDER = [
 	'style/context-control.css'
-	, 'style/simple-data-table.css'
-	, 'style/simple-data-table-listener.css'
+	, 'style/html-table-wrapper.css'
+	, 'style/html-table-wrapper-listener.css'
 ];
 
 // Util Distribution
-const UTIL_SRC_NAME = `${OUT_DIR}/simple-data-table-util.js`;
-const UTIL_STYLE_NAME = `${OUT_DIR}/simple-data-table-util.css`;
+const UTIL_SRC_NAME = `${OUT_DIR}/html-table-wrapper-util.js`;
+const UTIL_STYLE_NAME = `${OUT_DIR}/html-table-wrapper-util.css`;
 
 const UTIL_SRC_ORDER = [
 	'src/polyfill.js'
 	, 'src/IEGeneralCompatibility.js'
 	, 'src/IE9Compatibility.js'
 	, 'src/IE8Compatibility.js'
-	, 'src/SimpleDataTable.js'
-	, 'src/SimpleDataTableUtils.js'
+	, 'src/HTMLTableWrapper.js'
+	, 'src/HTMLTableWrapperUtils.js'
 	, 'src/SimpleFilterDescriptor.js'
 	, 'src/SimpleSortDescriptor.js'
 ];
 
-const UTIL_STYLE_ORDER = ['style/simple-data-table.css'];
+const UTIL_STYLE_ORDER = ['style/html-table-wrapper.css'];
 
 // Min Distribution
-const MIN_SRC_NAME = `${OUT_DIR}/simple-data-table-core.js`;
-const MIN_STYLE_NAME = `${OUT_DIR}/simple-data-table-core.css`;
+const MIN_SRC_NAME = `${OUT_DIR}/html-table-wrapper-core.js`;
+const MIN_STYLE_NAME = `${OUT_DIR}/html-table-wrapper-core.css`;
 
 const MIN_SRC_ORDER = [
 	'src/polyfill.js'
 	, 'src/IEGeneralCompatibility.js'
 	, 'src/IE9Compatibility.js'
 	, 'src/IE8Compatibility.js'
-	, 'src/SimpleDataTable.js'
+	, 'src/HTMLTableWrapper.js'
 ];
 
-const MIN_STYLE_ORDER = ['style/simple-data-table.css'];
+const MIN_STYLE_ORDER = ['style/html-table-wrapper.css'];
 
 // Utility Functions
 function pipeToTarget(targetName, arr) {

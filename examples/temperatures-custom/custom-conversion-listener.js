@@ -297,10 +297,10 @@ SwingFilter.prototype.include = function (row) {
 
 
 // TemperatureCategoryListener
-function TemperatureCategoryListener(simpleDataTable, categoryInputs, highColumnIndex, lowColumnIndex) {
+function TemperatureCategoryListener(tableWrapper, categoryInputs, highColumnIndex, lowColumnIndex) {
 	'use strict';
 	
-	this.simpleDataTable = simpleDataTable;
+	this.tableWrapper = tableWrapper;
 	this.categoryInputs = categoryInputs;
 	this.highColumnIndex = highColumnIndex;
 	this.lowColumnIndex = lowColumnIndex;
@@ -337,9 +337,9 @@ TemperatureCategoryListener.prototype.handleEvent = function () {
 TemperatureCategoryListener.prototype.updateTable = function () {
 	'use strict';
 	
-	var simpleDataTable, categoryInputs, i, input, tableFilters, classList, highColumnIndex, lowColumnIndex, gt, lte;
+	var tableWrapper, categoryInputs, i, input, tableFilters, classList, highColumnIndex, lowColumnIndex, gt, lte;
 	
-	simpleDataTable = this.simpleDataTable;
+	tableWrapper = this.tableWrapper;
 	categoryInputs = this.categoryInputs;
 	highColumnIndex = this.highColumnIndex;
 	lowColumnIndex = this.lowColumnIndex;
@@ -368,7 +368,7 @@ TemperatureCategoryListener.prototype.updateTable = function () {
 		}
 	}
 	
-	simpleDataTable.filter(tableFilters);
+	tableWrapper.filter(tableFilters);
 };
 //
 
@@ -448,10 +448,10 @@ SwingSortDescriptor.prototype.compare = function (rowA, rowB) {
 
 
 // TemperatureSortListener
-function TemperatureSortListener(simpleDataTable, sortInputs, highColumnIndex, lowColumnIndex) {
+function TemperatureSortListener(tableWrapper, sortInputs, highColumnIndex, lowColumnIndex) {
 	'use strict';
 	
-	this.simpleDataTable = simpleDataTable;
+	this.tableWrapper = tableWrapper;
 	this.sortInputs = sortInputs;
 	this.highColumnIndex = highColumnIndex;
 	this.lowColumnIndex = lowColumnIndex;
@@ -496,9 +496,9 @@ TemperatureSortListener.prototype.handleEvent = function (event) {
 TemperatureSortListener.prototype.doSort = function (category, direction) {
 	'use strict';
 	
-	var simpleDataTable, highColumnIndex, lowColumnIndex, descending, sortDescriptor;
+	var tableWrapper, highColumnIndex, lowColumnIndex, descending, sortDescriptor;
 	
-	simpleDataTable = this.simpleDataTable;
+	tableWrapper = this.tableWrapper;
 	highColumnIndex = this.highColumnIndex;
 	lowColumnIndex = this.lowColumnIndex;
 	
@@ -519,9 +519,9 @@ TemperatureSortListener.prototype.doSort = function (category, direction) {
 	}
 	
 	if (sortDescriptor) {
-		simpleDataTable.sort(sortDescriptor);
+		tableWrapper.sort(sortDescriptor);
 	} else {
-		simpleDataTable.clearSort();
+		tableWrapper.clearSort();
 	}
 };
 //

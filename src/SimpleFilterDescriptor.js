@@ -8,7 +8,7 @@
  * @param {(string)} [operation='='] 
  *   String indicating the operation this filter is to perform. Must be one of the following: '`='`, '`!=`' '`&lt;`', '`&gt;`' '`&lt;=`', 
  *   '`&gt;=`', '`~`', or '`~~`'.
- * @param {number} [columnType={@link SimpleDataTableUtils.COLUMN_TYPE_INFER}] How the values of cells in this column are to be determined.
+ * @param {number} [columnType={@link HTMLTableWrapperUtils.COLUMN_TYPE_INFER}] How the values of cells in this column are to be determined.
  * @classdesc
  *
  * Generic implementation of {@link FilterDescriptor}. Filters cells for the given `columnIndex` by comparing their values to the given 
@@ -41,7 +41,7 @@ function SimpleFilterDescriptor(columnIndex, compareValue, operation, columnType
 		this.operation = operation;
 	}
 	
-	if (columnType && columnType !== SimpleDataTableUtils.COLUMN_TYPE_INFER) {
+	if (columnType && columnType !== HTMLTableWrapperUtils.COLUMN_TYPE_INFER) {
 		this.columnType = columnType;
 	}
 	
@@ -58,13 +58,13 @@ SimpleFilterDescriptor.prototype.operation = '=';
 
 
 /**
- * How individual cell values are to be converted. If {@link SimpleDataTableUtils.COLUMN_TYPE_TEXT}, cell values will
- * be treated only as text; if {@link SimpleDataTableUtils.COLUMN_TYPE_INFER} (default), an attempt will be made to 
+ * How individual cell values are to be converted. If {@link HTMLTableWrapperUtils.COLUMN_TYPE_TEXT}, cell values will
+ * be treated only as text; if {@link HTMLTableWrapperUtils.COLUMN_TYPE_INFER} (default), an attempt will be made to 
  * convert cell values to numbers prior to evaluating filter conditions.
  *
  * @type {number}
  */
-SimpleFilterDescriptor.prototype.columnType = SimpleDataTableUtils.COLUMN_TYPE_INFER;
+SimpleFilterDescriptor.prototype.columnType = HTMLTableWrapperUtils.COLUMN_TYPE_INFER;
 
 
 // Instance Methods
@@ -75,32 +75,32 @@ SimpleFilterDescriptor.prototype.include = function (cell) {
 	
 	switch (this.operation) {
 		case '=':
-			operation = SimpleDataTableUtils.FILTER_OP_EQUALS;
+			operation = HTMLTableWrapperUtils.FILTER_OP_EQUALS;
 			break;
 		case '>':
-			operation = SimpleDataTableUtils.FILTER_OP_GREATER_THAN;
+			operation = HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN;
 			break;
 		case '<':
-			operation = SimpleDataTableUtils.FILTER_OP_LESS_THAN;
+			operation = HTMLTableWrapperUtils.FILTER_OP_LESS_THAN;
 			break;
 		case '>=':
-			operation = SimpleDataTableUtils.FILTER_OP_GREATER_THAN | SimpleDataTableUtils.FILTER_OP_EQUALS;
+			operation = HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN | HTMLTableWrapperUtils.FILTER_OP_EQUALS;
 			break;
 		case '<=':
-			operation = SimpleDataTableUtils.FILTER_OP_LESS_THAN | SimpleDataTableUtils.FILTER_OP_EQUALS;
+			operation = HTMLTableWrapperUtils.FILTER_OP_LESS_THAN | HTMLTableWrapperUtils.FILTER_OP_EQUALS;
 			break;
 		case '!=':
-			operation = SimpleDataTableUtils.FILTER_FLAG_NOT | SimpleDataTableUtils.FILTER_OP_EQUALS;
+			operation = HTMLTableWrapperUtils.FILTER_FLAG_NOT | HTMLTableWrapperUtils.FILTER_OP_EQUALS;
 			break;
 		case '~':
-			operation = SimpleDataTableUtils.FILTER_OP_CONTAINS | SimpleDataTableUtils.FILTER_FLAG_IGNORE_CASE;
+			operation = HTMLTableWrapperUtils.FILTER_OP_CONTAINS | HTMLTableWrapperUtils.FILTER_FLAG_IGNORE_CASE;
 			break;
 		case '~~':
-			operation = SimpleDataTableUtils.FILTER_OP_CONTAINS;
+			operation = HTMLTableWrapperUtils.FILTER_OP_CONTAINS;
 			break;
 	}
 	
 	columnValue = IE8Compatibility.getTextContent(cell).trim();
 	
-	return SimpleDataTableUtils.shouldInclude(columnValue, operation, this.compareValue, this.columnType);
+	return HTMLTableWrapperUtils.shouldInclude(columnValue, operation, this.compareValue, this.columnType);
 };

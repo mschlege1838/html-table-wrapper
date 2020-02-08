@@ -4,13 +4,13 @@ class ClickSortListener {
 	static get ASCENDING_SORT_CLASS_NAME() { return 'ascending'; }
 	static get DESCENDING_SORT_CLASS_NAME() { return 'descending'; }
 	
-	constructor(simpleDataTable) {
-		this.simpleDataTable = simpleDataTable;
+	constructor(tableWrapper) {
+		this.tableWrapper = tableWrapper;
 	}
 	
 	init () {
 		const tableHeaderCache = this.tableHeaderCache = [];
-		for (const tableHeader of this.simpleDataTable.getTableElement().tHead.rows[0].cells) {
+		for (const tableHeader of this.tableWrapper.getTableElement().tHead.rows[0].cells) {
 			tableHeader.addEventListener('click', this, false);
 			tableHeaderCache.push(tableHeader);
 		}
@@ -27,7 +27,7 @@ class ClickSortListener {
 	handleEvent (event) {
 		
 		// Setup.
-		const simpleDataTable = this.simpleDataTable;
+		const tableWrapper = this.tableWrapper;
 		const tableHeaderCache = this.tableHeaderCache;
 		const header = event.target;
 		
@@ -52,15 +52,15 @@ class ClickSortListener {
 			headerClassList.remove(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
 			headerClassList.add(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
 			
-			simpleDataTable.sort(new SimpleSortDescriptor(columnIndex, true));
+			tableWrapper.sort(new SimpleSortDescriptor(columnIndex, true));
 		} else if (headerClassList.contains(ClickSortListener.DESCENDING_SORT_CLASS_NAME)) {
 			headerClassList.remove(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
 			
-			simpleDataTable.clearSort();
+			tableWrapper.clearSort();
 		} else {
 			headerClassList.add(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
 			
-			simpleDataTable.sort(new SimpleSortDescriptor(columnIndex, false));
+			tableWrapper.sort(new SimpleSortDescriptor(columnIndex, false));
 		}
 	}
 }
@@ -73,8 +73,8 @@ ClickSortListener.prototype.lastColumnIndex = -1;
 
 class GradeCategoryListener {
 	
-	constructor(simpleDataTable, gradeColumnIndex, gradeCategoryInputs) {
-		this.simpleDataTable = simpleDataTable;
+	constructor(tableWrapper, gradeColumnIndex, gradeCategoryInputs) {
+		this.tableWrapper = tableWrapper;
 		this.gradeColumnIndex = gradeColumnIndex;
 		this.gradeCategoryInputs = gradeCategoryInputs;
 	}
@@ -97,19 +97,19 @@ class GradeCategoryListener {
 
 
 	filterByCategory(category) {
-		const simpleDataTable = this.simpleDataTable;
+		const tableWrapper = this.tableWrapper;
 		const gradeColumnIndex = this.gradeColumnIndex;
 		
 		switch (category) {
 			case 'passing':
-				simpleDataTable.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '<='));
+				tableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '<='));
 				break;
 			case 'failing':
-				simpleDataTable.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '>'));
+				tableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '>'));
 				break;
 			case 'all':
 			default:
-				simpleDataTable.clearFilter();
+				tableWrapper.clearFilter();
 				break;
 		}
 

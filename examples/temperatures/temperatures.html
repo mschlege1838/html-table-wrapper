@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>SimpleDataTable.js - Temperatures</title>
+<title>HTMLTableWrapper.js - Temperatures</title>
 
-<link rel="stylesheet" href="../simple-data-table.min.css" />
+<link rel="stylesheet" href="../html-table-wrapper.min.css" />
 <style>
 .fahrenheit::after {
 	content: '\00B0 F';
@@ -35,7 +35,7 @@
 </style>
 
 
-<script src="../simple-data-table.min.js"></script>
+<script src="../html-table-wrapper.min.js"></script>
 <script src="conversions.js"></script>
 
 
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 	table = document.getElementById('temperatures');
 	
-	new SimpleDataTableListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init();
+	new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init();
 });
 
 </script>
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 	<!-- const table = document.getElementById('temperatures'); -->
 	
-	<!-- new SimpleDataTableListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init(); -->
+	<!-- new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init(); -->
 <!-- }); -->
 
 <!-- </script> -->

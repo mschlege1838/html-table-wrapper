@@ -243,8 +243,8 @@ class SwingFilter {
 
 class TemperatureCategoryListener {
 	
-	constructor(simpleDataTable, categoryInputs, highColumnIndex, lowColumnIndex) {
-		this.simpleDataTable = simpleDataTable;
+	constructor(tableWrapper, categoryInputs, highColumnIndex, lowColumnIndex) {
+		this.tableWrapper = tableWrapper;
 		this.categoryInputs = categoryInputs;
 		this.highColumnIndex = highColumnIndex;
 		this.lowColumnIndex = lowColumnIndex;
@@ -267,7 +267,7 @@ class TemperatureCategoryListener {
 	}
 	
 	updateTable() {
-		const simpleDataTable = this.simpleDataTable;
+		const tableWrapper = this.tableWrapper;
 		const highColumnIndex = this.highColumnIndex;
 		const lowColumnIndex = this.lowColumnIndex;
 		
@@ -294,7 +294,7 @@ class TemperatureCategoryListener {
 			}
 		}
 		
-		simpleDataTable.filter(tableFilters);
+		tableWrapper.filter(tableFilters);
 	}
 
 }
@@ -367,8 +367,8 @@ class TemperatureSortListener {
 	
 	static get CATEGORY_ATTRIBUTE_NAME() { return 'data-category'; }
 	
-	constructor(simpleDataTable, sortInputs, highColumnIndex, lowColumnIndex) {
-		this.simpleDataTable = simpleDataTable;
+	constructor(tableWrapper, sortInputs, highColumnIndex, lowColumnIndex) {
+		this.tableWrapper = tableWrapper;
 		this.sortInputs = sortInputs;
 		this.highColumnIndex = highColumnIndex;
 		this.lowColumnIndex = lowColumnIndex;
@@ -392,7 +392,7 @@ class TemperatureSortListener {
 	}
 	
 	doSort(category, direction) {
-		const simpleDataTable = this.simpleDataTable;
+		const tableWrapper = this.tableWrapper;
 		const highColumnIndex = this.highColumnIndex;
 		const lowColumnIndex = this.lowColumnIndex;
 		
@@ -414,9 +414,9 @@ class TemperatureSortListener {
 		}
 		
 		if (sortDescriptor) {
-			simpleDataTable.sort(sortDescriptor);
+			tableWrapper.sort(sortDescriptor);
 		} else {
-			simpleDataTable.clearSort();
+			tableWrapper.clearSort();
 		}
 	}
 }

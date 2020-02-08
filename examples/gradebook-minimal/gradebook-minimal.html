@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>SimpleDataTable.js - Gradebook (Minimal)</title>
+<title>HTMLTableWrapper.js - Gradebook (Minimal)</title>
 
-<link rel="stylesheet" href="../simple-data-table-util.min.css" />
+<link rel="stylesheet" href="../html-table-wrapper-util.min.css" />
 <style>
 th {
 	cursor: pointer;
@@ -11,41 +11,41 @@ th {
 </style>
 
 
-<script src="../simple-data-table-util.min.js"></script>
+<script src="../html-table-wrapper-util.min.js"></script>
 
 
 <!-- Traditional -->
-<script src="grade-controls.js"></script>
-<script>
+<!-- <script src="grade-controls.js"></script> -->
+<!-- <script> -->
 
-document.addEventListener('DOMContentLoaded', function () {
-	'use strict';
+<!-- document.addEventListener('DOMContentLoaded', function () { -->
+	<!-- 'use strict'; -->
 	
-	var simpleDataTable, gradeCategoryInputs;
+	<!-- var tableWrapper, gradeCategoryInputs; -->
 	
-	simpleDataTable = new SimpleDataTable(document.getElementById('grades'));
-	gradeCategoryInputs = document.getElementsByClassName('grade-category');
+	<!-- tableWrapper = new HTMLTableWrapper(document.getElementById('grades')); -->
+	<!-- gradeCategoryInputs = document.getElementsByClassName('grade-category'); -->
 	
-	new ClickSortListener(simpleDataTable).init();
-	new GradeCategoryListener(simpleDataTable, 3, gradeCategoryInputs).init();
-});
+	<!-- new ClickSortListener(tableWrapper).init(); -->
+	<!-- new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init(); -->
+<!-- }); -->
 
-</script>
+<!-- </script> -->
 
 
 <!-- ES6 -->
-<!-- <script src="grade-controls-es6.js"></script> -->
-<!-- <script> -->
+<script src="grade-controls-es6.js"></script>
+<script>
 
-<!-- document.addEventListener('DOMContentLoaded', () => { -->
-	<!-- 'use strict'; -->
+document.addEventListener('DOMContentLoaded', () => {
+	'use strict';
 	
-	<!-- const simpleDataTable = new SimpleDataTable(document.getElementById('grades')); -->
-	<!-- const gradeCategoryInputs = document.getElementsByClassName('grade-category'); -->
+	const tableWrapper = new HTMLTableWrapper(document.getElementById('grades'));
+	const gradeCategoryInputs = document.getElementsByClassName('grade-category');
 	
-	<!-- new ClickSortListener(simpleDataTable).init(); -->
-	<!-- new GradeCategoryListener(simpleDataTable, 3, gradeCategoryInputs).init(); -->
-<!-- }); -->
+	new ClickSortListener(tableWrapper).init();
+	new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init();
+});
 
 </script>
 

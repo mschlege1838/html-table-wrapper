@@ -5,8 +5,8 @@
  * @implements SortDescriptor
  * @param {number} columnIndex Column index for which this descriptor applies.
  * @param {boolean} [descending=false] `true` if the result of this descriptor is to be inverted.
- * @param {number} [columnType={@link SimpleDataTableUtils.COLUMN_TYPE_INFER}] 
- *   `SimpleDataTableUtils.COLUMN_TYPE_*` constant indicating how this column is to be sorted.
+ * @param {number} [columnType={@link HTMLTableWrapperUtils.COLUMN_TYPE_INFER}] 
+ *   `HTMLTableWrapperUtils.COLUMN_TYPE_*` constant indicating how this column is to be sorted.
  * @classdesc
  *
  * Simple/direct implementation of {@link SortDescriptor}. 
@@ -19,7 +19,7 @@ function SimpleSortDescriptor(columnIndex, descending, columnType) {
 	if (descending) {
 		this.descending = true;
 	}
-	if (columnType && columnType !== SimpleDataTableUtils.COLUMN_TYPE_INFER) {
+	if (columnType && columnType !== HTMLTableWrapperUtils.COLUMN_TYPE_INFER) {
 		this.columnType = columnType;
 	}
 }
@@ -29,14 +29,14 @@ function SimpleSortDescriptor(columnIndex, descending, columnType) {
 SimpleSortDescriptor.prototype.descending = false;
 
 /**
- * How this column is to be sorted. If {@link SimpleDataTableUtils.COLUMN_TYPE_INFER}, will attempt to convert values to
+ * How this column is to be sorted. If {@link HTMLTableWrapperUtils.COLUMN_TYPE_INFER}, will attempt to convert values to
  * numbers prior to running the sort comparison; values that cannot be converted will be compared as strings,
- * and will be sorted under those successfully converted to numbers. If {@link SimpleDataTableUtils.COLUMN_TYPE_TEXT}, all
+ * and will be sorted under those successfully converted to numbers. If {@link HTMLTableWrapperUtils.COLUMN_TYPE_TEXT}, all
  * values will be compared as strings only.
  *
  * @type {number}
  */
-SimpleSortDescriptor.prototype.columnType = SimpleDataTableUtils.COLUMN_TYPE_INFER;
+SimpleSortDescriptor.prototype.columnType = HTMLTableWrapperUtils.COLUMN_TYPE_INFER;
 
 
 // Instance Methods
@@ -50,10 +50,10 @@ SimpleSortDescriptor.prototype.compare = function (cellA, cellB) {
 	
 	columnType = this.columnType;
 	switch (columnType) {
-		case SimpleDataTableUtils.COLUMN_TYPE_INFER:
-			aNum = SimpleDataTableUtils.getNumber(aVal, true);
+		case HTMLTableWrapperUtils.COLUMN_TYPE_INFER:
+			aNum = HTMLTableWrapperUtils.getNumber(aVal, true);
 			aNaN = IE8Compatibility.isNaN(aNum);
-			bNum = SimpleDataTableUtils.getNumber(bVal, true);
+			bNum = HTMLTableWrapperUtils.getNumber(bVal, true);
 			bNaN = IE8Compatibility.isNaN(bNum);
 			
 			if (aNaN && bNaN) {
@@ -66,7 +66,7 @@ SimpleSortDescriptor.prototype.compare = function (cellA, cellB) {
 				result = aNum - bNum;
 			}
 			break;
-		case SimpleDataTableUtils.COLUMN_TYPE_TEXT:
+		case HTMLTableWrapperUtils.COLUMN_TYPE_TEXT:
 			result = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
 			break;
 		default:

@@ -1,6 +1,6 @@
-# Using SimpleDataTable.js Directly
+# Using HTMLTableWrapper.js Directly
 
-SimpleDataTable.js can be used directly in your own controls. The utility distribution comes with some helper classes that make this a bit
+HTMLTableWrapper.js can be used directly in your own controls. The utility distribution comes with some helper classes that make this a bit
 easier: [SimpleSortDescriptor]({{link-to-doc}}) and [SimpleFilterDescriptor]({{link-to-doc}}).
 
 Consider the gradebook example from earlier. Say you don't need/want the full functionality of the standard distribution, but just the
@@ -39,13 +39,13 @@ First off, the options for filtering by category need to be defined. In the exam
 
 Next, you'll need to code an event listener for the table header cells that handle click events, and sort the column based upon how it's sorted
 currently. The example code implements this in `ClickSortListener`. `ClickSortListener` maintains a class name on the table header being sorted, and loops
-between three column states: not sorted -> sorted ascending -> sorted descending, and calls `SimpleDataTable`'s [sort]({{link-to-doc}})
+between three column states: not sorted -> sorted ascending -> sorted descending, and calls `HTMLTableWrapper`'s [sort]({{link-to-doc}})
 function with a [SimpleSortDescriptor]({{link-to-doc}}) each time a column header is clicked. If a different column header is clicked than the 
 one before, the previous column's state is cleared. Below is a snippet from `ClickSortListener`'s `handleEvent` function:
 ``` javascript
 ...
 	// Setup.
-	simpleDataTable = this.simpleDataTable;
+	HTMLTableWrapper = this.HTMLTableWrapper;
 	tableHeaderCache = this.tableHeaderCache;
 	header = event.target;
 	
@@ -70,37 +70,37 @@ one before, the previous column's state is cleared. Below is a snippet from `Cli
 		headerClassList.remove(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
 		headerClassList.add(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
 		
-		simpleDataTable.sort(new SimpleSortDescriptor(columnIndex, true));
+		HTMLTableWrapper.sort(new SimpleSortDescriptor(columnIndex, true));
 	} else if (headerClassList.contains(ClickSortListener.DESCENDING_SORT_CLASS_NAME)) {
 		headerClassList.remove(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
 		
-		simpleDataTable.clearSort();
+		HTMLTableWrapper.clearSort();
 	} else {
 		headerClassList.add(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
 		
-		simpleDataTable.sort(new SimpleSortDescriptor(columnIndex, false));
+		HTMLTableWrapper.sort(new SimpleSortDescriptor(columnIndex, false));
 	}
 ...
 ```
 
-You'll also need to code an event listener to handle filtering by grade category, and have it call on `SimpleDataTable`'s [filter]({{link-to-doc}})
+You'll also need to code an event listener to handle filtering by grade category, and have it call on `HTMLTableWrapper`'s [filter]({{link-to-doc}})
 function when a category is selected on the screen. The example code implements this in `GradeCategoryListener`. The relevant snippet from
 `GradeCategoryListener`'s `handleEvent` function is below:
 ``` javascript
 ...
-	simpleDataTable = this.simpleDataTable;
+	HTMLTableWrapper = this.HTMLTableWrapper;
 	gradeColumnIndex = this.gradeColumnIndex;
 	
 	switch (category) {
 		case 'passing':
-			simpleDataTable.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '<='));
+			HTMLTableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '<='));
 			break;
 		case 'failing':
-			simpleDataTable.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '>'));
+			HTMLTableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '>'));
 			break;
 		case 'all':
 		default:
-			simpleDataTable.clearFilter();
+			HTMLTableWrapper.clearFilter();
 			break;
 	}
 ...
@@ -114,13 +114,13 @@ With those two classes implemented, you page initialization script will look a l
 document.addEventListener('DOMContentLoaded', function () {
 	'use strict';
 	
-	var simpleDataTable, gradeCategoryInputs;
+	var HTMLTableWrapper, gradeCategoryInputs;
 	
-	simpleDataTable = new SimpleDataTable(document.getElementById('grades'));
+	HTMLTableWrapper = new HTMLTableWrapper(document.getElementById('grades'));
 	gradeCategoryInputs = document.getElementsByClassName('grade-category');
 	
-	new ClickSortListener(simpleDataTable).init();
-	new GradeCategoryListener(simpleDataTable, 3, gradeCategoryInputs).init();
+	new ClickSortListener(HTMLTableWrapper).init();
+	new GradeCategoryListener(HTMLTableWrapper, 3, gradeCategoryInputs).init();
 });
 
 </script>

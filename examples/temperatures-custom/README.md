@@ -1,6 +1,6 @@
 # An Entirely Custom Implementation
 
-All the previous examples used 'helper' classes defined to assist in the use of [SimpleDataTable], but it is worthy of note that none of these
+All the previous examples used 'helper' classes defined to assist in the use of [HTMLTableWrapper], but it is worthy of note that none of these
 are required; so long as the requirements of using the class are met, it will function perfectly well.
 
 Consider the temperature example from before, but with a slightly different spin: we want to define an off-table control than handles unit
@@ -145,8 +145,8 @@ With that, our general strategy will be to declare three classes:
    1. One that listens for click events on the unit selection radio buttons, and converts the relevant table columns, as well as setting the 'instance range' 
       attributes `data-gt` and `data-lte` on the category filter fields. 
    2. One that listens for click events on the category fields and use the `data-gt` and `data-lte` attributes to create [FilterDescriptor]s to pass
-      to the [filter] function of [SimpleDataTable].
-   3. A third that listens for click events on the sort fields, and passes an approprite [SortDescriptor] to the [sort] function of [SimpleDataTable].
+      to the [filter] function of [HTMLTableWrapper].
+   3. A third that listens for click events on the sort fields, and passes an approprite [SortDescriptor] to the [sort] function of [HTMLTableWrapper].
 
 The first class builds builds upon the [TemperatureConverter] class defined in the previous temperature example; it still operates on a backing table, only
 it processes all temperature columns at once, handles setting attributes on the category listener, and is a listener itself for the temperature unit inputs.
@@ -318,7 +318,7 @@ TemperatureConversionListener.prototype.getConversionFn = function (fromUnit, to
 ```
 
 Next we declare our [FilterDescriptor]s. A [FilterDescriptor] is an object that defines an `include` function that takes as an argument either an
-`HTMLTableCellElement` or `HTMLTableRowElement`. Which [SimpleDataTable] ends up passing depends upon whether the [FilterDescriptor] has the
+`HTMLTableCellElement` or `HTMLTableRowElement`. Which [HTMLTableWrapper] ends up passing depends upon whether the [FilterDescriptor] has the
 `columnIndex` property defined. If `columnIndex` is a positive number, the argument will be an `HTMLTableCellElement` corresponding to the cell
 at `columnIndex` within the relevant row, otherwise it will be the `HTMLTableRowElement` itself. In either case, it must return a `boolean` indicating
 whether the row should be kept, or filtered.
@@ -396,13 +396,13 @@ SwingFilter.prototype.include = function (row) {
 //
 ```
 
-Our listener class for the category inputs takes a [SimpleDataTable] to call on in response to events, the `categoryInputs` themselves, as well
+Our listener class for the category inputs takes a [HTMLTableWrapper] to call on in response to events, the `categoryInputs` themselves, as well
 as the index of the high and low temperature columns on the backing table:
 ``` javascript
-function TemperatureCategoryListener(simpleDataTable, categoryInputs, highColumnIndex, lowColumnIndex) {
+function TemperatureCategoryListener(HTMLTableWrapper, categoryInputs, highColumnIndex, lowColumnIndex) {
 	'use strict';
 	
-	this.simpleDataTable = simpleDataTable;
+	this.HTMLTableWrapper = HTMLTableWrapper;
 	this.categoryInputs = categoryInputs;
 	this.highColumnIndex = highColumnIndex;
 	this.lowColumnIndex = lowColumnIndex;
@@ -426,9 +426,9 @@ are selected. It then decides on an approprite constructor call (defined earlier
 TemperatureCategoryListener.prototype.updateTable = function () {
 	'use strict';
 	
-	var simpleDataTable, categoryInputs, i, input, tableFilters, classList, highColumnIndex, lowColumnIndex, gt, lte;
+	var HTMLTableWrapper, categoryInputs, i, input, tableFilters, classList, highColumnIndex, lowColumnIndex, gt, lte;
 	
-	simpleDataTable = this.simpleDataTable;
+	HTMLTableWrapper = this.HTMLTableWrapper;
 	categoryInputs = this.categoryInputs;
 	highColumnIndex = this.highColumnIndex;
 	lowColumnIndex = this.lowColumnIndex;
@@ -457,7 +457,7 @@ TemperatureCategoryListener.prototype.updateTable = function () {
 		}
 	}
 	
-	simpleDataTable.filter(tableFilters);
+	HTMLTableWrapper.filter(tableFilters);
 };
 ```
 
@@ -541,12 +541,12 @@ SwingSortDescriptor.prototype.compare = function (rowA, rowB) {
 //
 ```
 
-With those, we declare a listener for the sort inputs that makes calls to a backing [SimpleDataTable]:
+With those, we declare a listener for the sort inputs that makes calls to a backing [HTMLTableWrapper]:
 ``` javascript
-function TemperatureSortListener(simpleDataTable, sortInputs, highColumnIndex, lowColumnIndex) {
+function TemperatureSortListener(HTMLTableWrapper, sortInputs, highColumnIndex, lowColumnIndex) {
 	'use strict';
 	
-	this.simpleDataTable = simpleDataTable;
+	this.HTMLTableWrapper = HTMLTableWrapper;
 	this.sortInputs = sortInputs;
 	this.highColumnIndex = highColumnIndex;
 	this.lowColumnIndex = lowColumnIndex;
@@ -572,14 +572,14 @@ TemperatureSortListener.prototype.handleEvent = function (event) {
 ```
 
 The `doSort` function constructs a single `SortDescriptor` if an applicable input is selected, otherwise [clear]s the sorted state of the
-backing [SimpleDataTable]:
+backing [HTMLTableWrapper]:
 ``` javascript
 TemperatureSortListener.prototype.doSort = function (category, direction) {
 	'use strict';
 	
-	var simpleDataTable, highColumnIndex, lowColumnIndex, descending, sortDescriptor;
+	var HTMLTableWrapper, highColumnIndex, lowColumnIndex, descending, sortDescriptor;
 	
-	simpleDataTable = this.simpleDataTable;
+	HTMLTableWrapper = this.HTMLTableWrapper;
 	highColumnIndex = this.highColumnIndex;
 	lowColumnIndex = this.lowColumnIndex;
 	
@@ -600,9 +600,9 @@ TemperatureSortListener.prototype.doSort = function (category, direction) {
 	}
 	
 	if (sortDescriptor) {
-		simpleDataTable.sort(sortDescriptor);
+		HTMLTableWrapper.sort(sortDescriptor);
 	} else {
-		simpleDataTable.clearSort();
+		HTMLTableWrapper.clearSort();
 	}
 };
 ```
@@ -617,18 +617,18 @@ var LOW_COLUMN_INDEX = 3;
 document.addEventListener('DOMContentLoaded', function () {
 	'use strict';
 	
-	var table, categoryFieldGroup, unitInputs, simpleDataTable, categoryInputs, sortInputs;
+	var table, categoryFieldGroup, unitInputs, HTMLTableWrapper, categoryInputs, sortInputs;
 	
 	table = document.getElementById('temperatures');
 	categoryFieldGroup = document.getElementById('temperatureCategories');
 	unitInputs = document.getElementsByClassName('temperature-unit');
-	simpleDataTable = new SimpleDataTable(table);
+	HTMLTableWrapper = new HTMLTableWrapper(table);
 	categoryInputs = document.getElementsByClassName('temperature-category');
 	sortInputs = document.getElementsByClassName('temperature-sort');
 	
 	new TemperatureConversionListener(table, categoryFieldGroup, tempConversions, unitInputs).init();
-	new TemperatureCategoryListener(simpleDataTable, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
-	new TemperatureSortListener(simpleDataTable, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
+	new TemperatureCategoryListener(HTMLTableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
+	new TemperatureSortListener(HTMLTableWrapper, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
 	
 });
 </script>

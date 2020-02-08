@@ -53,7 +53,7 @@ to, etc. to an entered temperature.
 Though there are many different approaches to implementing something like this, this example will follow the following steps:
    1. Declare classes/functions/objects necessary to ecapsulate the desired custom functionality.
    2. Declare a [ColumnControl]({{link-to-doc}}) that defines the content of the custom control, calls back to its parent
-      [SimpleDataTableListener]({{link-to-doc}}) to trigger table processing in response to events on the custom control, and
+      [HTMLTableWrapperListener]({{link-to-doc}}) to trigger table processing in response to events on the custom control, and
 	  uses the custom declarations from the previous step to tell its parent how the table is to be filtered (and, technically, sorted,
 	  though sorting is not implemented in this example).
    3. Declare a [ColumnControlFactory]({{link-to-doc}}) that holds necessary custom supporting class instances, and returns
@@ -245,13 +245,13 @@ TemperatureConverter.prototype.convertColumn = function (columnIndex, unit) {
 ```
 
 The next step is to declare a [ColumnControl]({{link-to-doc}}) that makes use of the `TemperatureConverter` declared previously. A 
-[ColumnControl]({{link-to-doc}}) is a special object that defines functions its parent [SimpleDataTableListener]({{link-to-doc}}) calls
+[ColumnControl]({{link-to-doc}}) is a special object that defines functions its parent [HTMLTableWrapperListener]({{link-to-doc}}) calls
 to [open], [close], and determine how its column should be [sorted] and [filtered]. [ColumnControl]s can optionally (and will typically)
 make calls back to their parent to trigger table-wide processing via [processTable].
 
 As can be guessed, [open] and [close] are responsible for defining the content of, showing, and hiding the user interface dialogue
 for the column they control. Although there are a good deal many ways to do this, this example makes use of another class defined within
-the full distribution of SimpleDataTable.js: [ContextControl].
+the full distribution of HTMLTableWrapper.js: [ContextControl].
 
 A [ContextControl] is a convenience class that defines an `HTMLDivElement` as a 'content box', and handles positioning it relative to another
 element, adjusting to small window sizes, and hiding it when [close]d. Its model for defining content is 'lazy initialization;' upon the first
@@ -264,7 +264,7 @@ function TemperatureColumnControl(columnIndex, parent, temperatureConverter) {
 	'use strict';
 	
 	this.columnIndex = columnIndex;						// Column Index this control handles
-	this.parent = parent;								// Parent SimpleDataTableListener
+	this.parent = parent;								// Parent HTMLTableWrapperListener
 	this.temperatureConverter = temperatureConverter;	// TemperatureConverter, defined previously
 	this.contextControl = new ContextControl();			// Backing ContextControl
 }
@@ -301,7 +301,7 @@ TemperatureColumnControl.prototype.handleEvent = function (event) {
 As can be seen, we defer to another method to handle the definition of content in response to `create` events. We pass this method the backing
 'content box' of our [ContextControl]. This method is then responsible for adding the relevant content to it.
 
-Again, though there are many ways to define such content, this example uses another class defined with the full distribution of simpleDataTable.js:
+Again, though there are many ways to define such content, this example uses another class defined with the full distribution of HTMLTableWrapper.js:
 [XMLBuilder]. [XMLBuilder] is a simple builder for XML strings that 'escapes' (replaces with corresponding entities) all reserved XML characters in
 the data passed to it. It presents a simple, state-based, interface allowing client code to `startTag`s, add `attributes` to them, define their
 `content`, and `closeTag`s that are completed.
@@ -439,7 +439,7 @@ TemperatureColumnControl.prototype.updateParent = function () {
 
 
 This largely completes our definition of `TemperatureColumnControl`. The only non-trival method that needs to be defined is `getFilterDescriptor`, which is
-called by [SimpleDataTableListener] upon calls to [processTable]. In this case, we return a [SimpleFilterDescriptor] in the case the value entered for the
+called by [HTMLTableWrapperListener] upon calls to [processTable]. In this case, we return a [SimpleFilterDescriptor] in the case the value entered for the
 temperature filter on the control can be parsed as a number, otherwise, we return nothing (which indicates no filtering should be performed on this column).
 (Note also how the control element of the backing [ContextControl] is accessed; because it is lazily initialized, it can't, in all cases, be assumed to be
 defined).
@@ -483,7 +483,7 @@ TemperatureColumnControl.prototype.getSortDescriptor = function () {
 
 With our custom [ColumnControl] defined, we need to declare a [ColumnControlFactory] to return it when approprite. A [ColumnControlFactory] is
 either a function, or an object that declares a function called `getColumnControl` that takes the arguments of `columnIndex` (the column index
-for which a [ColumnControl] is being requested) and `parent` (the [SimpleDataTableListener] requesting the control).
+for which a [ColumnControl] is being requested) and `parent` (the [HTMLTableWrapperListener] requesting the control).
 
 In the case of this example, we use the object-based [ColumnControlFactory], as we want to share one instance of our `TemperatureConverter`:
 ``` javascript
@@ -517,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 	table = document.getElementById('temperatures');
 	
-	new SimpleDataTableListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init();
+	new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init();
 });
 
 </script>

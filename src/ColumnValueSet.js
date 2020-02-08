@@ -5,7 +5,7 @@
  * @classdesc
  *
  * A 'bridge' API to implement the necessary functionality of the ES6 Set for interpreting cell values. A `ColumnValueSet` is passed
- * to {@link CellInterpreter} or {@link SimpleDataTableControl~populateCellValues} when used in {@link SimpleDataTableControl}s. If the `Set`
+ * to {@link CellInterpreter} or {@link HTMLTableWrapperControl~populateCellValues} when used in {@link HTMLTableWrapperControl}s. If the `Set`
  * constructor is defined, a `Set` will be used to back this `ColumnValueSet`, otherwise will fall back to an `Array`.
  *
  * The {@link ColumnValueSet#iterator} function of this class implements the ES6 protocol for iterable objects (if the `Symbol` constructor
@@ -33,7 +33,7 @@ function ColumnValueSet() {
 }
 
 /**
- * Backing collection containing values added to this set from {@link CellInterpreter} or {@link SimpleDataTableControl~populateCellValues}
+ * Backing collection containing values added to this set from {@link CellInterpreter} or {@link HTMLTableWrapperControl~populateCellValues}
  * implementations. If the `Set` constructor is defined, will be a `Set`, otherwise will fall back to an `Array`.
  *
  * @member values

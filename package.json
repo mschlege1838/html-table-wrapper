@@ -1,10 +1,7 @@
 {
-  "name": "simple-data-table",
+  "name": "html-table-wrapper-src",
   "version": "1.0.0",
-  "description": "SimpleDataTable.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "Source/Build package for html-table-wrapper",
   "author": "Marty Schlegel",
   "license": "MIT AND BSD-3-Clause",
   "devDependencies": {

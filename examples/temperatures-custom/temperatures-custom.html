@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>SimpleDataTable.js - Temperatures (custom)</title>
+<title>HTMLTableWrapper.js - Temperatures (custom)</title>
 
-<link rel="stylesheet" href="../simple-data-table-core.min.css" />
+<link rel="stylesheet" href="../html-table-wrapper-core.min.css" />
 <style>
 .fahrenheit::after {
 	content: '\00B0 F';
@@ -52,7 +52,7 @@ main section {
 </style>
 
 
-<script src="../simple-data-table-core.min.js"></script>
+<script src="../html-table-wrapper-core.min.js"></script>
 <script src="conversions.js"></script>
 
 <!-- Traditional -->
@@ -65,18 +65,18 @@ var LOW_COLUMN_INDEX = 3;
 document.addEventListener('DOMContentLoaded', function () {
 	'use strict';
 	
-	var table, categoryFieldGroup, unitInputs, simpleDataTable, categoryInputs, sortInputs;
+	var table, categoryFieldGroup, unitInputs, tableWrapper, categoryInputs, sortInputs;
 	
 	table = document.getElementById('temperatures');
 	categoryFieldGroup = document.getElementById('temperatureCategories');
 	unitInputs = document.getElementsByClassName('temperature-unit');
-	simpleDataTable = new SimpleDataTable(table);
+	tableWrapper = new HTMLTableWrapper(table);
 	categoryInputs = document.getElementsByClassName('temperature-category');
 	sortInputs = document.getElementsByClassName('temperature-sort');
 	
 	new TemperatureConversionListener(table, categoryFieldGroup, tempConversions, unitInputs).init();
-	new TemperatureCategoryListener(simpleDataTable, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
-	new TemperatureSortListener(simpleDataTable, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
+	new TemperatureCategoryListener(tableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
+	new TemperatureSortListener(tableWrapper, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
 	
 });
 </script>
@@ -95,13 +95,13 @@ document.addEventListener('DOMContentLoaded', function () {
 	<!-- const table = document.getElementById('temperatures'); -->
 	<!-- const categoryFieldGroup = document.getElementById('temperatureCategories'); -->
 	<!-- const unitInputs = document.getElementsByClassName('temperature-unit'); -->
-	<!-- const simpleDataTable = new SimpleDataTable(table); -->
+	<!-- const tableWrapper = new HTMLTableWrapper(table); -->
 	<!-- const categoryInputs = document.getElementsByClassName('temperature-category'); -->
 	<!-- const sortInputs = document.getElementsByClassName('temperature-sort'); -->
 	
 	<!-- new TemperatureConversionListener(table, categoryFieldGroup, tempConversions, unitInputs).init(); -->
-	<!-- new TemperatureCategoryListener(simpleDataTable, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init(); -->
-	<!-- new TemperatureSortListener(simpleDataTable, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init(); -->
+	<!-- new TemperatureCategoryListener(tableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init(); -->
+	<!-- new TemperatureSortListener(tableWrapper, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init(); -->
 <!-- }); -->
 <!-- </script> -->
 
