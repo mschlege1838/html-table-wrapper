@@ -22,27 +22,23 @@ Consider the simple example of a webpage that shows a gradebook:
 			<td>Wimbleton</td>
 			<td>Julie</td>
 			<td>Homework #1</td>
-...
+<!-- ... -->
 ```
 
 Adding the default sort/filter dialogue to the table is as simple as adding something akin to the following to your webpage:
 
 ``` html
-<!DOCTYPE html>
-<html>
-<head>
-<title>HTMLTableWrapper.js - Gradebook</title>
+<link rel="stylesheet" href="../html-table-wrapper.min.css" />
 <script src="../html-table-wrapper.min.js"></script>
 <script>
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function {
 	'use strict';
 	
 	new HTMLTableWrapperListener(document.getElementById('grades')).init();
 });
 
 </script>
-...
 ```
 
 The full example can be found [here](examples/basic/gradebook.html).

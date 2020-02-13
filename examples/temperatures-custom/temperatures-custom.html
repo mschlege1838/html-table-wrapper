@@ -56,7 +56,13 @@ main section {
 <script src="conversions.js"></script>
 
 <!-- Traditional -->
-<script src="custom-conversion-listener.js"></script>
+<script src="TemperatureConversionListener.js"></script>
+<script src="TemperatureSortListener.js"></script>
+<script src="TemperatureCategoryListener.js"></script>
+<script src="SwingFilter.js"></script>
+<script src="SwingSortDescriptor.js"></script>
+<script src="HighLowSortDescriptor.js"></script>
+<script src="HighLowFilter.js"></script>
 <script>
 
 var HIGH_COLUMN_INDEX = 2;
@@ -83,7 +89,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 <!-- ES6 -->
-<!-- <script src="custom-conversion-listener-es6.js"></script> -->
+<!-- <script src="TemperatureConversionListener-es6.js"></script> -->
+<!-- <script src="TemperatureSortListener-es6.js"></script> -->
+<!-- <script src="TemperatureCategoryListener-es6.js"></script> -->
+<!-- <script src="SwingFilter-es6.js"></script> -->
+<!-- <script src="SwingSortDescriptor-es6.js"></script> -->
+<!-- <script src="HighLowSortDescriptor-es6.js"></script> -->
+<!-- <script src="HighLowFilter-es6.js"></script> -->
 <!-- <script> -->
 
 <!-- const HIGH_COLUMN_INDEX = 2; -->
@@ -239,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
 						</span>
 						<span>
 							<input id="temperatureSortSwingDescending" class="temperature-sort swing" type="radio" name="temperatureSort" data-category="swing" value="desc" />
-							<label for="temperatureSortSwingDescending">Low, Descending</label>
+							<label for="temperatureSortSwingDescending">Swing, Descending</label>
 						</span>
 					</div>
 				</div>

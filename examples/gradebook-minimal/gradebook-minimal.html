@@ -15,39 +15,39 @@ th {
 
 
 <!-- Traditional -->
-<!-- <script src="grade-controls.js"></script> -->
-<!-- <script> -->
-
-<!-- document.addEventListener('DOMContentLoaded', function () { -->
-	<!-- 'use strict'; -->
-	
-	<!-- var tableWrapper, gradeCategoryInputs; -->
-	
-	<!-- tableWrapper = new HTMLTableWrapper(document.getElementById('grades')); -->
-	<!-- gradeCategoryInputs = document.getElementsByClassName('grade-category'); -->
-	
-	<!-- new ClickSortListener(tableWrapper).init(); -->
-	<!-- new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init(); -->
-<!-- }); -->
-
-<!-- </script> -->
-
-
-<!-- ES6 -->
-<script src="grade-controls-es6.js"></script>
+<script src="grade-controls.js"></script>
 <script>
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
 	'use strict';
 	
-	const tableWrapper = new HTMLTableWrapper(document.getElementById('grades'));
-	const gradeCategoryInputs = document.getElementsByClassName('grade-category');
+	var tableWrapper, gradeCategoryInputs;
+	
+	tableWrapper = new HTMLTableWrapper(document.getElementById('grades'));
+	gradeCategoryInputs = document.getElementsByClassName('grade-category');
 	
 	new ClickSortListener(tableWrapper).init();
 	new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init();
 });
 
 </script>
+
+
+<!-- ES6 -->
+<!-- <script src="grade-controls-es6.js"></script> -->
+<!-- <script> -->
+
+<!-- document.addEventListener('DOMContentLoaded', () => { -->
+	<!-- 'use strict'; -->
+	
+	<!-- const tableWrapper = new HTMLTableWrapper(document.getElementById('grades')); -->
+	<!-- const gradeCategoryInputs = document.getElementsByClassName('grade-category'); -->
+	
+	<!-- new ClickSortListener(tableWrapper).init(); -->
+	<!-- new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init(); -->
+<!-- }); -->
+
+<!-- </script> -->
 
 </head>
 <body>

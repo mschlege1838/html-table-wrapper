@@ -6,8 +6,8 @@
  * @param {number} columnIndex Column index this `SimpleFilterDescriptor` describes.
  * @param {*} compareValue Value to which cells are to be compared.
  * @param {(string)} [operation='='] 
- *   String indicating the operation this filter is to perform. Must be one of the following: '`='`, '`!=`' '`&lt;`', '`&gt;`' '`&lt;=`', 
- *   '`&gt;=`', '`~`', or '`~~`'.
+ *   String indicating the operation this filter is to perform. Must be one of the following: '`='`, '`!=`' '`<`', '`>`' '`<=`', 
+ *   '`>=`', '`~`', or '`~~`'.
  * @param {number} [columnType={@link HTMLTableWrapperUtils.COLUMN_TYPE_INFER}] How the values of cells in this column are to be determined.
  * @classdesc
  *
@@ -16,7 +16,7 @@
  * 
  * `Operation` is a string, and must be one of the following:
  * - `'='` (Equals)
- * - `>'` (Greater Than)
+ * - `'>'` (Greater Than)
  * - `'<'` (Less Than)
  * - `'>='` (Greater Than Or Equal To)
  * - `'<='` (Less Than Or Equal To)

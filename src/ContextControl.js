@@ -42,8 +42,43 @@
  * but (assuming default styling), only one would be visible. Due to the unlikelihood of this scenario, it is not handled by this class, however if it is determined to be more
  * likely for a particular application, that application should implement communication between `ContextControl`s to handle this situation appropritely.
  * 
- * Of note, this class *only* sets element class names, and a limited set of CSS properties; most styling should be handled by dedicated stylesheets. A baseline 
- * stylesheet (based on default class names) is provided <a href="..\..\style\context-control.css">here</a>.
+ * Of note, this class *only* sets element class names, and a limited set of CSS properties; most styling should be handled by dedicated stylesheets. The following is a baseline
+ * stylesheet that uses the default class names:
+ *
+ * ``` css
+ * /&ast; Common &ast;/
+ * .context-control {
+ *     position: absolute;
+ *     opacity: 0;
+ *     color: black;
+ *     background-color: white;
+ *     border: 1px solid black;
+ *     padding: .5em;
+ * }
+ * 
+ * .context-control.context-control-opened {
+ *     opacity: 1;
+ *     transition: opacity .5s;
+ * }
+ * 
+ * .context-control.context-control-closed {
+ *     display: none;
+ * }
+ * 
+ * 
+ * /&ast; Mobile View &ast;/
+ * .context-control.context-control-mobile-view {
+ *     height: 100%;
+ *     width: 100%;
+ *     left: 0;
+ *     top: 0;
+ *     overflow: auto;
+ * }
+ * 
+ * body.context-control-mobile-view {
+ *     overflow: hidden;
+ * }
+ * ```
  */
 function ContextControl(horizontalOffset, verticalOffset) {
 	'use strict';
