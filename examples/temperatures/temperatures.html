@@ -6,31 +6,31 @@
 <link rel="stylesheet" href="../html-table-wrapper.min.css" />
 <style>
 .fahrenheit::after {
-	content: '\00B0 F';
+    content: '\00B0 F';
 }
 
 .celsius::after {
-	content: '\00B0 C';
+    content: '\00B0 C';
 }
 
 .kelvin::after {
-	content: '\00B0 K';
+    content: '\00B0 K';
 }
 
 .control-bar {
-	text-align: right;
+    text-align: right;
 }
 
 .control-button {
-	cursor: pointer;
-	border: 1px solid black;
-	padding: 0 .2em 0 .2em;
-	font-weight: bolder;
+    cursor: pointer;
+    border: 1px solid black;
+    padding: 0 .2em 0 .2em;
+    font-weight: bolder;
 }
 
 .control-button:hover {
-	background-color: rgb(157, 157, 255);
-	transition: background-color .5s;
+    background-color: rgb(157, 157, 255);
+    transition: background-color .5s;
 }
 </style>
 
@@ -46,13 +46,13 @@
 <script>
 
 document.addEventListener('DOMContentLoaded', function () {
-	'use strict';
-	
-	var table;
-	
-	table = document.getElementById('temperatures');
-	
-	new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init();
+    'use strict';
+    
+    var table;
+    
+    table = document.getElementById('temperatures');
+    
+    new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init();
 });
 
 </script>
@@ -66,11 +66,11 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- <script> -->
 
 <!-- document.addEventListener('DOMContentLoaded', () => { -->
-	<!-- 'use strict'; -->
-	
-	<!-- const table = document.getElementById('temperatures'); -->
-	
-	<!-- new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init(); -->
+    <!-- 'use strict'; -->
+    
+    <!-- const table = document.getElementById('temperatures'); -->
+    
+    <!-- new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init(); -->
 <!-- }); -->
 
 <!-- </script> -->
@@ -80,257 +80,257 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </head>
 <body>
-	<h1>Temperature Readings</h1>
-	<p>Source: <a href="https://weather.com">The Weather Channel</a></p>
-	<table id="temperatures">
-		<thead>
-			<th>City</th>
-			<th>Date</th>
-			<th class="temperature-column">High</th>
-			<th class="temperature-column">Low</th>
-		</thead>
-		<tbody>
-			<tr>
-				<td>Washington, DC, US</td>
-				<td>2020-01-28</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
-			</tr>
-			<tr>
-				<td>Washington, DC, US</td>
-				<td>2020-01-27</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="36">36</td>
-			</tr>
-			<tr>
-				<td>Washington, DC, US</td>
-				<td>2020-01-26</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="36">36</td>
-			</tr>
-			<tr>
-				<td>Washington, DC, US</td>
-				<td>2020-01-25</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
-			</tr>
-			<tr>
-				<td>Washington, DC, US</td>
-				<td>2020-01-24</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-			</tr>
-			<tr>
-				<td>New York, NY, US</td>
-				<td>2020-01-28</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
-			</tr>
-			<tr>
-				<td>New York, NY, US</td>
-				<td>2020-01-27</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
-			</tr>
-			<tr>
-				<td>New York, NY, US</td>
-				<td>2020-01-26</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="39">39</td>
-			</tr>
-			<tr>
-				<td>New York, NY, US</td>
-				<td>2020-01-25</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="39">39</td>
-			</tr>
-			<tr>
-				<td>New York, NY, US</td>
-				<td>2020-01-24</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
-			</tr>
-			<tr>
-				<td>Chicago, IL, US</td>
-				<td>2020-01-28</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="33">33</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="30">30</td>
-			</tr>
-			<tr>
-				<td>Chicago, IL, US</td>
-				<td>2020-01-27</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="28">28</td>
-			</tr>
-			<tr>
-				<td>Chicago, IL, US</td>
-				<td>2020-01-26</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="28">28</td>
-			</tr>
-			<tr>
-				<td>Chicago, IL, US</td>
-				<td>2020-01-25</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="32">32</td>
-			</tr>
-			<tr>
-				<td>Chicago, IL, US</td>
-				<td>2020-01-24</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-			</tr>
-			<tr>
-				<td>Los Angeles, CA, US</td>
-				<td>2020-01-28</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="77">77</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="55">55</td>
-			</tr>
-			<tr>
-				<td>Los Angeles, CA, US</td>
-				<td>2020-01-27</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="72">72</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
-			</tr>
-			<tr>
-				<td>Los Angeles, CA, US</td>
-				<td>2020-01-26</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="61">61</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="53">53</td>
-			</tr>
-			<tr>
-				<td>Los Angeles, CA, US</td>
-				<td>2020-01-25</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="72">72</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
-			</tr>
-			<tr>
-				<td>Los Angeles, CA, US</td>
-				<td>2020-01-24</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="75">75</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="52">52</td>
-			</tr>
-			<tr>
-				<td>London, England, UK</td>
-				<td>2020-01-28</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
-			</tr>
-			<tr>
-				<td>London, England, UK</td>
-				<td>2020-01-27</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="41">41</td>
-			</tr>
-			<tr>
-				<td>London, England, UK</td>
-				<td>2020-01-26</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
-			</tr>
-			<tr>
-				<td>London, England, UK</td>
-				<td>2020-01-25</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
-			</tr>
-			<tr>
-				<td>London, England, UK</td>
-				<td>2020-01-24</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
-			</tr>
-			<tr>
-				<td>Paris, Paris, FR</td>
-				<td>2020-01-28</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
-			</tr>
-			<tr>
-				<td>Paris, Paris, FR</td>
-				<td>2020-01-27</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
-			</tr>
-			<tr>
-				<td>Paris, Paris, FR</td>
-				<td>2020-01-26</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="48">48</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
-			</tr>
-			<tr>
-				<td>Paris, Paris, FR</td>
-				<td>2020-01-25</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="31">31</td>
-			</tr>
-			<tr>
-				<td>Paris, Paris, FR</td>
-				<td>2020-01-24</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="41">41</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="31">31</td>
-			</tr>
-			<tr>
-				<td>Tokyo, Tokyo Prefecture, JP</td>
-				<td>2020-01-28</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-			</tr>
-			<tr>
-				<td>Tokyo, Tokyo Prefecture, JP</td>
-				<td>2020-01-27</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
-			</tr>
-			<tr>
-				<td>Tokyo, Tokyo Prefecture, JP</td>
-				<td>2020-01-26</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
-			</tr>
-			<tr>
-				<td>Tokyo, Tokyo Prefecture, JP</td>
-				<td>2020-01-25</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
-			</tr>
-			<tr>
-				<td>Tokyo, Tokyo Prefecture, JP</td>
-				<td>2020-01-24</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="56">56</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
-			</tr>
-			<tr>
-				<td>Beijing, CN</td>
-				<td>2020-01-28</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="25">25</td>
-			</tr>
-			<tr>
-				<td>Beijing, CN</td>
-				<td>2020-01-27</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="25">25</td>
-			</tr>
-			<tr>
-				<td>Beijing, CN</td>
-				<td>2020-01-26</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="21">21</td>
-			</tr>
-			<tr>
-				<td>Beijing, CN</td>
-				<td>2020-01-25</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="20">20</td>
-			</tr>
-			<tr>
-				<td>Beijing, CN</td>
-				<td>2020-01-24</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
-				<td class="fahrenheit" data-orig-unit="F" data-orig-temp="22">22</td>
-			</tr>
-		</tbody>
-	</table>
+    <h1>Temperature Readings</h1>
+    <p>Source: <a href="https://weather.com">The Weather Channel</a></p>
+    <table id="temperatures">
+        <thead>
+            <th>City</th>
+            <th>Date</th>
+            <th class="temperature-column">High</th>
+            <th class="temperature-column">Low</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Washington, DC, US</td>
+                <td>2020-01-28</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
+            </tr>
+            <tr>
+                <td>Washington, DC, US</td>
+                <td>2020-01-27</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="36">36</td>
+            </tr>
+            <tr>
+                <td>Washington, DC, US</td>
+                <td>2020-01-26</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="36">36</td>
+            </tr>
+            <tr>
+                <td>Washington, DC, US</td>
+                <td>2020-01-25</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
+            </tr>
+            <tr>
+                <td>Washington, DC, US</td>
+                <td>2020-01-24</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+            </tr>
+            <tr>
+                <td>New York, NY, US</td>
+                <td>2020-01-28</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
+            </tr>
+            <tr>
+                <td>New York, NY, US</td>
+                <td>2020-01-27</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
+            </tr>
+            <tr>
+                <td>New York, NY, US</td>
+                <td>2020-01-26</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="39">39</td>
+            </tr>
+            <tr>
+                <td>New York, NY, US</td>
+                <td>2020-01-25</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="39">39</td>
+            </tr>
+            <tr>
+                <td>New York, NY, US</td>
+                <td>2020-01-24</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
+            </tr>
+            <tr>
+                <td>Chicago, IL, US</td>
+                <td>2020-01-28</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="33">33</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="30">30</td>
+            </tr>
+            <tr>
+                <td>Chicago, IL, US</td>
+                <td>2020-01-27</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="28">28</td>
+            </tr>
+            <tr>
+                <td>Chicago, IL, US</td>
+                <td>2020-01-26</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="28">28</td>
+            </tr>
+            <tr>
+                <td>Chicago, IL, US</td>
+                <td>2020-01-25</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="32">32</td>
+            </tr>
+            <tr>
+                <td>Chicago, IL, US</td>
+                <td>2020-01-24</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+            </tr>
+            <tr>
+                <td>Los Angeles, CA, US</td>
+                <td>2020-01-28</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="77">77</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="55">55</td>
+            </tr>
+            <tr>
+                <td>Los Angeles, CA, US</td>
+                <td>2020-01-27</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="72">72</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
+            </tr>
+            <tr>
+                <td>Los Angeles, CA, US</td>
+                <td>2020-01-26</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="61">61</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="53">53</td>
+            </tr>
+            <tr>
+                <td>Los Angeles, CA, US</td>
+                <td>2020-01-25</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="72">72</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
+            </tr>
+            <tr>
+                <td>Los Angeles, CA, US</td>
+                <td>2020-01-24</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="75">75</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="52">52</td>
+            </tr>
+            <tr>
+                <td>London, England, UK</td>
+                <td>2020-01-28</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
+            </tr>
+            <tr>
+                <td>London, England, UK</td>
+                <td>2020-01-27</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="41">41</td>
+            </tr>
+            <tr>
+                <td>London, England, UK</td>
+                <td>2020-01-26</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
+            </tr>
+            <tr>
+                <td>London, England, UK</td>
+                <td>2020-01-25</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
+            </tr>
+            <tr>
+                <td>London, England, UK</td>
+                <td>2020-01-24</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
+            </tr>
+            <tr>
+                <td>Paris, Paris, FR</td>
+                <td>2020-01-28</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
+            </tr>
+            <tr>
+                <td>Paris, Paris, FR</td>
+                <td>2020-01-27</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
+            </tr>
+            <tr>
+                <td>Paris, Paris, FR</td>
+                <td>2020-01-26</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="48">48</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
+            </tr>
+            <tr>
+                <td>Paris, Paris, FR</td>
+                <td>2020-01-25</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="31">31</td>
+            </tr>
+            <tr>
+                <td>Paris, Paris, FR</td>
+                <td>2020-01-24</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="41">41</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="31">31</td>
+            </tr>
+            <tr>
+                <td>Tokyo, Tokyo Prefecture, JP</td>
+                <td>2020-01-28</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+            </tr>
+            <tr>
+                <td>Tokyo, Tokyo Prefecture, JP</td>
+                <td>2020-01-27</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
+            </tr>
+            <tr>
+                <td>Tokyo, Tokyo Prefecture, JP</td>
+                <td>2020-01-26</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
+            </tr>
+            <tr>
+                <td>Tokyo, Tokyo Prefecture, JP</td>
+                <td>2020-01-25</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
+            </tr>
+            <tr>
+                <td>Tokyo, Tokyo Prefecture, JP</td>
+                <td>2020-01-24</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="56">56</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
+            </tr>
+            <tr>
+                <td>Beijing, CN</td>
+                <td>2020-01-28</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="25">25</td>
+            </tr>
+            <tr>
+                <td>Beijing, CN</td>
+                <td>2020-01-27</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="25">25</td>
+            </tr>
+            <tr>
+                <td>Beijing, CN</td>
+                <td>2020-01-26</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="21">21</td>
+            </tr>
+            <tr>
+                <td>Beijing, CN</td>
+                <td>2020-01-25</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="20">20</td>
+            </tr>
+            <tr>
+                <td>Beijing, CN</td>
+                <td>2020-01-24</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
+                <td class="fahrenheit" data-orig-unit="F" data-orig-temp="22">22</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>

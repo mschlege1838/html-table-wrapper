@@ -84,20 +84,20 @@ HTMLTableWrapperUtils.FILTER_FLAG_NOT = 1 << 5;
  * @param {boolean} [strict=false] Whether to return `NaN` if `val` is not a number, or simply to return `val` itself.
  */
 HTMLTableWrapperUtils.getNumber = function (val, strict) {
-	'use strict';
-	
-	if (typeof val === 'number') {
-		return val;
-	}
-	
-	if (/^\d+$/.test(val)) {
-		return IE8Compatibility.parseInt(val);
-	} else if (/^\d+(?:\.\d*)?(?:[eE]\d*)?$/.test(val)) {
-		return IE8Compatibility.parseFloat(val);
-	} else {
-		return strict ? Number.NaN : val;
-	}
-	
+    'use strict';
+    
+    if (typeof val === 'number') {
+        return val;
+    }
+    
+    if (/^\d+$/.test(val)) {
+        return IE8Compatibility.parseInt(val);
+    } else if (/^\d+(?:\.\d*)?(?:[eE]\d*)?$/.test(val)) {
+        return IE8Compatibility.parseFloat(val);
+    } else {
+        return strict ? Number.NaN : val;
+    }
+    
 };
 
 
@@ -143,88 +143,88 @@ HTMLTableWrapperUtils.getNumber = function (val, strict) {
  * @returns {boolean} `true` if any of the requested comparisons succeed, otherwise `false`.
  */
 HTMLTableWrapperUtils.shouldInclude = function (cellValue, operation, compareValue, columnType) {
-	'use strict';
-	
-	var convertedCellValue, convertedCompareValue, negated, simpleFlags, textCellValue, textCompareValue, ignoreCase;
-	
-	ignoreCase = operation & HTMLTableWrapperUtils.FILTER_FLAG_IGNORE_CASE;
-	
-	// Convert values.
-	switch (columnType) {
-		case HTMLTableWrapperUtils.COLUMN_TYPE_TEXT:
-			convertedCellValue = String(cellValue);
-			convertedCompareValue = String(compareValue);
-			if (ignoreCase) {
-				convertedCellValue = convertedCellValue.toUpperCase();
-				convertedCompareValue = convertedCompareValue.toUpperCase();
-			}
-			break;
-		case HTMLTableWrapperUtils.COLUMN_TYPE_INFER:
-		default:
-			convertedCellValue = HTMLTableWrapperUtils.getNumber(cellValue, false);
-			convertedCompareValue = HTMLTableWrapperUtils.getNumber(compareValue, false);
-			if (ignoreCase) {
-				if (typeof convertedCellValue === 'string') {
-					convertedCellValue = convertedCellValue.toUpperCase();
-				}
-				if (typeof convertedCompareValue === 'string') {
-					convertedCompareValue = convertedCompareValue.toUpperCase();
-				}
-			}
-			break;
-	}
-	
-	// Perform comparisons.
-	negated = operation & HTMLTableWrapperUtils.FILTER_FLAG_NOT;
-	
-	
-	// 'Simple' relational comparisons. 
-	simpleFlags = operation & (HTMLTableWrapperUtils.FILTER_OP_EQUALS | HTMLTableWrapperUtils.FILTER_OP_LESS_THAN | HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN);
-	if (simpleFlags) {
-		// Handle negation
-		if (negated) {
-			simpleFlags = ~simpleFlags;
-		}
-		
-		// Do Compare.
-		if (simpleFlags & HTMLTableWrapperUtils.FILTER_OP_EQUALS) {
-			if (convertedCellValue == convertedCompareValue) {
-				return true;
-			}
-		}
-		
-		if (simpleFlags & HTMLTableWrapperUtils.FILTER_OP_LESS_THAN) {
-			if (convertedCellValue < convertedCompareValue) {
-				return true;
-			}
-		}
-		
-		if (simpleFlags & HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN) {
-			if (convertedCellValue > convertedCompareValue) {
-				return true;
-			}
-		}
-	}
-	
-	
-	// Contains comparison.
-	if (operation & HTMLTableWrapperUtils.FILTER_OP_CONTAINS) {
-		textCellValue = String(cellValue);
-		textCompareValue = String(compareValue);
-		
-		if (ignoreCase) {
-			textCellValue = textCellValue.toUpperCase();
-			textCompareValue = textCompareValue.toUpperCase();
-		}
-		
-		if (textCellValue.indexOf(textCompareValue) !== -1) {
-			return !negated;
-		}
-	}
-	
-	
-	// Default case.
-	return false;
+    'use strict';
+    
+    var convertedCellValue, convertedCompareValue, negated, simpleFlags, textCellValue, textCompareValue, ignoreCase;
+    
+    ignoreCase = operation & HTMLTableWrapperUtils.FILTER_FLAG_IGNORE_CASE;
+    
+    // Convert values.
+    switch (columnType) {
+        case HTMLTableWrapperUtils.COLUMN_TYPE_TEXT:
+            convertedCellValue = String(cellValue);
+            convertedCompareValue = String(compareValue);
+            if (ignoreCase) {
+                convertedCellValue = convertedCellValue.toUpperCase();
+                convertedCompareValue = convertedCompareValue.toUpperCase();
+            }
+            break;
+        case HTMLTableWrapperUtils.COLUMN_TYPE_INFER:
+        default:
+            convertedCellValue = HTMLTableWrapperUtils.getNumber(cellValue, false);
+            convertedCompareValue = HTMLTableWrapperUtils.getNumber(compareValue, false);
+            if (ignoreCase) {
+                if (typeof convertedCellValue === 'string') {
+                    convertedCellValue = convertedCellValue.toUpperCase();
+                }
+                if (typeof convertedCompareValue === 'string') {
+                    convertedCompareValue = convertedCompareValue.toUpperCase();
+                }
+            }
+            break;
+    }
+    
+    // Perform comparisons.
+    negated = operation & HTMLTableWrapperUtils.FILTER_FLAG_NOT;
+    
+    
+    // 'Simple' relational comparisons. 
+    simpleFlags = operation & (HTMLTableWrapperUtils.FILTER_OP_EQUALS | HTMLTableWrapperUtils.FILTER_OP_LESS_THAN | HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN);
+    if (simpleFlags) {
+        // Handle negation
+        if (negated) {
+            simpleFlags = ~simpleFlags;
+        }
+        
+        // Do Compare.
+        if (simpleFlags & HTMLTableWrapperUtils.FILTER_OP_EQUALS) {
+            if (convertedCellValue == convertedCompareValue) {
+                return true;
+            }
+        }
+        
+        if (simpleFlags & HTMLTableWrapperUtils.FILTER_OP_LESS_THAN) {
+            if (convertedCellValue < convertedCompareValue) {
+                return true;
+            }
+        }
+        
+        if (simpleFlags & HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN) {
+            if (convertedCellValue > convertedCompareValue) {
+                return true;
+            }
+        }
+    }
+    
+    
+    // Contains comparison.
+    if (operation & HTMLTableWrapperUtils.FILTER_OP_CONTAINS) {
+        textCellValue = String(cellValue);
+        textCompareValue = String(compareValue);
+        
+        if (ignoreCase) {
+            textCellValue = textCellValue.toUpperCase();
+            textCompareValue = textCompareValue.toUpperCase();
+        }
+        
+        if (textCellValue.indexOf(textCompareValue) !== -1) {
+            return !negated;
+        }
+    }
+    
+    
+    // Default case.
+    return false;
 };
 
 

@@ -9,52 +9,52 @@ between highs and lows (swing), and also allows for sorting the table based upon
 ``` html
 <!-- ... -->
 <div class="control-group">
-	<div class="field-group">
-		<h4>Temperature Unit</h4>
-		<span>
-			<input id="temperatureUnitFahrenheit" class="temperature-unit"  type="radio" name="temperatureUnit" value="F" checked />
-			<label for="temperatureUnitFahrenheit" class="fahrenheit" title="Fahrenheit"></label>
-		</span>
-		<span>
-			<input id="temperatureUnitCelsius" class="temperature-unit" type="radio" name="temperatureUnit" value="C" />
-			<label for="temperatureUnitCelsius" class="celsius" title="Celsius"></label>
+    <div class="field-group">
+        <h4>Temperature Unit</h4>
+        <span>
+            <input id="temperatureUnitFahrenheit" class="temperature-unit"  type="radio" name="temperatureUnit" value="F" checked />
+            <label for="temperatureUnitFahrenheit" class="fahrenheit" title="Fahrenheit"></label>
+        </span>
+        <span>
+            <input id="temperatureUnitCelsius" class="temperature-unit" type="radio" name="temperatureUnit" value="C" />
+            <label for="temperatureUnitCelsius" class="celsius" title="Celsius"></label>
 <!-- ... -->
-	<div class="field-group" id="temperatureCategories">
-		<h4>Filter By Category</h4>
-		<div class="field">
-			<span>High:</span>
-			<span>
-				<input id="temperatureCategoryHighNone" class="temperature-category high" type="radio" 
-						name="temperatureCategoryHigh" value="none" checked />
-				<label for="temperatureCategoryHighNone">None</label>
-			</span>
-			<span>
-				<input id="temperatureCategoryHighHot" class="temperature-category high" type="radio" 
-						name="temperatureCategoryHigh" value="hot" data-orig-unit="F" data-orig-gt="75" />
-				<label for="temperatureCategoryHighHot">Hot</label>
-			</span>
-			<span>
-				<input id="temperatureCategoryHighWarm" class="temperature-category high" type="radio" 
-						name="temperatureCategoryHigh" value="warm" data-orig-unit="F" data-orig-lte="75" data-orig-gt="63" />
-				<label for="temperatureCategoryHighWarm">Warm</label>
-			</span>
+    <div class="field-group" id="temperatureCategories">
+        <h4>Filter By Category</h4>
+        <div class="field">
+            <span>High:</span>
+            <span>
+                <input id="temperatureCategoryHighNone" class="temperature-category high" type="radio" 
+                        name="temperatureCategoryHigh" value="none" checked />
+                <label for="temperatureCategoryHighNone">None</label>
+            </span>
+            <span>
+                <input id="temperatureCategoryHighHot" class="temperature-category high" type="radio" 
+                        name="temperatureCategoryHigh" value="hot" data-orig-unit="F" data-orig-gt="75" />
+                <label for="temperatureCategoryHighHot">Hot</label>
+            </span>
+            <span>
+                <input id="temperatureCategoryHighWarm" class="temperature-category high" type="radio" 
+                        name="temperatureCategoryHigh" value="warm" data-orig-unit="F" data-orig-lte="75" data-orig-gt="63" />
+                <label for="temperatureCategoryHighWarm">Warm</label>
+            </span>
 <!-- ... -->
 <div class="field-group" id="sortOptions">
-	<h4>Sort By Temperature</h4>
-	<div>
-		<input id="temperatureSortNone" class="temperature-sort" type="radio" name="temperatureSort" data-category="none" checked />
-		<label for="temperatureSortNone">None</label>
-	</div>
-	<div>
-		<span>
-			<input id="temperatureSortHighAscending" class="temperature-sort" type="radio" 
-					name="temperatureSort" data-category="high" value="asc" />
-			<label for="temperatureSortHighAscending">High, Ascending</label>
-		</span>
-		<span>
-			<input id="temperatureSortHighDescending" class="temperature-sort" type="radio" 
-					name="temperatureSort" data-category="high" value="desc" />
-			<label for="temperatureSortHighDescending">High, Descending</label>
+    <h4>Sort By Temperature</h4>
+    <div>
+        <input id="temperatureSortNone" class="temperature-sort" type="radio" name="temperatureSort" data-category="none" checked />
+        <label for="temperatureSortNone">None</label>
+    </div>
+    <div>
+        <span>
+            <input id="temperatureSortHighAscending" class="temperature-sort" type="radio" 
+                    name="temperatureSort" data-category="high" value="asc" />
+            <label for="temperatureSortHighAscending">High, Ascending</label>
+        </span>
+        <span>
+            <input id="temperatureSortHighDescending" class="temperature-sort" type="radio" 
+                    name="temperatureSort" data-category="high" value="desc" />
+            <label for="temperatureSortHighDescending">High, Descending</label>
 <!-- ... -->
 ```
 
@@ -88,69 +88,69 @@ filtering based upon swings (differences between highs and lows), which does not
 number that defines the filter's range:
 ``` javascript
 function HighLowFilter(columnIndex, gtRange, lteRange) {
-	'use strict';
-	
-	this.columnIndex = columnIndex;
-	this.gtRange = gtRange;
-	this.lteRange = lteRange;
+    'use strict';
+    
+    this.columnIndex = columnIndex;
+    this.gtRange = gtRange;
+    this.lteRange = lteRange;
 }
 
 HighLowFilter.prototype.include = function (cell) {
-	'use strict';
-	
-	var gtRange, lteRange, currentValue;
-	
-	currentValue = Number.parseFloat(cell.textContent);
-	if (Number.isNaN(currentValue)) {
-		return false;
-	}
-	
-	gtRange = this.gtRange;
-	lteRange = this.lteRange;
-	
-	if (!Number.isNaN(gtRange) && !(currentValue > gtRange)) {
-		return false;
-	}
-	if (!Number.isNaN(lteRange) && !(currentValue <= lteRange)) {
-		return false;
-	}
-	
-	return true;
+    'use strict';
+    
+    var gtRange, lteRange, currentValue;
+    
+    currentValue = Number.parseFloat(cell.textContent);
+    if (Number.isNaN(currentValue)) {
+        return false;
+    }
+    
+    gtRange = this.gtRange;
+    lteRange = this.lteRange;
+    
+    if (!Number.isNaN(gtRange) && !(currentValue > gtRange)) {
+        return false;
+    }
+    if (!Number.isNaN(lteRange) && !(currentValue <= lteRange)) {
+        return false;
+    }
+    
+    return true;
 };
 
 
 function SwingFilter(gtRange, lteRange, highColumnIndex, lowColumnIndex) {
-	'use strict';
-	
-	this.gtRange = gtRange;
-	this.lteRange = lteRange;
-	this.highColumnIndex = highColumnIndex;
-	this.lowColumnIndex = lowColumnIndex;
+    'use strict';
+    
+    this.gtRange = gtRange;
+    this.lteRange = lteRange;
+    this.highColumnIndex = highColumnIndex;
+    this.lowColumnIndex = lowColumnIndex;
 }
 
 SwingFilter.prototype.include = function (row) {
-	'use strict';
-	
-	var cells, currentSwing, gtRange, lteRange;
-	
-	cells = row.cells;
-	
-	currentSwing = Number.parseFloat(cells[this.highColumnIndex].textContent) - Number.parseFloat(cells[this.lowColumnIndex].textContent)
-	if (Number.isNaN(currentSwing)) {
-		return false;
-	}
-	
-	gtRange = this.gtRange;
-	lteRange = this.lteRange;
-	
-	if (!Number.isNaN(gtRange) && !(currentSwing > gtRange)) {
-		return false;
-	}
-	if (!Number.isNaN(lteRange) && !(currentSwing <= lteRange)) {
-		return false;
-	}
-	
-	return true;
+    'use strict';
+    
+    var cells, currentSwing, gtRange, lteRange;
+    
+    cells = row.cells;
+    
+    currentSwing = Number.parseFloat(cells[this.highColumnIndex].textContent) - Number.parseFloat(cells[this.lowColumnIndex].textContent)
+    if (Number.isNaN(currentSwing)) {
+        return false;
+    }
+    
+    gtRange = this.gtRange;
+    lteRange = this.lteRange;
+    
+    if (!Number.isNaN(gtRange) && !(currentSwing > gtRange)) {
+        return false;
+    }
+    if (!Number.isNaN(lteRange) && !(currentSwing <= lteRange)) {
+        return false;
+    }
+    
+    return true;
 };
 ```
 
@@ -159,89 +159,89 @@ as the index of the high and low temperature columns in the backing table. We al
 and remove (respectively) itself as a listener for click events on `categoryInputs`.
 ``` javascript
 function TemperatureCategoryListener(tableWrapper, categoryInputs, highColumnIndex, lowColumnIndex) {
-	'use strict';
-	
-	this.tableWrapper = tableWrapper;
-	this.categoryInputs = categoryInputs;
-	this.highColumnIndex = highColumnIndex;
-	this.lowColumnIndex = lowColumnIndex;
+    'use strict';
+    
+    this.tableWrapper = tableWrapper;
+    this.categoryInputs = categoryInputs;
+    this.highColumnIndex = highColumnIndex;
+    this.lowColumnIndex = lowColumnIndex;
 }
 
 TemperatureCategoryListener.prototype.init = function () {
-	'use strict';
-	
-	var categoryInputs, i;
-	
-	categoryInputs = this.categoryInputs;
-	for (i = 0; i < categoryInputs.length; ++i) {
-		categoryInputs[i].addEventListener('click', this, false);
-	}
+    'use strict';
+    
+    var categoryInputs, i;
+    
+    categoryInputs = this.categoryInputs;
+    for (i = 0; i < categoryInputs.length; ++i) {
+        categoryInputs[i].addEventListener('click', this, false);
+    }
 };
 
 TemperatureCategoryListener.prototype.dispose = function () {
-	'use strict';
-	
-	var categoryInputs, i;
-	
-	categoryInputs = this.categoryInputs;
-	for (i = 0; i < categoryInputs.length; ++i) {
-		categoryInputs[i].removeEventListener('click', this, false);
-	}
+    'use strict';
+    
+    var categoryInputs, i;
+    
+    categoryInputs = this.categoryInputs;
+    for (i = 0; i < categoryInputs.length; ++i) {
+        categoryInputs[i].removeEventListener('click', this, false);
+    }
 };
 ```
 
 Next, we define an `updateTable` function that builds a series of [FilterDescriptor]s based upon the currently selected category inputs:
 ``` javascript
 TemperatureCategoryListener.prototype.updateTable = function () {
-	'use strict';
-	
-	var tableWrapper, categoryInputs, i, input, tableFilters, classList, highColumnIndex, lowColumnIndex, gt, lte;
-	
-	tableWrapper = this.tableWrapper;
-	categoryInputs = this.categoryInputs;
-	highColumnIndex = this.highColumnIndex;
-	lowColumnIndex = this.lowColumnIndex;
-	
-	tableFilters = [];
-	for (i = 0; i < categoryInputs.length; ++i) {
-		input = categoryInputs[i];
-		
-		// Only consider checked inputs
-		if (!input.checked) {
-			continue;
-		}
-		
-		// No need to build a FilterDescriptor for the 'none' field.
-		if (input.value === 'none') {
-			continue;
-		}
-		
-		// Read in range values.
-		gt = Number.parseFloat(input.getAttribute(TemperatureConversionListener.CURRENT_GT_ATTRIBUTE));
-		lte = Number.parseFloat(input.getAttribute(TemperatureConversionListener.CURRENT_LTE_ATTRIBUTE));
-		
-		// Add appropriate filter descriptor.
-		classList = input.classList;
-		if (classList.contains('high')) {
-			tableFilters.push(new HighLowFilter(highColumnIndex, gt, lte));
-		} else if (classList.contains('low')) {
-			tableFilters.push(new HighLowFilter(lowColumnIndex, gt, lte));
-		} else if (classList.contains('swing')) {
-			tableFilters.push(new SwingFilter(gt, lte, highColumnIndex, lowColumnIndex));
-		}
-	}
-	
-	// Call HTMLTableWrapper.
-	tableWrapper.filter(tableFilters);
+    'use strict';
+    
+    var tableWrapper, categoryInputs, i, input, tableFilters, classList, highColumnIndex, lowColumnIndex, gt, lte;
+    
+    tableWrapper = this.tableWrapper;
+    categoryInputs = this.categoryInputs;
+    highColumnIndex = this.highColumnIndex;
+    lowColumnIndex = this.lowColumnIndex;
+    
+    tableFilters = [];
+    for (i = 0; i < categoryInputs.length; ++i) {
+        input = categoryInputs[i];
+        
+        // Only consider checked inputs
+        if (!input.checked) {
+            continue;
+        }
+        
+        // No need to build a FilterDescriptor for the 'none' field.
+        if (input.value === 'none') {
+            continue;
+        }
+        
+        // Read in range values.
+        gt = Number.parseFloat(input.getAttribute(TemperatureConversionListener.CURRENT_GT_ATTRIBUTE));
+        lte = Number.parseFloat(input.getAttribute(TemperatureConversionListener.CURRENT_LTE_ATTRIBUTE));
+        
+        // Add appropriate filter descriptor.
+        classList = input.classList;
+        if (classList.contains('high')) {
+            tableFilters.push(new HighLowFilter(highColumnIndex, gt, lte));
+        } else if (classList.contains('low')) {
+            tableFilters.push(new HighLowFilter(lowColumnIndex, gt, lte));
+        } else if (classList.contains('swing')) {
+            tableFilters.push(new SwingFilter(gt, lte, highColumnIndex, lowColumnIndex));
+        }
+    }
+    
+    // Call HTMLTableWrapper.
+    tableWrapper.filter(tableFilters);
 };
 ```
 
 With that, the `handleEvent` function for `TemperatureCategoryListener` is simple:
 ``` javascript
 TemperatureCategoryListener.prototype.handleEvent = function () {
-	'use strict';
-	
-	this.updateTable();
+    'use strict';
+    
+    this.updateTable();
 };
 ```
 
@@ -254,70 +254,70 @@ if it should be sorted above, and zero if there's no preference.
 The [SortDescriptor]s for this example are quite similar to the [FilterDescriptor]s:
 ``` javascript
 function HighLowSortDescriptor(columnIndex, descending) {
-	'use strict';
-	
-	this.columnIndex = columnIndex;
-	this.descending = descending;
+    'use strict';
+    
+    this.columnIndex = columnIndex;
+    this.descending = descending;
 }
 
 HighLowSortDescriptor.prototype.compare = function (cellA, cellB) {
-	'use strict';
-	
-	var numA, numB, aNaN, bNaN, result;
-	
-	numA = Number.parseFloat(cellA.textContent);
-	numB = Number.parseFloat(cellB.textContent);
-	
-	aNaN = Number.isNaN(numA);
-	bNaN = Number.isNaN(numB);
-	if (aNaN && bNaN) {
-		return 0;
-	} else if (aNaN) {
-		return 1;
-	} else if (bNaN) {
-		return -1;
-	}
-	
-	result = numA - numB;
-	return this.descending ? -1 * result : result;
+    'use strict';
+    
+    var numA, numB, aNaN, bNaN, result;
+    
+    numA = Number.parseFloat(cellA.textContent);
+    numB = Number.parseFloat(cellB.textContent);
+    
+    aNaN = Number.isNaN(numA);
+    bNaN = Number.isNaN(numB);
+    if (aNaN && bNaN) {
+        return 0;
+    } else if (aNaN) {
+        return 1;
+    } else if (bNaN) {
+        return -1;
+    }
+    
+    result = numA - numB;
+    return this.descending ? -1 * result : result;
 };
 
 
 
 function SwingSortDescriptor(highColumnIndex, lowColumnIndex, descending) {
-	'use strict';
-	
-	this.highColumnIndex = highColumnIndex;
-	this.lowColumnIndex = lowColumnIndex;
-	this.descending = descending;
+    'use strict';
+    
+    this.highColumnIndex = highColumnIndex;
+    this.lowColumnIndex = lowColumnIndex;
+    this.descending = descending;
 }
 
 SwingSortDescriptor.prototype.compare = function (rowA, rowB) {
-	'use strict';
-	
-	var highColumnIndex, lowColumnIndex, aCells, bCells, aSwing, bSwing, aNaN, bNaN, result;
-	
-	highColumnIndex = this.highColumnIndex;
-	lowColumnIndex = this.lowColumnIndex;
-	
-	aCells = rowA.cells;
-	bCells = rowB.cells;
-	
-	aSwing = Number.parseFloat(aCells[highColumnIndex].textContent) - Number.parseFloat(aCells[lowColumnIndex].textContent);
-	bSwing = Number.parseFloat(bCells[highColumnIndex].textContent) - Number.parseFloat(bCells[lowColumnIndex].textContent);
-	
-	aNaN = Number.isNaN(aSwing);
-	bNaN = Number.isNaN(bSwing);
-	if (aNaN && bNaN) {
-		return 0;
-	} else if (aNaN) {
-		return 1;
-	} else if (bNaN) {
-		return -1;
-	}
-	
-	result = aSwing - bSwing;
-	return this.descending ? -1 * result : result;
+    'use strict';
+    
+    var highColumnIndex, lowColumnIndex, aCells, bCells, aSwing, bSwing, aNaN, bNaN, result;
+    
+    highColumnIndex = this.highColumnIndex;
+    lowColumnIndex = this.lowColumnIndex;
+    
+    aCells = rowA.cells;
+    bCells = rowB.cells;
+    
+    aSwing = Number.parseFloat(aCells[highColumnIndex].textContent) - Number.parseFloat(aCells[lowColumnIndex].textContent);
+    bSwing = Number.parseFloat(bCells[highColumnIndex].textContent) - Number.parseFloat(bCells[lowColumnIndex].textContent);
+    
+    aNaN = Number.isNaN(aSwing);
+    bNaN = Number.isNaN(bSwing);
+    if (aNaN && bNaN) {
+        return 0;
+    } else if (aNaN) {
+        return 1;
+    } else if (bNaN) {
+        return -1;
+    }
+    
+    result = aSwing - bSwing;
+    return this.descending ? -1 * result : result;
 };
 ```
 
@@ -327,36 +327,36 @@ a set of relevant inputs, and the column index of the high and low temperature c
 inputs.
 ``` javascript
 function TemperatureSortListener(tableWrapper, sortInputs, highColumnIndex, lowColumnIndex) {
-	'use strict';
-	
-	this.tableWrapper = tableWrapper;
-	this.sortInputs = sortInputs;
-	this.highColumnIndex = highColumnIndex;
-	this.lowColumnIndex = lowColumnIndex;
+    'use strict';
+    
+    this.tableWrapper = tableWrapper;
+    this.sortInputs = sortInputs;
+    this.highColumnIndex = highColumnIndex;
+    this.lowColumnIndex = lowColumnIndex;
 }
 
 TemperatureSortListener.prototype.init = function () {
-	'use strict';
-	
-	var sortInputs, i;
-	
-	sortInputs = this.sortInputs;
-	
-	for (i = 0; i < sortInputs.length; ++i) {
-		sortInputs[i].addEventListener('click', this, false);
-	}
+    'use strict';
+    
+    var sortInputs, i;
+    
+    sortInputs = this.sortInputs;
+    
+    for (i = 0; i < sortInputs.length; ++i) {
+        sortInputs[i].addEventListener('click', this, false);
+    }
 };
 
 TemperatureSortListener.prototype.dispose = function () {
-	'use strict';
-	
-	var sortInputs, i;
-	
-	sortInputs = this.sortInputs;
-	
-	for (i = 0; i < sortInputs.length; ++i) {
-		sortInputs[i].removeEventListener('click', this, false);
-	}
+    'use strict';
+    
+    var sortInputs, i;
+    
+    sortInputs = this.sortInputs;
+    
+    for (i = 0; i < sortInputs.length; ++i) {
+        sortInputs[i].removeEventListener('click', this, false);
+    }
 };
 ```
 
@@ -369,48 +369,48 @@ TemperatureSortListener.CATEGORY_ATTRIBUTE_NAME = 'data-category';
 // ...
 
 TemperatureSortListener.prototype.doSort = function (category, direction) {
-	'use strict';
-	
-	var tableWrapper, highColumnIndex, lowColumnIndex, descending, sortDescriptor;
-	
-	tableWrapper = this.tableWrapper;
-	highColumnIndex = this.highColumnIndex;
-	lowColumnIndex = this.lowColumnIndex;
-	
-	descending = direction == 'desc';
-	switch (category) {
-		case 'high':
-			sortDescriptor = new HighLowSortDescriptor(highColumnIndex, descending);
-			break;
-		case 'low':
-			sortDescriptor = new HighLowSortDescriptor(lowColumnIndex, descending);
-			break;
-		case 'swing':
-			sortDescriptor = new SwingSortDescriptor(highColumnIndex, lowColumnIndex, descending);
-			break;
-		case 'none':
-		default:
-			sortDescriptor = null;
-	}
-	
-	if (sortDescriptor) {
-		tableWrapper.sort(sortDescriptor);
-	} else {
-		tableWrapper.clearSort();
-	}
+    'use strict';
+    
+    var tableWrapper, highColumnIndex, lowColumnIndex, descending, sortDescriptor;
+    
+    tableWrapper = this.tableWrapper;
+    highColumnIndex = this.highColumnIndex;
+    lowColumnIndex = this.lowColumnIndex;
+    
+    descending = direction == 'desc';
+    switch (category) {
+        case 'high':
+            sortDescriptor = new HighLowSortDescriptor(highColumnIndex, descending);
+            break;
+        case 'low':
+            sortDescriptor = new HighLowSortDescriptor(lowColumnIndex, descending);
+            break;
+        case 'swing':
+            sortDescriptor = new SwingSortDescriptor(highColumnIndex, lowColumnIndex, descending);
+            break;
+        case 'none':
+        default:
+            sortDescriptor = null;
+    }
+    
+    if (sortDescriptor) {
+        tableWrapper.sort(sortDescriptor);
+    } else {
+        tableWrapper.clearSort();
+    }
 };
 ```
 
 The `handleEvent` function for `TemperatureSortListener` is also rather simple:
 ``` javascript
 TemperatureSortListener.prototype.handleEvent = function (event) {
-	'use strict';
-	
-	var target;
-	
-	target = event.target;
-	
-	this.doSort(target.getAttribute(TemperatureSortListener.CATEGORY_ATTRIBUTE_NAME), target.value);
+    'use strict';
+    
+    var target;
+    
+    target = event.target;
+    
+    this.doSort(target.getAttribute(TemperatureSortListener.CATEGORY_ATTRIBUTE_NAME), target.value);
 };
 ```
 
@@ -431,21 +431,21 @@ var HIGH_COLUMN_INDEX = 2;
 var LOW_COLUMN_INDEX = 3;
 
 document.addEventListener('DOMContentLoaded', function () {
-	'use strict';
-	
-	var table, categoryFieldGroup, unitInputs, tableWrapper, categoryInputs, sortInputs;
-	
-	table = document.getElementById('temperatures');
-	categoryFieldGroup = document.getElementById('temperatureCategories');
-	unitInputs = document.getElementsByClassName('temperature-unit');
-	tableWrapper = new HTMLTableWrapper(table);
-	categoryInputs = document.getElementsByClassName('temperature-category');
-	sortInputs = document.getElementsByClassName('temperature-sort');
-	
-	new TemperatureConversionListener(table, categoryFieldGroup, tempConversions, unitInputs).init();
-	new TemperatureCategoryListener(tableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
-	new TemperatureSortListener(tableWrapper, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
-	
+    'use strict';
+    
+    var table, categoryFieldGroup, unitInputs, tableWrapper, categoryInputs, sortInputs;
+    
+    table = document.getElementById('temperatures');
+    categoryFieldGroup = document.getElementById('temperatureCategories');
+    unitInputs = document.getElementsByClassName('temperature-unit');
+    tableWrapper = new HTMLTableWrapper(table);
+    categoryInputs = document.getElementsByClassName('temperature-category');
+    sortInputs = document.getElementsByClassName('temperature-sort');
+    
+    new TemperatureConversionListener(table, categoryFieldGroup, tempConversions, unitInputs).init();
+    new TemperatureCategoryListener(tableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
+    new TemperatureSortListener(tableWrapper, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
+    
 });
 </script>
 ```

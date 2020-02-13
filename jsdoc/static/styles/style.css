@@ -1,19 +1,19 @@
 
 .footnote {
-	font-size: .5em;
-	line-height: 100%;
-	margin-bottom: 1em;
+    font-size: .5em;
+    line-height: 100%;
+    margin-bottom: 1em;
 }
 
 code {
-	white-space: pre;
+    white-space: pre;
 }
 
 .see-also-section {
-	margin-top: 2.5em;
-	font-size: 80%;
+    margin-top: 2.5em;
+    font-size: 80%;
 }
 
 .see-also .label {
-	font-weight: bold;
+    font-weight: bold;
 }

@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="../html-table-wrapper-util.min.css" />
 <style>
 th {
-	cursor: pointer;
+    cursor: pointer;
 }
 </style>
 
@@ -19,15 +19,15 @@ th {
 <script>
 
 document.addEventListener('DOMContentLoaded', function () {
-	'use strict';
-	
-	var tableWrapper, gradeCategoryInputs;
-	
-	tableWrapper = new HTMLTableWrapper(document.getElementById('grades'));
-	gradeCategoryInputs = document.getElementsByClassName('grade-category');
-	
-	new ClickSortListener(tableWrapper).init();
-	new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init();
+    'use strict';
+    
+    var tableWrapper, gradeCategoryInputs;
+    
+    tableWrapper = new HTMLTableWrapper(document.getElementById('grades'));
+    gradeCategoryInputs = document.getElementsByClassName('grade-category');
+    
+    new ClickSortListener(tableWrapper).init();
+    new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init();
 });
 
 </script>
@@ -38,118 +38,118 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- <script> -->
 
 <!-- document.addEventListener('DOMContentLoaded', () => { -->
-	<!-- 'use strict'; -->
-	
-	<!-- const tableWrapper = new HTMLTableWrapper(document.getElementById('grades')); -->
-	<!-- const gradeCategoryInputs = document.getElementsByClassName('grade-category'); -->
-	
-	<!-- new ClickSortListener(tableWrapper).init(); -->
-	<!-- new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init(); -->
+    <!-- 'use strict'; -->
+    
+    <!-- const tableWrapper = new HTMLTableWrapper(document.getElementById('grades')); -->
+    <!-- const gradeCategoryInputs = document.getElementsByClassName('grade-category'); -->
+    
+    <!-- new ClickSortListener(tableWrapper).init(); -->
+    <!-- new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init(); -->
 <!-- }); -->
 
 <!-- </script> -->
 
 </head>
 <body>
-	<h1>Gradebook</h1>
-	<div>
-		<span>Show:</span>
-		<span>
-			<input id="gradeCategoryAll" class="grade-category" type="radio" name="gradeCategory" value="all" checked />
-			<label for="gradeCategoryAll">All</label>
-		</span>
-		<span>
-			<input id="gradeCategoryPassing" class="grade-category" type="radio" name="gradeCategory" value="passing" />
-			<label for="gradeCategoryPassing">Passing</label>
-		</span>
-		<span>
-			<input id="gradeCategoryFailing" class="grade-category" type="radio" name="gradeCategory" value="failing" />
-			<label for="gradeCategoryFailing">Failing</label>
-		</span>
-	</div>
-	<table id="grades">
-		<thead>
-			<tr>
-				<th>Last Name</th>
-				<th>First Name</th>
-				<th>Assignment</th>
-				<th>Grade</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>Smith</td>
-				<td>John</td>
-				<td>Homework #1</td>
-				<td>C</td>
-			</tr>
-			<tr>
-				<td>Wimbleton</td>
-				<td>Julie</td>
-				<td>Homework #1</td>
-				<td>D</td>
-			</tr>
-			<tr>
-				<td>Doe</td>
-				<td>Jane</td>
-				<td>Homework #1</td>
-				<td>A</td>
-			</tr>
-			<tr>
-				<td>Grey</td>
-				<td>William</td>
-				<td>Homework #1</td>
-				<td>B</td>
-			</tr>
-			<tr>
-				<td>Smith</td>
-				<td>John</td>
-				<td>Homework #2</td>
-				<td>A</td>
-			</tr>
-			<tr>
-				<td>Wimbleton</td>
-				<td>Julie</td>
-				<td>Homework #2</td>
-				<td>F</td>
-			</tr>
-			<tr>
-				<td>Doe</td>
-				<td>Jane</td>
-				<td>Homework #2</td>
-				<td>C</td>
-			</tr>
-			<tr>
-				<td>Grey</td>
-				<td>William</td>
-				<td>Homework #2</td>
-				<td>D</td>
-			</tr>
-			<tr>
-				<td>Smith</td>
-				<td>John</td>
-				<td>Midterm #1</td>
-				<td>A</td>
-			</tr>
-			<tr>
-				<td>Wimbleton</td>
-				<td>Julie</td>
-				<td>Midterm #1</td>
-				<td>B</td>
-			</tr>
-			<tr>
-				<td>Doe</td>
-				<td>Jane</td>
-				<td>Midterm #1</td>
-				<td>D</td>
-			</tr>
-			<tr>
-				<td>Grey</td>
-				<td>William</td>
-				<td>Midterm #1</td>
-				<td>F</td>
-			</tr>
-		</tbody>
-	</table>
+    <h1>Gradebook</h1>
+    <div>
+        <span>Show:</span>
+        <span>
+            <input id="gradeCategoryAll" class="grade-category" type="radio" name="gradeCategory" value="all" checked />
+            <label for="gradeCategoryAll">All</label>
+        </span>
+        <span>
+            <input id="gradeCategoryPassing" class="grade-category" type="radio" name="gradeCategory" value="passing" />
+            <label for="gradeCategoryPassing">Passing</label>
+        </span>
+        <span>
+            <input id="gradeCategoryFailing" class="grade-category" type="radio" name="gradeCategory" value="failing" />
+            <label for="gradeCategoryFailing">Failing</label>
+        </span>
+    </div>
+    <table id="grades">
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Assignment</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Smith</td>
+                <td>John</td>
+                <td>Homework #1</td>
+                <td>C</td>
+            </tr>
+            <tr>
+                <td>Wimbleton</td>
+                <td>Julie</td>
+                <td>Homework #1</td>
+                <td>D</td>
+            </tr>
+            <tr>
+                <td>Doe</td>
+                <td>Jane</td>
+                <td>Homework #1</td>
+                <td>A</td>
+            </tr>
+            <tr>
+                <td>Grey</td>
+                <td>William</td>
+                <td>Homework #1</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>Smith</td>
+                <td>John</td>
+                <td>Homework #2</td>
+                <td>A</td>
+            </tr>
+            <tr>
+                <td>Wimbleton</td>
+                <td>Julie</td>
+                <td>Homework #2</td>
+                <td>F</td>
+            </tr>
+            <tr>
+                <td>Doe</td>
+                <td>Jane</td>
+                <td>Homework #2</td>
+                <td>C</td>
+            </tr>
+            <tr>
+                <td>Grey</td>
+                <td>William</td>
+                <td>Homework #2</td>
+                <td>D</td>
+            </tr>
+            <tr>
+                <td>Smith</td>
+                <td>John</td>
+                <td>Midterm #1</td>
+                <td>A</td>
+            </tr>
+            <tr>
+                <td>Wimbleton</td>
+                <td>Julie</td>
+                <td>Midterm #1</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>Doe</td>
+                <td>Jane</td>
+                <td>Midterm #1</td>
+                <td>D</td>
+            </tr>
+            <tr>
+                <td>Grey</td>
+                <td>William</td>
+                <td>Midterm #1</td>
+                <td>F</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>

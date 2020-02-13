@@ -79,27 +79,27 @@
  *
  */
 function HTMLTableWrapper(table) {
-	'use strict';
-	
-	if (!table || !table.tBodies || !table.tBodies.length) {
-		throw new ReferenceError('Table must be an defined and have a body.');
-	}
-	
-	/**
-	 * Backing `HTMLTableElement`.
-	 *
-	 * @private
-	 * @type {HTMLTableElement}
-	 */
-	this.table = table;
-	
-	/**
-	 * Cache of the initial state of the table's rows. Used when sort parameters are {@link HTMLTableWrapper#clearSort cleared}.
-	 *
-	 * @private
-	 * @type {Array}
-	 */
-	this.initialOrder = HTMLTableWrapper.copy(table.tBodies[0].rows);
+    'use strict';
+    
+    if (!table || !table.tBodies || !table.tBodies.length) {
+        throw new ReferenceError('Table must be an defined and have a body.');
+    }
+    
+    /**
+     * Backing `HTMLTableElement`.
+     *
+     * @private
+     * @type {HTMLTableElement}
+     */
+    this.table = table;
+    
+    /**
+     * Cache of the initial state of the table's rows. Used when sort parameters are {@link HTMLTableWrapper#clearSort cleared}.
+     *
+     * @private
+     * @type {Array}
+     */
+    this.initialOrder = HTMLTableWrapper.copy(table.tBodies[0].rows);
 
 }
 
@@ -125,15 +125,15 @@ HTMLTableWrapper.filteredClassName = 'data-table-filtered';
  * @return {Array} An `Array` containing the same elements of the given `src`.
  */
 HTMLTableWrapper.copy = function (src) {
-	
-	var result, i;
-	
-	result = [];
-	for (i = 0; i < src.length; ++i) {
-		result.push(src[i]);
-	}
-	
-	return result;
+    
+    var result, i;
+    
+    result = [];
+    for (i = 0; i < src.length; ++i) {
+        result.push(src[i]);
+    }
+    
+    return result;
 };
 
 
@@ -153,75 +153,75 @@ HTMLTableWrapper.copy = function (src) {
  *   will be ignored.
  */
 HTMLTableWrapper.prototype.sort = function () {
-	'use strict';
-	
-	var sortDescriptors, sortDescriptor, i, tbody, rows, copy, _this;
-	
-	// Pre-Validation Initialization.
-	sortDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
-	
-	if (!sortDescriptors.length) {
-		this.clearSort();
-		return;
-	}
-	
-	// Validation.
-	for (i = 0; i < sortDescriptors.length; ++i) {
-		sortDescriptor = sortDescriptors[i];
-		
-		if (!sortDescriptor) {
-			throw new ReferenceError('Invalid reference supplied for sort descriptor at index ' + i + ': ' + sortDescriptor);
-		}
-		
-		if (typeof sortDescriptor.compare !== 'function') {
-			throw new TypeError('Sort descriptor does not define define the compare property (of type function) at index ' + i);
-		}
-		
-	}
-	
-	// Post-Validation Initialization.
-	tbody = this.table.tBodies[0];
-	rows = tbody.rows;
-	copy = HTMLTableWrapper.copy(rows);
-	
-	// Perform sort.
-	_this = this;
-	copy.sort(function (rowA, rowB) {
-		var sortDescriptor, columnIndex, cellA, cellB, compareValue, i;
-		
-		for (i = 0; i < sortDescriptors.length; ++i) {
-			sortDescriptor = sortDescriptors[i];
-			
-			columnIndex = sortDescriptor.columnIndex;
-			
-			if (typeof columnIndex === 'number' && columnIndex > 0) {
-				cellA = rowA.cells[columnIndex];
-				cellB = rowB.cells[columnIndex];
-				compareValue = sortDescriptor.compare(cellA, cellB);
-			} else {
-				compareValue = sortDescriptor.compare(rowA, rowB);
-			}
-			
-			
-			
-			// Allowing type coercion if (for whatever reason) the compare function does not return an integer.
-			if (compareValue != 0) {
-				return compareValue;
-			}
-			
-		}
-		return 0;
-	});
-	
-	
-	// Update table.
-	while (rows.length) {
-		tbody.removeChild(rows[0]);
-	}
-	
-	for (i = 0; i < copy.length; ++i) {
-		tbody.appendChild(copy[i]);
-	}
+    'use strict';
+    
+    var sortDescriptors, sortDescriptor, i, tbody, rows, copy, _this;
+    
+    // Pre-Validation Initialization.
+    sortDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
+    
+    if (!sortDescriptors.length) {
+        this.clearSort();
+        return;
+    }
+    
+    // Validation.
+    for (i = 0; i < sortDescriptors.length; ++i) {
+        sortDescriptor = sortDescriptors[i];
+        
+        if (!sortDescriptor) {
+            throw new ReferenceError('Invalid reference supplied for sort descriptor at index ' + i + ': ' + sortDescriptor);
+        }
+        
+        if (typeof sortDescriptor.compare !== 'function') {
+            throw new TypeError('Sort descriptor does not define define the compare property (of type function) at index ' + i);
+        }
+        
+    }
+    
+    // Post-Validation Initialization.
+    tbody = this.table.tBodies[0];
+    rows = tbody.rows;
+    copy = HTMLTableWrapper.copy(rows);
+    
+    // Perform sort.
+    _this = this;
+    copy.sort(function (rowA, rowB) {
+        var sortDescriptor, columnIndex, cellA, cellB, compareValue, i;
+        
+        for (i = 0; i < sortDescriptors.length; ++i) {
+            sortDescriptor = sortDescriptors[i];
+            
+            columnIndex = sortDescriptor.columnIndex;
+            
+            if (typeof columnIndex === 'number' && columnIndex > 0) {
+                cellA = rowA.cells[columnIndex];
+                cellB = rowB.cells[columnIndex];
+                compareValue = sortDescriptor.compare(cellA, cellB);
+            } else {
+                compareValue = sortDescriptor.compare(rowA, rowB);
+            }
+            
+            
+            
+            // Allowing type coercion if (for whatever reason) the compare function does not return an integer.
+            if (compareValue != 0) {
+                return compareValue;
+            }
+            
+        }
+        return 0;
+    });
+    
+    
+    // Update table.
+    while (rows.length) {
+        tbody.removeChild(rows[0]);
+    }
+    
+    for (i = 0; i < copy.length; ++i) {
+        tbody.appendChild(copy[i]);
+    }
 };
 
 /**
@@ -234,62 +234,62 @@ HTMLTableWrapper.prototype.sort = function () {
  *   will be ignored.
  */
 HTMLTableWrapper.prototype.filter = function () {
-	'use strict';
-	
-	var filterDescriptors, filterDescriptor, i, rows, row, filter, j, cells, columnIndex, shouldInclude;
-	
-	// Initialization.
-	filterDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
-	
-	if (!filterDescriptors.length) {
-		this.clearFilter();
-		return;
-	}
-	
-	// Validation.
-	for (i = 0; i < filterDescriptors.length; ++i) {
-		filterDescriptor = filterDescriptors[i];
-		
-		if (!filterDescriptor) {
-			throw new ReferenceError('Invalid reference supplied for filter descriptor at index ' + i);
-		}
-		
-		if (typeof filterDescriptor.include !== 'function') {
-			throw new TypeError('Filter descriptor does not define the include property (of type function) at index ' + i);
-		}
+    'use strict';
+    
+    var filterDescriptors, filterDescriptor, i, rows, row, filter, j, cells, columnIndex, shouldInclude;
+    
+    // Initialization.
+    filterDescriptors = arguments[0] instanceof Array ? arguments[0] : arguments;
+    
+    if (!filterDescriptors.length) {
+        this.clearFilter();
+        return;
+    }
+    
+    // Validation.
+    for (i = 0; i < filterDescriptors.length; ++i) {
+        filterDescriptor = filterDescriptors[i];
+        
+        if (!filterDescriptor) {
+            throw new ReferenceError('Invalid reference supplied for filter descriptor at index ' + i);
+        }
+        
+        if (typeof filterDescriptor.include !== 'function') {
+            throw new TypeError('Filter descriptor does not define the include property (of type function) at index ' + i);
+        }
 
-	}
-	
-	// Perform filtering.
-	rows = this.table.tBodies[0].rows;
-	for (i = 0; i < rows.length; ++i) {
-		row = rows[i];
-		cells = row.cells;
-		filter = false;
-		
-		for (j = 0; j < filterDescriptors.length; ++j) {
-			filterDescriptor = filterDescriptors[j];
-			
-			columnIndex = filterDescriptor.columnIndex;
-			
-			if (typeof columnIndex === 'number' && columnIndex > 0) {
-				shouldInclude = filterDescriptor.include(cells[columnIndex]);
-			} else {
-				shouldInclude = filterDescriptor.include(row);
-			}
-			
-			if (!shouldInclude) {
-				filter = true;
-				break;
-			}
-		}
-		
-		if (filter) {
-			IE8Compatibility.addClass(row, HTMLTableWrapper.filteredClassName);
-		} else {
-			IE8Compatibility.removeClass(row, HTMLTableWrapper.filteredClassName);
-		}
-	}
+    }
+    
+    // Perform filtering.
+    rows = this.table.tBodies[0].rows;
+    for (i = 0; i < rows.length; ++i) {
+        row = rows[i];
+        cells = row.cells;
+        filter = false;
+        
+        for (j = 0; j < filterDescriptors.length; ++j) {
+            filterDescriptor = filterDescriptors[j];
+            
+            columnIndex = filterDescriptor.columnIndex;
+            
+            if (typeof columnIndex === 'number' && columnIndex > 0) {
+                shouldInclude = filterDescriptor.include(cells[columnIndex]);
+            } else {
+                shouldInclude = filterDescriptor.include(row);
+            }
+            
+            if (!shouldInclude) {
+                filter = true;
+                break;
+            }
+        }
+        
+        if (filter) {
+            IE8Compatibility.addClass(row, HTMLTableWrapper.filteredClassName);
+        } else {
+            IE8Compatibility.removeClass(row, HTMLTableWrapper.filteredClassName);
+        }
+    }
 };
 
 
@@ -297,38 +297,38 @@ HTMLTableWrapper.prototype.filter = function () {
  * Clears all filters.
  */
 HTMLTableWrapper.prototype.clearFilter = function () {
-	'use strict';
-	
-	var i, rows;
-	
-	rows = this.table.tBodies[0].rows;
-	
-	for (i = 0; i < rows.length; ++i) {
-		IE8Compatibility.removeClass(rows[i], HTMLTableWrapper.filteredClassName);
-	}
-	
+    'use strict';
+    
+    var i, rows;
+    
+    rows = this.table.tBodies[0].rows;
+    
+    for (i = 0; i < rows.length; ++i) {
+        IE8Compatibility.removeClass(rows[i], HTMLTableWrapper.filteredClassName);
+    }
+    
 };
 
 /**
  * Clears the sorting for all columns. The original order for all rows (at the time this `HTMLTableWrapper` was constructed) is restored.
  */
 HTMLTableWrapper.prototype.clearSort = function () {
-	'use strict';
-	
-	var initialOrder, tbody, rows, i;
-	
-	tbody = this.table.tBodies[0];
-	rows = tbody.rows;
-	initialOrder = this.initialOrder;
-	
-	while (rows.length) {
-		tbody.removeChild(rows[0]);
-	}
-	
-	for (i = 0; i < initialOrder.length; ++i) {
-		tbody.appendChild(initialOrder[i]);
-	}
-	
+    'use strict';
+    
+    var initialOrder, tbody, rows, i;
+    
+    tbody = this.table.tBodies[0];
+    rows = tbody.rows;
+    initialOrder = this.initialOrder;
+    
+    while (rows.length) {
+        tbody.removeChild(rows[0]);
+    }
+    
+    for (i = 0; i < initialOrder.length; ++i) {
+        tbody.appendChild(initialOrder[i]);
+    }
+    
 };
 
 
@@ -338,9 +338,9 @@ HTMLTableWrapper.prototype.clearSort = function () {
  * @returns {HTMLTableElement} The `HTMLTableElement` backing this `HTMLTableWrapper`.
  */
 HTMLTableWrapper.prototype.getTableElement = function () {
-	'use strict';
-	
-	return this.table;
+    'use strict';
+    
+    return this.table;
 };
 
 /**
@@ -354,23 +354,23 @@ HTMLTableWrapper.prototype.getTableElement = function () {
  * @returns {MinimalList} `HTMLTableRowElement`s of the first table body section of the backing table.
  */
 HTMLTableWrapper.prototype.getRows = function (includeFiltered) {
-	'use strict';
-	
-	var rows, row, i, result;
-	
-	rows = this.table.tBodies[0].rows;
-	
-	if (includeFiltered) {
-		return rows;
-	}
-	
-	result = [];
-	for (i = 0; i < rows.length; ++i) {
-		row = rows[i];
-		if (!IE8Compatibility.hasClass(row, HTMLTableWrapper.filteredClassName)) {
-			result.push(row);
-		}
-	}
-	
-	return result;
+    'use strict';
+    
+    var rows, row, i, result;
+    
+    rows = this.table.tBodies[0].rows;
+    
+    if (includeFiltered) {
+        return rows;
+    }
+    
+    result = [];
+    for (i = 0; i < rows.length; ++i) {
+        row = rows[i];
+        if (!IE8Compatibility.hasClass(row, HTMLTableWrapper.filteredClassName)) {
+            result.push(row);
+        }
+    }
+    
+    return result;
 };

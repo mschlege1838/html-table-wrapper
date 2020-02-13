@@ -26,25 +26,25 @@
  * 
  */
 function SimpleFilterDescriptor(columnIndex, compareValue, operation, columnType) {
-	'use strict';
-	
-	this.columnIndex = columnIndex;
-	
-	/**
-	 * Value against which individual cell values are to be compared.
-	 *
-	 * @type {*}
-	 */
-	this.compareValue = compareValue;
-	
-	if (operation && operation !== '=') {
-		this.operation = operation;
-	}
-	
-	if (columnType && columnType !== HTMLTableWrapperUtils.COLUMN_TYPE_INFER) {
-		this.columnType = columnType;
-	}
-	
+    'use strict';
+    
+    this.columnIndex = columnIndex;
+    
+    /**
+     * Value against which individual cell values are to be compared.
+     *
+     * @type {*}
+     */
+    this.compareValue = compareValue;
+    
+    if (operation && operation !== '=') {
+        this.operation = operation;
+    }
+    
+    if (columnType && columnType !== HTMLTableWrapperUtils.COLUMN_TYPE_INFER) {
+        this.columnType = columnType;
+    }
+    
 }
 
 // Default Instance Properties
@@ -69,38 +69,38 @@ SimpleFilterDescriptor.prototype.columnType = HTMLTableWrapperUtils.COLUMN_TYPE_
 
 // Instance Methods
 SimpleFilterDescriptor.prototype.include = function (cell) {
-	'use strict';
-	
-	var operation, columnValue;
-	
-	switch (this.operation) {
-		case '=':
-			operation = HTMLTableWrapperUtils.FILTER_OP_EQUALS;
-			break;
-		case '>':
-			operation = HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN;
-			break;
-		case '<':
-			operation = HTMLTableWrapperUtils.FILTER_OP_LESS_THAN;
-			break;
-		case '>=':
-			operation = HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN | HTMLTableWrapperUtils.FILTER_OP_EQUALS;
-			break;
-		case '<=':
-			operation = HTMLTableWrapperUtils.FILTER_OP_LESS_THAN | HTMLTableWrapperUtils.FILTER_OP_EQUALS;
-			break;
-		case '!=':
-			operation = HTMLTableWrapperUtils.FILTER_FLAG_NOT | HTMLTableWrapperUtils.FILTER_OP_EQUALS;
-			break;
-		case '~':
-			operation = HTMLTableWrapperUtils.FILTER_OP_CONTAINS | HTMLTableWrapperUtils.FILTER_FLAG_IGNORE_CASE;
-			break;
-		case '~~':
-			operation = HTMLTableWrapperUtils.FILTER_OP_CONTAINS;
-			break;
-	}
-	
-	columnValue = IE8Compatibility.getTextContent(cell).trim();
-	
-	return HTMLTableWrapperUtils.shouldInclude(columnValue, operation, this.compareValue, this.columnType);
+    'use strict';
+    
+    var operation, columnValue;
+    
+    switch (this.operation) {
+        case '=':
+            operation = HTMLTableWrapperUtils.FILTER_OP_EQUALS;
+            break;
+        case '>':
+            operation = HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN;
+            break;
+        case '<':
+            operation = HTMLTableWrapperUtils.FILTER_OP_LESS_THAN;
+            break;
+        case '>=':
+            operation = HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN | HTMLTableWrapperUtils.FILTER_OP_EQUALS;
+            break;
+        case '<=':
+            operation = HTMLTableWrapperUtils.FILTER_OP_LESS_THAN | HTMLTableWrapperUtils.FILTER_OP_EQUALS;
+            break;
+        case '!=':
+            operation = HTMLTableWrapperUtils.FILTER_FLAG_NOT | HTMLTableWrapperUtils.FILTER_OP_EQUALS;
+            break;
+        case '~':
+            operation = HTMLTableWrapperUtils.FILTER_OP_CONTAINS | HTMLTableWrapperUtils.FILTER_FLAG_IGNORE_CASE;
+            break;
+        case '~~':
+            operation = HTMLTableWrapperUtils.FILTER_OP_CONTAINS;
+            break;
+    }
+    
+    columnValue = IE8Compatibility.getTextContent(cell).trim();
+    
+    return HTMLTableWrapperUtils.shouldInclude(columnValue, operation, this.compareValue, this.columnType);
 };

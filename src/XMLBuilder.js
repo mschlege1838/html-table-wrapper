@@ -17,31 +17,31 @@
  * This implementation is state-based, and therefore, not thread-safe.
  */
 function XMLBuilder() {
-	'use strict';
-	
-	/**
-	 * Tag name stack.
-	 *
-	 * @private
-	 * @type {Array}
-	 */
-	this.stack = [];
-	
-	/**
-	 * Current state of this `XMLBuilder`. Corresponds to one of the `STATE_*` static members of this class.
-	 *
-	 * @private
-	 * @type {number}
-	 */
-	this.state = XMLBuilder.STATE_INITIAL;
-	
-	/**
-	 * The raw text of this `XMLBuilder`. If {@link XMLBuilder.useArray} is `true`, it will be an `Array`, otherwise a `string`.
-	 *
-	 * @private
-	 * @type {(string|Array)}
-	 */
-	this.text = XMLBuilder.useArray ? [] : ''
+    'use strict';
+    
+    /**
+     * Tag name stack.
+     *
+     * @private
+     * @type {Array}
+     */
+    this.stack = [];
+    
+    /**
+     * Current state of this `XMLBuilder`. Corresponds to one of the `STATE_*` static members of this class.
+     *
+     * @private
+     * @type {number}
+     */
+    this.state = XMLBuilder.STATE_INITIAL;
+    
+    /**
+     * The raw text of this `XMLBuilder`. If {@link XMLBuilder.useArray} is `true`, it will be an `Array`, otherwise a `string`.
+     *
+     * @private
+     * @type {(string|Array)}
+     */
+    this.text = XMLBuilder.useArray ? [] : ''
 }
 
 // Static fields
@@ -80,11 +80,11 @@ XMLBuilder.STATE_CONTENT = 2;
  * @type {object}
  */
 XMLBuilder.ESCAPE_CHARACTER_MAPPING = {
-	'"' : '&quot;'
-	, '&': '&amp;'
-	, "'": '&apos;'
-	, '<': '&lt;'
-	, '>': '&gt;'
+    '"' : '&quot;'
+    , '&': '&amp;'
+    , "'": '&apos;'
+    , '<': '&lt;'
+    , '>': '&gt;'
 };
 
 
@@ -104,29 +104,29 @@ XMLBuilder.useArray = false;
  * @returns {string} The given `val` with XML reserved characters replaced with their corresponding entities.
  */
 XMLBuilder.escape = function (val) {
-	'use strict';
-	
-	var re, index, match, result;
-	
-	re = /["&'<>]/g;
-	if (!re.test(val)) {
-		return val;
-	}
-	re.lastIndex = 0;
-	
-	index = 0;
-	match = null;
-	result = '';
-	
-	while ((match = re.exec(val)) != null) {
-		result += val.substring(index, re.lastIndex - 1);
-		result += XMLBuilder.ESCAPE_CHARACTER_MAPPING[match[0]];
-		index = re.lastIndex;
-	}
-	result += val.substring(index);
-	
-	return result;
-	
+    'use strict';
+    
+    var re, index, match, result;
+    
+    re = /["&'<>]/g;
+    if (!re.test(val)) {
+        return val;
+    }
+    re.lastIndex = 0;
+    
+    index = 0;
+    match = null;
+    result = '';
+    
+    while ((match = re.exec(val)) != null) {
+        result += val.substring(index, re.lastIndex - 1);
+        result += XMLBuilder.ESCAPE_CHARACTER_MAPPING[match[0]];
+        index = re.lastIndex;
+    }
+    result += val.substring(index);
+    
+    return result;
+    
 };
 
 
@@ -141,22 +141,22 @@ XMLBuilder.escape = function (val) {
  * @returns {XMLBuilder} This `XMLBuilder`.
  */
 XMLBuilder.prototype.startTag = function (name) {
-	'use strict';
-	
-	var tag;
-	
-	if (this.state == XMLBuilder.STATE_TAG) {
-		this.appendDirect('>');
-	}
-	
-	tag = XMLBuilder.escape(name);
-	
-	this.appendDirect('<' + tag);
-	this.state = XMLBuilder.STATE_TAG;
-	
-	this.stack.push(tag);
-	
-	return this;
+    'use strict';
+    
+    var tag;
+    
+    if (this.state == XMLBuilder.STATE_TAG) {
+        this.appendDirect('>');
+    }
+    
+    tag = XMLBuilder.escape(name);
+    
+    this.appendDirect('<' + tag);
+    this.state = XMLBuilder.STATE_TAG;
+    
+    this.stack.push(tag);
+    
+    return this;
 };
 
 /**
@@ -172,24 +172,24 @@ XMLBuilder.prototype.startTag = function (name) {
  * @throws {Error} If not called subsequent to a call to {@link XMLBuilder#startTag}.
  */
 XMLBuilder.prototype.attribute = function (name, value) {
-	'use strict';
-	
-	var attributeName, attributeValue;
-	
-	if (this.state != XMLBuilder.STATE_TAG) {
-		throw new Error('Invalid state.');
-	}
-	
-	attributeName = XMLBuilder.escape(name);
-	
-	if (value) {
-		attributeValue = XMLBuilder.escape(value);
-		this.appendDirect(' ' + attributeName + '="' + attributeValue + '"');
-	} else {
-		this.appendDirect(' ' + attributeName);
-	}
-	
-	return this;
+    'use strict';
+    
+    var attributeName, attributeValue;
+    
+    if (this.state != XMLBuilder.STATE_TAG) {
+        throw new Error('Invalid state.');
+    }
+    
+    attributeName = XMLBuilder.escape(name);
+    
+    if (value) {
+        attributeValue = XMLBuilder.escape(value);
+        this.appendDirect(' ' + attributeName + '="' + attributeValue + '"');
+    } else {
+        this.appendDirect(' ' + attributeName);
+    }
+    
+    return this;
 };
 
 /**
@@ -199,16 +199,16 @@ XMLBuilder.prototype.attribute = function (name, value) {
  * @returns {XMLBuilder} This `XMLBuilder`.
  */
 XMLBuilder.prototype.content = function (value) {
-	'use strict';
-	
-	if (this.state == XMLBuilder.STATE_TAG) {
-		this.appendDirect('>');
-	}
-	
-	this.appendDirect(XMLBuilder.escape(value));
-	this.state = XMLBuilder.STATE_CONTENT;
-	
-	return this;
+    'use strict';
+    
+    if (this.state == XMLBuilder.STATE_TAG) {
+        this.appendDirect('>');
+    }
+    
+    this.appendDirect(XMLBuilder.escape(value));
+    this.state = XMLBuilder.STATE_CONTENT;
+    
+    return this;
 };
 
 /**
@@ -221,35 +221,35 @@ XMLBuilder.prototype.content = function (value) {
  * @throws {Error} If there is no current tag.
  */
 XMLBuilder.prototype.closeTag = function (requiresBody) {
-	'use strict';
-	
-	var stack, name, state;
-	
-	stack = this.stack;
-	if (!stack.length) {
-		throw new Error('Invalid state.');
-	}
-	
-	name = stack.pop();
-	state = this.state;
-	
-	
-	if (requiresBody) {
-		if (state === XMLBuilder.STATE_TAG) {
-			this.appendDirect('>');
-		}
-		this.appendDirect('</' + name + '>');
-	} else if (state === XMLBuilder.STATE_CONTENT) {
-		this.appendDirect('</' + name + '>');
-	} else if (state === XMLBuilder.STATE_TAG) {
-		this.appendDirect(' />');
-	} else {
-		throw new Error('Invalid state.');
-	}
-	
-	this.state = stack.length ? XMLBuilder.STATE_CONTENT : XMLBuilder.STATE_INITIAL;
-	
-	return this;
+    'use strict';
+    
+    var stack, name, state;
+    
+    stack = this.stack;
+    if (!stack.length) {
+        throw new Error('Invalid state.');
+    }
+    
+    name = stack.pop();
+    state = this.state;
+    
+    
+    if (requiresBody) {
+        if (state === XMLBuilder.STATE_TAG) {
+            this.appendDirect('>');
+        }
+        this.appendDirect('</' + name + '>');
+    } else if (state === XMLBuilder.STATE_CONTENT) {
+        this.appendDirect('</' + name + '>');
+    } else if (state === XMLBuilder.STATE_TAG) {
+        this.appendDirect(' />');
+    } else {
+        throw new Error('Invalid state.');
+    }
+    
+    this.state = stack.length ? XMLBuilder.STATE_CONTENT : XMLBuilder.STATE_INITIAL;
+    
+    return this;
 };
 
 /**
@@ -260,29 +260,29 @@ XMLBuilder.prototype.closeTag = function (requiresBody) {
  * @returns {XMLBuilder} This `XMLBuilder`.
  */
 XMLBuilder.prototype.appendDirect = function (val) {
-	'use strict';
-	
-	if (XMLBuilder.useArray) {
-		this.text.push(val);
-	} else {
-		this.text += val;
-	}
-	
-	return this;
+    'use strict';
+    
+    if (XMLBuilder.useArray) {
+        this.text.push(val);
+    } else {
+        this.text += val;
+    }
+    
+    return this;
 };
 
 /**
  * Clears this `XMLBuilder`.
  */
 XMLBuilder.prototype.clear = function () {
-	'use strict';
-	
-	if (XMLBuilder.useArray) {
-		this.text = []
-	} else {
-		this.text = '';
-	}
-	
+    'use strict';
+    
+    if (XMLBuilder.useArray) {
+        this.text = []
+    } else {
+        this.text = '';
+    }
+    
 };
 
 /**
@@ -291,9 +291,9 @@ XMLBuilder.prototype.clear = function () {
  * @returns {string} This `XMLBuilder`'s content.
  */
 XMLBuilder.prototype.toString = function () {
-	'use strict';
-	
-	return XMLBuilder.useArray ? this.text.join('') : this.text;
+    'use strict';
+    
+    return XMLBuilder.useArray ? this.text.join('') : this.text;
 };
 
 

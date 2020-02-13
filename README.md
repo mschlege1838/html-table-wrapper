@@ -9,9 +9,9 @@ HTMLTableWrapper.js is a standalone, lightweight, completely pluggable library f
 <script src="{{full-dist-url}}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-	'use strict';
-	
-	new HTMLTableWrapperListener(document.getElementById('myTable')).init();
+    'use strict';
+    
+    new HTMLTableWrapperListener(document.getElementById('myTable')).init();
 });
 </script>
 ```
@@ -23,18 +23,18 @@ Or, if you prefer to trigger sorting and filtering directly, the "utility" confi
 <script>
 var tableWrapper;
 document.addEventListener('DOMContentLoaded', function () {
-	'use strict';
-	
-	tableWrapper = new HTMLTableWrapper(document.getElementById('myTable'));
+    'use strict';
+    
+    tableWrapper = new HTMLTableWrapper(document.getElementById('myTable'));
 });
 </script>
 <!-- ... -->
 <script>
 // Some event handler
-	// Sort by column index 2, asc and 3, desc.
-	tableWrapper.sort(new SimpleSortDescriptor(2), new SimpleSortDescriptor(3, true));
-	// Filter column index 0 to include only values greater than or equal to 3.
-	tableWrapper.sort(new SimpleFilterDescriptor(0, 3, '>='));
+    // Sort by column index 2, asc and 3, desc.
+    tableWrapper.sort(new SimpleSortDescriptor(2), new SimpleSortDescriptor(3, true));
+    // Filter column index 0 to include only values greater than or equal to 3.
+    tableWrapper.sort(new SimpleFilterDescriptor(0, 3, '>='));
 </script>
 ```
 
@@ -44,21 +44,21 @@ To use HTMLTableWrapper.js on your webpages, you need only include the desired c
 below:
 
 - Full
-	- `html-table-wrapper.min.js`
-	- `html-table-wrapper.min.css`
-	
-	Fully featured, and end-user friendly. This is the easiest configuration to use.
+    - `html-table-wrapper.min.js`
+    - `html-table-wrapper.min.css`
+    
+    Fully featured, and end-user friendly. This is the easiest configuration to use.
 - Utility
-	- `html-table-wrapper-util.min.js`
-	- `html-table-wrapper-util.min.css`
-	
-	Includes the contents of the core configuration (below) with a couple extra classes that assist in using HTMLTableWrapper.js,
-	but no UI elements.
+    - `html-table-wrapper-util.min.js`
+    - `html-table-wrapper-util.min.css`
+    
+    Includes the contents of the core configuration (below) with a couple extra classes that assist in using HTMLTableWrapper.js,
+    but no UI elements.
 - Core
-	- `html-table-wrapper-core.min.js`
-	- `html-table-wrapper-core.min.css`
-	
-	Includes only the definition of [HTMLTableWrapper], and supporting compatibility classes for Internet Explorer.
+    - `html-table-wrapper-core.min.js`
+    - `html-table-wrapper-core.min.css`
+    
+    Includes only the definition of [HTMLTableWrapper], and supporting compatibility classes for Internet Explorer.
 
 
 All the above files are included in the NPM package, along with their un-minified versions, HTMLTableWrapper.js's individual source files and

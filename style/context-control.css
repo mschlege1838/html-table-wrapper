@@ -1,35 +1,35 @@
 
 /* Common */
 .context-control {
-	position: absolute;
-	opacity: 0;
-	color: black;
-	background-color: white;
-	border: 1px solid black;
-	padding: .5em;
+    position: absolute;
+    opacity: 0;
+    color: black;
+    background-color: white;
+    border: 1px solid black;
+    padding: .5em;
 }
 
 .context-control.context-control-opened {
-	opacity: 1;
-	transition: opacity .5s;
+    opacity: 1;
+    transition: opacity .5s;
 }
 
 .context-control.context-control-closed {
-	display: none;
+    display: none;
 }
 
 
 /* Mobile View */
 .context-control.context-control-mobile-view {
-	height: 100%;
-	width: 100%;
-	left: 0;
-	top: 0;
-	overflow: auto;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    overflow: auto;
 }
 
 body.context-control-mobile-view {
-	overflow: hidden;
+    overflow: hidden;
 }
 
 

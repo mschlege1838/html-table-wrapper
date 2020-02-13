@@ -8,8 +8,8 @@
  * Implementation of the ES6 `IteratorResult`.
  */
 function IterationValue(done, value) {
-	'use strict';
-	
-	this.done = done;
-	this.value = value;
+    'use strict';
+    
+    this.done = done;
+    this.value = value;
 }

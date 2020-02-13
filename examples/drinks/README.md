@@ -8,41 +8,41 @@ detailing each:
 ``` html
 <!-- ... -->
 <table id="drinks">
-	<thead>
-		<tr>
-			<th>Drink</th>
-			<th>Source</th>
-			<th>Ingredients</th>
-			<th>Instructions</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>Manhattan (Traditional)</td>
-			<td><a href="https://www.makersmark.com/cocktails/makers-46-manhattan">Maker's Mark</a></td>
-			<td>
-				<ul>
-					<li>Bourbon(2 parts)</li>
-					<li>Sweet Vermouth(1 part)</li>
-					<li>Bitters(2 dashes)</li>
-					<li>Maraschino Cherry</li>
-				</ul>
-			</td>
-			<td>
-				<ol>
-					<li>Combine Bourbon, Vermouth and Bitters in a mixing glass</li>
-					<li>Stir and strain into a chilled cocktail glass neat, or on the rocks</li>
-					<li>Garnish with cherry</li>
-				</ol>
-			</td>
-		</tr>
-		<tr>
-			<td>Manhattan (Traditional)</td>
-			<td><a href="https://www.allrecipes.com/recipe/222415/manhattan-cocktail">Allrecipes</a></td>
-			<td>
-				<ul>
-					<li>Rye(2 oz)</li>
-					<li>Sweet Vermouth(1/2 oz)</li>
+    <thead>
+        <tr>
+            <th>Drink</th>
+            <th>Source</th>
+            <th>Ingredients</th>
+            <th>Instructions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Manhattan (Traditional)</td>
+            <td><a href="https://www.makersmark.com/cocktails/makers-46-manhattan">Maker's Mark</a></td>
+            <td>
+                <ul>
+                    <li>Bourbon(2 parts)</li>
+                    <li>Sweet Vermouth(1 part)</li>
+                    <li>Bitters(2 dashes)</li>
+                    <li>Maraschino Cherry</li>
+                </ul>
+            </td>
+            <td>
+                <ol>
+                    <li>Combine Bourbon, Vermouth and Bitters in a mixing glass</li>
+                    <li>Stir and strain into a chilled cocktail glass neat, or on the rocks</li>
+                    <li>Garnish with cherry</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td>Manhattan (Traditional)</td>
+            <td><a href="https://www.allrecipes.com/recipe/222415/manhattan-cocktail">Allrecipes</a></td>
+            <td>
+                <ul>
+                    <li>Rye(2 oz)</li>
+                    <li>Sweet Vermouth(1/2 oz)</li>
 <!-- ... -->
 ```
 
@@ -56,21 +56,21 @@ set. Returning a value that evaluates to `true` from this function will trigger 
 For the case of interpreting list cells, the following accomplishes this:
 ``` javascript
 function interpretListCell(cell, values) {
-	'use strict';
-	
-	var listElements, i;
-	
-	listElements = cell.getElementsByTagName('li');
-	if (!listElements.length) {
-		return true;
-	}
-	
-	for (i = 0; i < listElements.length; ++i) {
-		values.add(listElements[i].textContent);
-	}
-	
-	// Not strictly necessary; permissable to not have a return value. (No return statement implies a return value of undefined.)
-	return false;
+    'use strict';
+    
+    var listElements, i;
+    
+    listElements = cell.getElementsByTagName('li');
+    if (!listElements.length) {
+        return true;
+    }
+    
+    for (i = 0; i < listElements.length; ++i) {
+        values.add(listElements[i].textContent);
+    }
+    
+    // Not strictly necessary; permissable to not have a return value. (No return statement implies a return value of undefined.)
+    return false;
 }
 ```
 
@@ -79,9 +79,9 @@ After a [`CellInterpreter`] implementation is declared, it must be passed to the
 ```html
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-	'use strict';
-	
-	new HTMLTableWrapperListener(document.getElementById('drinks'), null, interpretListCell).init();
+    'use strict';
+    
+    new HTMLTableWrapperListener(document.getElementById('drinks'), null, interpretListCell).init();
 });
 </script>
 ```

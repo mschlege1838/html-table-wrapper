@@ -103,29 +103,29 @@
  * should not be made in {@link ColumnControl#getFilterDescriptor} and {@link ColumnControl#getSortDescriptor}, as such would cause infinite recursion).
  */
 function HTMLTableWrapperListener(table, columnControlFactory, cellInterpreter) {
-	'use strict';
-	
-	if (table instanceof HTMLTableWrapper) {
-		this.dataTable = dataTable;
-	} else {
-		this.dataTable = new HTMLTableWrapper(table);
-	}
-	
-	if (columnControlFactory) {
-		this.columnControlFactory = columnControlFactory;
-	}
-	
-	if (cellInterpreter) {
-		this.cellInterpreter = cellInterpreter;
-	}
-	
-	/**
-	 * {@link ColumnControl} cache.
-	 *
-	 * @private
-	 * @type {ColumnControl[]}
-	 */
-	this.columnControls = [];
+    'use strict';
+    
+    if (table instanceof HTMLTableWrapper) {
+        this.dataTable = dataTable;
+    } else {
+        this.dataTable = new HTMLTableWrapper(table);
+    }
+    
+    if (columnControlFactory) {
+        this.columnControlFactory = columnControlFactory;
+    }
+    
+    if (cellInterpreter) {
+        this.cellInterpreter = cellInterpreter;
+    }
+    
+    /**
+     * {@link ColumnControl} cache.
+     *
+     * @private
+     * @type {ColumnControl[]}
+     */
+    this.columnControls = [];
 }
 
 // Static fields.
@@ -182,22 +182,22 @@ HTMLTableWrapperListener.prototype.cellInterpreter = null;
  * each cell.
  */
 HTMLTableWrapperListener.prototype.init = function () {
-	'use strict';
-	
-	var table, tableHeaders, tableHeaderCache, i, tableHeader;
-	
-	table = this.dataTable.getTableElement();
-	tableHeaders = table.tHead.rows[0].cells;
-	tableHeaderCache = this.tableHeaderCache = [];
-	
-	
-	for (i = 0; i < tableHeaders.length; ++i) {
-		tableHeader = tableHeaders[i];
-		IE8Compatibility.addEventListener(tableHeader, 'click', this, false);
-		IE8Compatibility.addClass(tableHeader, HTMLTableWrapperListener.processedColumnHeader);
-		tableHeaderCache.push(tableHeader);
-	}
-	
+    'use strict';
+    
+    var table, tableHeaders, tableHeaderCache, i, tableHeader;
+    
+    table = this.dataTable.getTableElement();
+    tableHeaders = table.tHead.rows[0].cells;
+    tableHeaderCache = this.tableHeaderCache = [];
+    
+    
+    for (i = 0; i < tableHeaders.length; ++i) {
+        tableHeader = tableHeaders[i];
+        IE8Compatibility.addEventListener(tableHeader, 'click', this, false);
+        IE8Compatibility.addClass(tableHeader, HTMLTableWrapperListener.processedColumnHeader);
+        tableHeaderCache.push(tableHeader);
+    }
+    
 };
 
 /**
@@ -206,25 +206,25 @@ HTMLTableWrapperListener.prototype.init = function () {
  * class name. Additionally, if any cached {@link ColumnControl}s define a {@link ColumnControl#dispose dispose} function, it will also be called.
  */
 HTMLTableWrapperListener.prototype.dispose = function () {
-	'use strict';
-	
-	var tableHeaderCache, i, columnControls, columnControl, tableHeader;
-	
-	tableHeaderCache = this.tableHeaderCache;
-	for (i = 0; i < tableHeaderCache.length; ++i) {
-		tableHeader = tableHeaderCache[i];
-		IE8Compatibility.removeEventListener(tableHeader, 'click', this, false);
-		IE8Compatibility.removeClass(tableHeader, HTMLTableWrapperListener.processedColumnHeader)
-	}
-	
-	columnControls = this.columnControls;
-	for (i = 0; i < columnControls.length; ++i) {
-		columnControl = columnControls[i];
-		if (typeof columnControl.dispose === 'function') {
-			columnControl.dispose();
-		}
-	}
-	
+    'use strict';
+    
+    var tableHeaderCache, i, columnControls, columnControl, tableHeader;
+    
+    tableHeaderCache = this.tableHeaderCache;
+    for (i = 0; i < tableHeaderCache.length; ++i) {
+        tableHeader = tableHeaderCache[i];
+        IE8Compatibility.removeEventListener(tableHeader, 'click', this, false);
+        IE8Compatibility.removeClass(tableHeader, HTMLTableWrapperListener.processedColumnHeader)
+    }
+    
+    columnControls = this.columnControls;
+    for (i = 0; i < columnControls.length; ++i) {
+        columnControl = columnControls[i];
+        if (typeof columnControl.dispose === 'function') {
+            columnControl.dispose();
+        }
+    }
+    
 };
 
 /**
@@ -233,32 +233,32 @@ HTMLTableWrapperListener.prototype.dispose = function () {
  * @param {Event} event Event being dispatched.
  */
 HTMLTableWrapperListener.prototype.handleEvent = function (event) {
-	'use strict';
-	
-	var columnIndex, target;
-	
-	// Only process click events (warn otherwise).
-	if (event.type !== 'click') {
-		if (console && console.warn) {
-			console.warn('Unsupported event: ' + event.type);
-			console.warn(event);
-		}
-		return;
-	}
-	
-	// Get column index.
-	target = IE8Compatibility.getEventTarget(event);
-	columnIndex = this.tableHeaderCache.indexOf(target);
-	if (columnIndex === -1) {
-		if (console && console.warn) {
-			console.warn('Unrecognized event target.');
-			console.warn(target);
-		}
-		return;
-	}
-	
-	// Open control
-	this.openColumnControl(columnIndex);
+    'use strict';
+    
+    var columnIndex, target;
+    
+    // Only process click events (warn otherwise).
+    if (event.type !== 'click') {
+        if (console && console.warn) {
+            console.warn('Unsupported event: ' + event.type);
+            console.warn(event);
+        }
+        return;
+    }
+    
+    // Get column index.
+    target = IE8Compatibility.getEventTarget(event);
+    columnIndex = this.tableHeaderCache.indexOf(target);
+    if (columnIndex === -1) {
+        if (console && console.warn) {
+            console.warn('Unrecognized event target.');
+            console.warn(target);
+        }
+        return;
+    }
+    
+    // Open control
+    this.openColumnControl(columnIndex);
 };
 
 /**
@@ -270,21 +270,21 @@ HTMLTableWrapperListener.prototype.handleEvent = function (event) {
  * @throws {RangeError} If `columnIndex` is greater than or equal to the number of columns in the backing table.
  */
 HTMLTableWrapperListener.prototype.openColumnControl = function (columnIndex) {
-	'use strict';
-	
-	var tableHeader, targetColumnControl, columnControls, columnControl, i;
-	
-	targetColumnControl = this.getColumnControl(columnIndex);
-	
-	columnControls = this.columnControls;
-	for (i = 0; i < columnControls.length; ++i) {
-		columnControl = columnControls[i];
-		if (columnControl === targetColumnControl) {
-			columnControl.open();
-		} else {
-			columnControl.close();
-		}
-	}
+    'use strict';
+    
+    var tableHeader, targetColumnControl, columnControls, columnControl, i;
+    
+    targetColumnControl = this.getColumnControl(columnIndex);
+    
+    columnControls = this.columnControls;
+    for (i = 0; i < columnControls.length; ++i) {
+        columnControl = columnControls[i];
+        if (columnControl === targetColumnControl) {
+            columnControl.open();
+        } else {
+            columnControl.close();
+        }
+    }
 };
 
 /**
@@ -298,39 +298,39 @@ HTMLTableWrapperListener.prototype.openColumnControl = function (columnIndex) {
  * @returns {ColumnControl} The newly created, or previously cached {@link ColumnControl} for the given `columnIndex`.
  */
 HTMLTableWrapperListener.prototype.getColumnControl = function (columnIndex) {
-	'use strict';
-	
-	var columnControls, columnControl, currentColumnControl, i, columnControlFactory, columnCount;
-	
-	if (columnIndex > (columnCount = this.tableHeaderCache.length)) {
-		throw new RangeError('The given columnIndex must be less than the number of columns in the backing table (' + columnCount + '): ' + columnIndex);
-	}
-	
-	columnControls = this.columnControls;
-	for (i = 0; i < columnControls.length; ++i) {
-		currentColumnControl = columnControls[i];
-		if (currentColumnControl.columnIndex === columnIndex) {
-			return currentColumnControl;
-		}
-	}
+    'use strict';
+    
+    var columnControls, columnControl, currentColumnControl, i, columnControlFactory, columnCount;
+    
+    if (columnIndex > (columnCount = this.tableHeaderCache.length)) {
+        throw new RangeError('The given columnIndex must be less than the number of columns in the backing table (' + columnCount + '): ' + columnIndex);
+    }
+    
+    columnControls = this.columnControls;
+    for (i = 0; i < columnControls.length; ++i) {
+        currentColumnControl = columnControls[i];
+        if (currentColumnControl.columnIndex === columnIndex) {
+            return currentColumnControl;
+        }
+    }
 
-	
-	columnControlFactory = this.columnControlFactory;
-	if (columnControlFactory) {
-		columnControl = typeof columnControlFactory.getColumnControl === 'function' ? 
-				columnControlFactory.getColumnControl(columnIndex, this) : columnControlFactory(columnIndex, this);
-	}
-	
-	if (!columnControl) {
-		columnControl = new HTMLTableWrapperControl(columnIndex, this, this.cellInterpreter);
-	}
-	
-	if (typeof columnControl.init === 'function') {
-		columnControl.init();
-	}
-	
-	columnControls.push(columnControl);
-	return columnControl;
+    
+    columnControlFactory = this.columnControlFactory;
+    if (columnControlFactory) {
+        columnControl = typeof columnControlFactory.getColumnControl === 'function' ? 
+                columnControlFactory.getColumnControl(columnIndex, this) : columnControlFactory(columnIndex, this);
+    }
+    
+    if (!columnControl) {
+        columnControl = new HTMLTableWrapperControl(columnIndex, this, this.cellInterpreter);
+    }
+    
+    if (typeof columnControl.init === 'function') {
+        columnControl.init();
+    }
+    
+    columnControls.push(columnControl);
+    return columnControl;
 };
 
 
@@ -353,75 +353,75 @@ HTMLTableWrapperListener.prototype.getColumnControl = function (columnIndex) {
  *
  */
 HTMLTableWrapperListener.prototype.processTable = function () {
-	'use strict';
-	
-	var sortDescriptors, filterDescriptors, columnControls, i, columnControl, dataTable, filterDescriptor,
-		sortDescriptor, sortDescriptorOrder, columnIndex, j, targetIndex;
-	
-	
-	// Get descriptors.
-	filterDescriptors = [];
-	sortDescriptors = [];
-	columnControls = this.columnControls;
-	for (i = 0; i < columnControls.length; ++i) {
-		columnControl = columnControls[i];
-		
-		filterDescriptor = columnControl.getFilterDescriptor();
-		if (filterDescriptor) {
-			filterDescriptors.push(filterDescriptor);
-		}
-		
-		sortDescriptor = columnControl.getSortDescriptor();
-		if (sortDescriptor) {
-			sortDescriptors.push(sortDescriptor);
-		}
-	}
-	
-	
-	// Determine order for sort descriptors.
-	sortDescriptorOrder = this.sortDescriptorOrder;
-	if (!sortDescriptorOrder) {
-		sortDescriptorOrder = this.sortDescriptorOrder = [];
-	}
-	
-	// Add column indicies to order that were returned, but not present.
-	for (i = 0; i < sortDescriptors.length; ++i) {
-		columnIndex = sortDescriptors[i].columnIndex;
-		if (sortDescriptorOrder.indexOf(columnIndex) === -1) {
-			sortDescriptorOrder.push(columnIndex);
-		}
-	}
-	
-	// Remove column indicies from order that are present, but not returned
-	for (i = 0; i < sortDescriptorOrder.length; ++i) {
-		columnIndex = sortDescriptorOrder[i];
-		
-		targetIndex = -1;
-		for (j = 0; j < sortDescriptors.length; ++j) {
-			if (sortDescriptors[j].columnIndex === columnIndex) {
-				targetIndex = j;
-				break;
-			}
-		}
-		
-		if (targetIndex === -1) {
-			sortDescriptorOrder.splice(i, 1);
-			--i;
-		}
-	}
-	
-	// Sort sort descriptors according to order.
-	sortDescriptors.sort(function (a, b) {
-		return sortDescriptorOrder.indexOf(a.columnIndex) - sortDescriptorOrder.indexOf(b.columnIndex);
-	});
-	
-	
-	
-	// Process backing table.
-	dataTable = this.dataTable;
-	
-	dataTable.filter(filterDescriptors);
-	dataTable.sort(sortDescriptors);
+    'use strict';
+    
+    var sortDescriptors, filterDescriptors, columnControls, i, columnControl, dataTable, filterDescriptor,
+        sortDescriptor, sortDescriptorOrder, columnIndex, j, targetIndex;
+    
+    
+    // Get descriptors.
+    filterDescriptors = [];
+    sortDescriptors = [];
+    columnControls = this.columnControls;
+    for (i = 0; i < columnControls.length; ++i) {
+        columnControl = columnControls[i];
+        
+        filterDescriptor = columnControl.getFilterDescriptor();
+        if (filterDescriptor) {
+            filterDescriptors.push(filterDescriptor);
+        }
+        
+        sortDescriptor = columnControl.getSortDescriptor();
+        if (sortDescriptor) {
+            sortDescriptors.push(sortDescriptor);
+        }
+    }
+    
+    
+    // Determine order for sort descriptors.
+    sortDescriptorOrder = this.sortDescriptorOrder;
+    if (!sortDescriptorOrder) {
+        sortDescriptorOrder = this.sortDescriptorOrder = [];
+    }
+    
+    // Add column indicies to order that were returned, but not present.
+    for (i = 0; i < sortDescriptors.length; ++i) {
+        columnIndex = sortDescriptors[i].columnIndex;
+        if (sortDescriptorOrder.indexOf(columnIndex) === -1) {
+            sortDescriptorOrder.push(columnIndex);
+        }
+    }
+    
+    // Remove column indicies from order that are present, but not returned
+    for (i = 0; i < sortDescriptorOrder.length; ++i) {
+        columnIndex = sortDescriptorOrder[i];
+        
+        targetIndex = -1;
+        for (j = 0; j < sortDescriptors.length; ++j) {
+            if (sortDescriptors[j].columnIndex === columnIndex) {
+                targetIndex = j;
+                break;
+            }
+        }
+        
+        if (targetIndex === -1) {
+            sortDescriptorOrder.splice(i, 1);
+            --i;
+        }
+    }
+    
+    // Sort sort descriptors according to order.
+    sortDescriptors.sort(function (a, b) {
+        return sortDescriptorOrder.indexOf(a.columnIndex) - sortDescriptorOrder.indexOf(b.columnIndex);
+    });
+    
+    
+    
+    // Process backing table.
+    dataTable = this.dataTable;
+    
+    dataTable.filter(filterDescriptors);
+    dataTable.sort(sortDescriptors);
 };
 
 
@@ -431,9 +431,9 @@ HTMLTableWrapperListener.prototype.processTable = function () {
  * @returns {HTMLTableWrapper} This `HTMLTableWrapperListener`'s backing {@link HTMLTableWrapper}.
  */
 HTMLTableWrapperListener.prototype.getDataTable = function () {
-	'use strict';
-	
-	return this.dataTable;
+    'use strict';
+    
+    return this.dataTable;
 };
 
 
@@ -445,9 +445,9 @@ HTMLTableWrapperListener.prototype.getDataTable = function () {
  * @throws {RangeError} If `columnIndex` is greater than or equal to the number of columns in the backing table.
  */
 HTMLTableWrapperListener.prototype.getTableHeaderElement = function (columnIndex) {
-	'use strict';
-	
-	return this.dataTable.getTableElement().tHead.rows[0].cells[columnIndex];
+    'use strict';
+    
+    return this.dataTable.getTableElement().tHead.rows[0].cells[columnIndex];
 };
 
 

@@ -6,48 +6,48 @@
 <link rel="stylesheet" href="../html-table-wrapper-core.min.css" />
 <style>
 .fahrenheit::after {
-	content: '\00B0 F';
+    content: '\00B0 F';
 }
 
 .celsius::after {
-	content: '\00B0 C';
+    content: '\00B0 C';
 }
 
 .kelvin::after {
-	content: '\00B0 K';
+    content: '\00B0 K';
 }
 
 .field-group {
-	padding-bottom: .5em;
-	margin-bottom: .5em;
-	border-bottom: 1px solid black;
+    padding-bottom: .5em;
+    margin-bottom: .5em;
+    border-bottom: 1px solid black;
 }
 
 .field-group:last-child {
-	border: none;
+    border: none;
 }
 
 .page-controls {
-	margin-bottom: 1em;
+    margin-bottom: 1em;
 }
 
 .control-group {
-	display: inline-block;
-	border: 1px solid black;
+    display: inline-block;
+    border: 1px solid black;
 }
 
 h4 {
-	margin: 0 0 .5em 0;
+    margin: 0 0 .5em 0;
 }
 
 main section {
-	display: inline-block;
-	vertical-align: top;
-	margin-right: 1em;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 1em;
 }
 
 .field {
-	padding: 0 .3em;
+    padding: 0 .3em;
 }
 </style>
 
@@ -69,21 +69,21 @@ var HIGH_COLUMN_INDEX = 2;
 var LOW_COLUMN_INDEX = 3;
 
 document.addEventListener('DOMContentLoaded', function () {
-	'use strict';
-	
-	var table, categoryFieldGroup, unitInputs, tableWrapper, categoryInputs, sortInputs;
-	
-	table = document.getElementById('temperatures');
-	categoryFieldGroup = document.getElementById('temperatureCategories');
-	unitInputs = document.getElementsByClassName('temperature-unit');
-	tableWrapper = new HTMLTableWrapper(table);
-	categoryInputs = document.getElementsByClassName('temperature-category');
-	sortInputs = document.getElementsByClassName('temperature-sort');
-	
-	new TemperatureConversionListener(table, categoryFieldGroup, tempConversions, unitInputs).init();
-	new TemperatureCategoryListener(tableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
-	new TemperatureSortListener(tableWrapper, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
-	
+    'use strict';
+    
+    var table, categoryFieldGroup, unitInputs, tableWrapper, categoryInputs, sortInputs;
+    
+    table = document.getElementById('temperatures');
+    categoryFieldGroup = document.getElementById('temperatureCategories');
+    unitInputs = document.getElementsByClassName('temperature-unit');
+    tableWrapper = new HTMLTableWrapper(table);
+    categoryInputs = document.getElementsByClassName('temperature-category');
+    sortInputs = document.getElementsByClassName('temperature-sort');
+    
+    new TemperatureConversionListener(table, categoryFieldGroup, tempConversions, unitInputs).init();
+    new TemperatureCategoryListener(tableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
+    new TemperatureSortListener(tableWrapper, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
+    
 });
 </script>
 
@@ -102,414 +102,414 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- const LOW_COLUMN_INDEX = 3; -->
 
 <!-- document.addEventListener('DOMContentLoaded', () => { -->
-	<!-- 'use strict'; -->
-	
-	<!-- const table = document.getElementById('temperatures'); -->
-	<!-- const categoryFieldGroup = document.getElementById('temperatureCategories'); -->
-	<!-- const unitInputs = document.getElementsByClassName('temperature-unit'); -->
-	<!-- const tableWrapper = new HTMLTableWrapper(table); -->
-	<!-- const categoryInputs = document.getElementsByClassName('temperature-category'); -->
-	<!-- const sortInputs = document.getElementsByClassName('temperature-sort'); -->
-	
-	<!-- new TemperatureConversionListener(table, categoryFieldGroup, tempConversions, unitInputs).init(); -->
-	<!-- new TemperatureCategoryListener(tableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init(); -->
-	<!-- new TemperatureSortListener(tableWrapper, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init(); -->
+    <!-- 'use strict'; -->
+    
+    <!-- const table = document.getElementById('temperatures'); -->
+    <!-- const categoryFieldGroup = document.getElementById('temperatureCategories'); -->
+    <!-- const unitInputs = document.getElementsByClassName('temperature-unit'); -->
+    <!-- const tableWrapper = new HTMLTableWrapper(table); -->
+    <!-- const categoryInputs = document.getElementsByClassName('temperature-category'); -->
+    <!-- const sortInputs = document.getElementsByClassName('temperature-sort'); -->
+    
+    <!-- new TemperatureConversionListener(table, categoryFieldGroup, tempConversions, unitInputs).init(); -->
+    <!-- new TemperatureCategoryListener(tableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init(); -->
+    <!-- new TemperatureSortListener(tableWrapper, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init(); -->
 <!-- }); -->
 <!-- </script> -->
 
 </head>
 <body>
-	<h1>Temperature Readings</h1>
-	<p>Source: <a href="https://weather.com">The Weather Channel</a></p>
-	<main>
-		<section class="page-controls">
-			<h3>Controls</h3>
-			<div class="control-group">
-				<div class="field-group">
-					<h4>Temperature Unit</h4>
-					<span>
-						<input id="temperatureUnitFahrenheit" class="temperature-unit"  type="radio" name="temperatureUnit" value="F" checked />
-						<label for="temperatureUnitFahrenheit" class="fahrenheit" title="Fahrenheit"></label>
-					</span>
-					<span>
-						<input id="temperatureUnitCelsius" class="temperature-unit" type="radio" name="temperatureUnit" value="C" />
-						<label for="temperatureUnitCelsius" class="celsius" title="Celsius"></label>
-					</span>
-					<span>
-						<input id="temperatureUnitKelvin" class="temperature-unit" type="radio" name="temperatureUnit" value="K" />
-						<label for="temperatureUnitKelvin" class="kelvin"></label>
-					</span>
-				</div>
-				<div class="field-group" id="temperatureCategories">
-					<h4>Filter By Category</h4>					<div class="field">
-						<span>High:</span>
-						<span>
-							<input id="temperatureCategoryHighNone" class="temperature-category high" type="radio" name="temperatureCategoryHigh" value="none" checked />
-							<label for="temperatureCategoryHighNone">None</label>
-						</span>
-						<span>
-							<input id="temperatureCategoryHighHot" class="temperature-category high" type="radio" name="temperatureCategoryHigh" value="hot" 
-									data-orig-unit="F" data-orig-gt="75" />
-							<label for="temperatureCategoryHighHot">Hot</label>
-						</span>
-						<span>
-							<input id="temperatureCategoryHighWarm" class="temperature-category high" type="radio" name="temperatureCategoryHigh" value="warm" 
-									data-orig-unit="F" data-orig-lte="75" data-orig-gt="63" />
-							<label for="temperatureCategoryHighWarm">Warm</label>
-						</span>
-						<span>
-							<input id="temperatureCategoryHighCool" class="temperature-category high" type="radio" name="temperatureCategoryHigh" value="cool" 
-									data-orig-unit="F" data-orig-lte="63" data-orig-gt="45" />
-							<label for="temperatureCategoryHighCool">Cool</label>
-						</span>
-						<span>
-							<input id="temperatureCategoryHighCold" class="temperature-category high" type="radio" name="temperatureCategoryHigh" value="cold" 
-									data-orig-unit="F" data-orig-lte="45" />
-							<label for="temperatureCategoryHighCold">Cold</label>
-						</span>
-					</div>
-					<div class="field">
-						<span>Low:</span>
-						<span>
-							<input id="temperatureCategoryLowNone" class="temperature-category low" type="radio" name="temperatureCategoryLow" value="none" checked />
-							<label for="temperatureCategoryLowNone">None</label>
-						</span>
-						<span>
-							<input id="temperatureCategoryLowHot" class="temperature-category low" type="radio" name="temperatureCategoryLow" value="hot" 
-									data-orig-unit="F" data-orig-gt="75" />
-							<label for="temperatureCategoryLowHot">Hot</label>
-						</span>
-						<span>
-							<input id="temperatureCategoryLowWarm" class="temperature-category low" type="radio" name="temperatureCategoryLow" value="warm" 
-									data-orig-unit="F" data-orig-lte="75" data-orig-gt="63" />
-							<label for="temperatureCategoryLowWarm">Warm</label>
-						</span>
-						<span>
-							<input id="temperatureCategoryLowCool" class="temperature-category low" type="radio" name="temperatureCategoryLow" value="cool" 
-									data-orig-unit="F" data-orig-lte="63" data-orig-gt="45" />
-							<label for="temperatureCategoryLowCool">Cool</label>
-						</span>
-						<span>
-							<input id="temperatureCategoryLowCold" class="temperature-category low" type="radio" name="temperatureCategoryLow" value="cold" 
-									data-orig-unit="F" data-orig-lte="45" />
-							<label for="temperatureCategoryLowCold">Cold</label>
-						</span>
-					</div>
-					<div class="field">
-						<span>Swing:</span>
-						<span>
-							<input id="temperatureCategorySwingNone" class="temperature-category swing" type="radio" name="temperatureCategorySwing" value="none" checked />
-							<label for="temperatureCategorySwingNone">Ignore</label>
-						</span>
-						<span>
-							<input id="temperatureCategorySwingSlight" class="temperature-category swing" type="radio" name="temperatureCategorySwing" value="slight"
-									data-orig-unit="F" data-orig-lte="20" />
-							<label for="temperatureCategorySwingSlight">Slight</label>
-						</span>
-						<span>
-							<input id="temperatureCategorySwingMedium" class="temperature-category swing" type="radio" name="temperatureCategorySwing" value="medium"
-									data-orig-unit="F" data-orig-gt="20" data-orig-lte="30" />
-							<label for="temperatureCategorySwingMedium">Medium</label>
-						</span>
-						<span>
-							<input id="temperatureCategorySwingLarge" class="temperature-category swing" type="radio" name="temperatureCategorySwing" value="large"
-									data-orig-unit="F" data-orig-gt="30" />
-							<label for="temperatureCategorySwingLarge">Large</label>
-						</span>
-					</div>
-				</div>
-				<div class="field-group" id="sortOptions">
-					<h4>Sort By Temperature</h4>
-					<div>
-						<input id="temperatureSortNone" class="temperature-sort" type="radio" name="temperatureSort" data-category="none" checked />
-						<label for="temperatureSortNone">None</label>
-					</div>
-					<div>
-						<span>
-							<input id="temperatureSortHighAscending" class="temperature-sort" type="radio" name="temperatureSort" data-category="high" value="asc" />
-							<label for="temperatureSortHighAscending">High, Ascending</label>
-						</span>
-						<span>
-							<input id="temperatureSortHighDescending" class="temperature-sort" type="radio" name="temperatureSort" data-category="high" value="desc" />
-							<label for="temperatureSortHighDescending">High, Descending</label>
-						</span>
-					</div>
-					<div>
-						<span>
-							<input id="temperatureSortLowAscending" class="temperature-sort" type="radio" name="temperatureSort" data-category="low" value="asc" />
-							<label for="temperatureSortLowAscending">Low, Ascending</label>
-						</span>
-						<span>
-							<input id="temperatureSortLowDescending" class="temperature-sort" type="radio" name="temperatureSort" data-category="low" value="desc" />
-							<label for="temperatureSortLowDescending">Low, Descending</label>
-						</span>
-					</div>
-					<div>
-						<span>
-							<input id="temperatureSwingLowAscending" class="temperature-sort swing" type="radio" name="temperatureSort" data-category="swing" value="asc" />
-							<label for="temperatureSwingLowAscending">Swing, Ascending</label>
-						</span>
-						<span>
-							<input id="temperatureSortSwingDescending" class="temperature-sort swing" type="radio" name="temperatureSort" data-category="swing" value="desc" />
-							<label for="temperatureSortSwingDescending">Swing, Descending</label>
-						</span>
-					</div>
-				</div>
-			</div>
-		</section>
-		<section>
-			<h3>Data</h3>
-			<table id="temperatures">
-				<thead>
-					<th>City</th>
-					<th>Date</th>
-					<th class="temperature-column">High</th>
-					<th class="temperature-column">Low</th>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Washington, DC, US</td>
-						<td>2020-01-28</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
-					</tr>
-					<tr>
-						<td>Washington, DC, US</td>
-						<td>2020-01-27</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="36">36</td>
-					</tr>
-					<tr>
-						<td>Washington, DC, US</td>
-						<td>2020-01-26</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="36">36</td>
-					</tr>
-					<tr>
-						<td>Washington, DC, US</td>
-						<td>2020-01-25</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
-					</tr>
-					<tr>
-						<td>Washington, DC, US</td>
-						<td>2020-01-24</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-					</tr>
-					<tr>
-						<td>New York, NY, US</td>
-						<td>2020-01-28</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
-					</tr>
-					<tr>
-						<td>New York, NY, US</td>
-						<td>2020-01-27</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
-					</tr>
-					<tr>
-						<td>New York, NY, US</td>
-						<td>2020-01-26</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="39">39</td>
-					</tr>
-					<tr>
-						<td>New York, NY, US</td>
-						<td>2020-01-25</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="39">39</td>
-					</tr>
-					<tr>
-						<td>New York, NY, US</td>
-						<td>2020-01-24</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
-					</tr>
-					<tr>
-						<td>Chicago, IL, US</td>
-						<td>2020-01-28</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="33">33</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="30">30</td>
-					</tr>
-					<tr>
-						<td>Chicago, IL, US</td>
-						<td>2020-01-27</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="28">28</td>
-					</tr>
-					<tr>
-						<td>Chicago, IL, US</td>
-						<td>2020-01-26</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="28">28</td>
-					</tr>
-					<tr>
-						<td>Chicago, IL, US</td>
-						<td>2020-01-25</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="32">32</td>
-					</tr>
-					<tr>
-						<td>Chicago, IL, US</td>
-						<td>2020-01-24</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-					</tr>
-					<tr>
-						<td>Los Angeles, CA, US</td>
-						<td>2020-01-28</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="77">77</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="55">55</td>
-					</tr>
-					<tr>
-						<td>Los Angeles, CA, US</td>
-						<td>2020-01-27</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="72">72</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
-					</tr>
-					<tr>
-						<td>Los Angeles, CA, US</td>
-						<td>2020-01-26</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="61">61</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="53">53</td>
-					</tr>
-					<tr>
-						<td>Los Angeles, CA, US</td>
-						<td>2020-01-25</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="72">72</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
-					</tr>
-					<tr>
-						<td>Los Angeles, CA, US</td>
-						<td>2020-01-24</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="75">75</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="52">52</td>
-					</tr>
-					<tr>
-						<td>London, England, UK</td>
-						<td>2020-01-28</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
-					</tr>
-					<tr>
-						<td>London, England, UK</td>
-						<td>2020-01-27</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="41">41</td>
-					</tr>
-					<tr>
-						<td>London, England, UK</td>
-						<td>2020-01-26</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
-					</tr>
-					<tr>
-						<td>London, England, UK</td>
-						<td>2020-01-25</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
-					</tr>
-					<tr>
-						<td>London, England, UK</td>
-						<td>2020-01-24</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
-					</tr>
-					<tr>
-						<td>Paris, Paris, FR</td>
-						<td>2020-01-28</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
-					</tr>
-					<tr>
-						<td>Paris, Paris, FR</td>
-						<td>2020-01-27</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
-					</tr>
-					<tr>
-						<td>Paris, Paris, FR</td>
-						<td>2020-01-26</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="48">48</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
-					</tr>
-					<tr>
-						<td>Paris, Paris, FR</td>
-						<td>2020-01-25</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="31">31</td>
-					</tr>
-					<tr>
-						<td>Paris, Paris, FR</td>
-						<td>2020-01-24</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="41">41</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="31">31</td>
-					</tr>
-					<tr>
-						<td>Tokyo, Tokyo Prefecture, JP</td>
-						<td>2020-01-28</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
-					</tr>
-					<tr>
-						<td>Tokyo, Tokyo Prefecture, JP</td>
-						<td>2020-01-27</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
-					</tr>
-					<tr>
-						<td>Tokyo, Tokyo Prefecture, JP</td>
-						<td>2020-01-26</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
-					</tr>
-					<tr>
-						<td>Tokyo, Tokyo Prefecture, JP</td>
-						<td>2020-01-25</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
-					</tr>
-					<tr>
-						<td>Tokyo, Tokyo Prefecture, JP</td>
-						<td>2020-01-24</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="56">56</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
-					</tr>
-					<tr>
-						<td>Beijing, CN</td>
-						<td>2020-01-28</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="25">25</td>
-					</tr>
-					<tr>
-						<td>Beijing, CN</td>
-						<td>2020-01-27</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="25">25</td>
-					</tr>
-					<tr>
-						<td>Beijing, CN</td>
-						<td>2020-01-26</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="21">21</td>
-					</tr>
-					<tr>
-						<td>Beijing, CN</td>
-						<td>2020-01-25</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="20">20</td>
-					</tr>
-					<tr>
-						<td>Beijing, CN</td>
-						<td>2020-01-24</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
-						<td class="fahrenheit" data-orig-unit="F" data-orig-temp="22">22</td>
-					</tr>
-				</tbody>
-			</table>
-		</section>
-	</main>
+    <h1>Temperature Readings</h1>
+    <p>Source: <a href="https://weather.com">The Weather Channel</a></p>
+    <main>
+        <section class="page-controls">
+            <h3>Controls</h3>
+            <div class="control-group">
+                <div class="field-group">
+                    <h4>Temperature Unit</h4>
+                    <span>
+                        <input id="temperatureUnitFahrenheit" class="temperature-unit"  type="radio" name="temperatureUnit" value="F" checked />
+                        <label for="temperatureUnitFahrenheit" class="fahrenheit" title="Fahrenheit"></label>
+                    </span>
+                    <span>
+                        <input id="temperatureUnitCelsius" class="temperature-unit" type="radio" name="temperatureUnit" value="C" />
+                        <label for="temperatureUnitCelsius" class="celsius" title="Celsius"></label>
+                    </span>
+                    <span>
+                        <input id="temperatureUnitKelvin" class="temperature-unit" type="radio" name="temperatureUnit" value="K" />
+                        <label for="temperatureUnitKelvin" class="kelvin"></label>
+                    </span>
+                </div>
+                <div class="field-group" id="temperatureCategories">
+                    <h4>Filter By Category</h4>                    <div class="field">
+                        <span>High:</span>
+                        <span>
+                            <input id="temperatureCategoryHighNone" class="temperature-category high" type="radio" name="temperatureCategoryHigh" value="none" checked />
+                            <label for="temperatureCategoryHighNone">None</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategoryHighHot" class="temperature-category high" type="radio" name="temperatureCategoryHigh" value="hot" 
+                                    data-orig-unit="F" data-orig-gt="75" />
+                            <label for="temperatureCategoryHighHot">Hot</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategoryHighWarm" class="temperature-category high" type="radio" name="temperatureCategoryHigh" value="warm" 
+                                    data-orig-unit="F" data-orig-lte="75" data-orig-gt="63" />
+                            <label for="temperatureCategoryHighWarm">Warm</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategoryHighCool" class="temperature-category high" type="radio" name="temperatureCategoryHigh" value="cool" 
+                                    data-orig-unit="F" data-orig-lte="63" data-orig-gt="45" />
+                            <label for="temperatureCategoryHighCool">Cool</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategoryHighCold" class="temperature-category high" type="radio" name="temperatureCategoryHigh" value="cold" 
+                                    data-orig-unit="F" data-orig-lte="45" />
+                            <label for="temperatureCategoryHighCold">Cold</label>
+                        </span>
+                    </div>
+                    <div class="field">
+                        <span>Low:</span>
+                        <span>
+                            <input id="temperatureCategoryLowNone" class="temperature-category low" type="radio" name="temperatureCategoryLow" value="none" checked />
+                            <label for="temperatureCategoryLowNone">None</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategoryLowHot" class="temperature-category low" type="radio" name="temperatureCategoryLow" value="hot" 
+                                    data-orig-unit="F" data-orig-gt="75" />
+                            <label for="temperatureCategoryLowHot">Hot</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategoryLowWarm" class="temperature-category low" type="radio" name="temperatureCategoryLow" value="warm" 
+                                    data-orig-unit="F" data-orig-lte="75" data-orig-gt="63" />
+                            <label for="temperatureCategoryLowWarm">Warm</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategoryLowCool" class="temperature-category low" type="radio" name="temperatureCategoryLow" value="cool" 
+                                    data-orig-unit="F" data-orig-lte="63" data-orig-gt="45" />
+                            <label for="temperatureCategoryLowCool">Cool</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategoryLowCold" class="temperature-category low" type="radio" name="temperatureCategoryLow" value="cold" 
+                                    data-orig-unit="F" data-orig-lte="45" />
+                            <label for="temperatureCategoryLowCold">Cold</label>
+                        </span>
+                    </div>
+                    <div class="field">
+                        <span>Swing:</span>
+                        <span>
+                            <input id="temperatureCategorySwingNone" class="temperature-category swing" type="radio" name="temperatureCategorySwing" value="none" checked />
+                            <label for="temperatureCategorySwingNone">Ignore</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategorySwingSlight" class="temperature-category swing" type="radio" name="temperatureCategorySwing" value="slight"
+                                    data-orig-unit="F" data-orig-lte="20" />
+                            <label for="temperatureCategorySwingSlight">Slight</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategorySwingMedium" class="temperature-category swing" type="radio" name="temperatureCategorySwing" value="medium"
+                                    data-orig-unit="F" data-orig-gt="20" data-orig-lte="30" />
+                            <label for="temperatureCategorySwingMedium">Medium</label>
+                        </span>
+                        <span>
+                            <input id="temperatureCategorySwingLarge" class="temperature-category swing" type="radio" name="temperatureCategorySwing" value="large"
+                                    data-orig-unit="F" data-orig-gt="30" />
+                            <label for="temperatureCategorySwingLarge">Large</label>
+                        </span>
+                    </div>
+                </div>
+                <div class="field-group" id="sortOptions">
+                    <h4>Sort By Temperature</h4>
+                    <div>
+                        <input id="temperatureSortNone" class="temperature-sort" type="radio" name="temperatureSort" data-category="none" checked />
+                        <label for="temperatureSortNone">None</label>
+                    </div>
+                    <div>
+                        <span>
+                            <input id="temperatureSortHighAscending" class="temperature-sort" type="radio" name="temperatureSort" data-category="high" value="asc" />
+                            <label for="temperatureSortHighAscending">High, Ascending</label>
+                        </span>
+                        <span>
+                            <input id="temperatureSortHighDescending" class="temperature-sort" type="radio" name="temperatureSort" data-category="high" value="desc" />
+                            <label for="temperatureSortHighDescending">High, Descending</label>
+                        </span>
+                    </div>
+                    <div>
+                        <span>
+                            <input id="temperatureSortLowAscending" class="temperature-sort" type="radio" name="temperatureSort" data-category="low" value="asc" />
+                            <label for="temperatureSortLowAscending">Low, Ascending</label>
+                        </span>
+                        <span>
+                            <input id="temperatureSortLowDescending" class="temperature-sort" type="radio" name="temperatureSort" data-category="low" value="desc" />
+                            <label for="temperatureSortLowDescending">Low, Descending</label>
+                        </span>
+                    </div>
+                    <div>
+                        <span>
+                            <input id="temperatureSwingLowAscending" class="temperature-sort swing" type="radio" name="temperatureSort" data-category="swing" value="asc" />
+                            <label for="temperatureSwingLowAscending">Swing, Ascending</label>
+                        </span>
+                        <span>
+                            <input id="temperatureSortSwingDescending" class="temperature-sort swing" type="radio" name="temperatureSort" data-category="swing" value="desc" />
+                            <label for="temperatureSortSwingDescending">Swing, Descending</label>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h3>Data</h3>
+            <table id="temperatures">
+                <thead>
+                    <th>City</th>
+                    <th>Date</th>
+                    <th class="temperature-column">High</th>
+                    <th class="temperature-column">Low</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Washington, DC, US</td>
+                        <td>2020-01-28</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
+                    </tr>
+                    <tr>
+                        <td>Washington, DC, US</td>
+                        <td>2020-01-27</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="36">36</td>
+                    </tr>
+                    <tr>
+                        <td>Washington, DC, US</td>
+                        <td>2020-01-26</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="36">36</td>
+                    </tr>
+                    <tr>
+                        <td>Washington, DC, US</td>
+                        <td>2020-01-25</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
+                    </tr>
+                    <tr>
+                        <td>Washington, DC, US</td>
+                        <td>2020-01-24</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+                    </tr>
+                    <tr>
+                        <td>New York, NY, US</td>
+                        <td>2020-01-28</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
+                    </tr>
+                    <tr>
+                        <td>New York, NY, US</td>
+                        <td>2020-01-27</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
+                    </tr>
+                    <tr>
+                        <td>New York, NY, US</td>
+                        <td>2020-01-26</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="39">39</td>
+                    </tr>
+                    <tr>
+                        <td>New York, NY, US</td>
+                        <td>2020-01-25</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="39">39</td>
+                    </tr>
+                    <tr>
+                        <td>New York, NY, US</td>
+                        <td>2020-01-24</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
+                    </tr>
+                    <tr>
+                        <td>Chicago, IL, US</td>
+                        <td>2020-01-28</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="33">33</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="30">30</td>
+                    </tr>
+                    <tr>
+                        <td>Chicago, IL, US</td>
+                        <td>2020-01-27</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="28">28</td>
+                    </tr>
+                    <tr>
+                        <td>Chicago, IL, US</td>
+                        <td>2020-01-26</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="28">28</td>
+                    </tr>
+                    <tr>
+                        <td>Chicago, IL, US</td>
+                        <td>2020-01-25</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="32">32</td>
+                    </tr>
+                    <tr>
+                        <td>Chicago, IL, US</td>
+                        <td>2020-01-24</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+                    </tr>
+                    <tr>
+                        <td>Los Angeles, CA, US</td>
+                        <td>2020-01-28</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="77">77</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="55">55</td>
+                    </tr>
+                    <tr>
+                        <td>Los Angeles, CA, US</td>
+                        <td>2020-01-27</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="72">72</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
+                    </tr>
+                    <tr>
+                        <td>Los Angeles, CA, US</td>
+                        <td>2020-01-26</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="61">61</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="53">53</td>
+                    </tr>
+                    <tr>
+                        <td>Los Angeles, CA, US</td>
+                        <td>2020-01-25</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="72">72</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
+                    </tr>
+                    <tr>
+                        <td>Los Angeles, CA, US</td>
+                        <td>2020-01-24</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="75">75</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="52">52</td>
+                    </tr>
+                    <tr>
+                        <td>London, England, UK</td>
+                        <td>2020-01-28</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
+                    </tr>
+                    <tr>
+                        <td>London, England, UK</td>
+                        <td>2020-01-27</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="41">41</td>
+                    </tr>
+                    <tr>
+                        <td>London, England, UK</td>
+                        <td>2020-01-26</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="51">51</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
+                    </tr>
+                    <tr>
+                        <td>London, England, UK</td>
+                        <td>2020-01-25</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
+                    </tr>
+                    <tr>
+                        <td>London, England, UK</td>
+                        <td>2020-01-24</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="45">45</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
+                    </tr>
+                    <tr>
+                        <td>Paris, Paris, FR</td>
+                        <td>2020-01-28</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
+                    </tr>
+                    <tr>
+                        <td>Paris, Paris, FR</td>
+                        <td>2020-01-27</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="49">49</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="47">47</td>
+                    </tr>
+                    <tr>
+                        <td>Paris, Paris, FR</td>
+                        <td>2020-01-26</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="48">48</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="37">37</td>
+                    </tr>
+                    <tr>
+                        <td>Paris, Paris, FR</td>
+                        <td>2020-01-25</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="31">31</td>
+                    </tr>
+                    <tr>
+                        <td>Paris, Paris, FR</td>
+                        <td>2020-01-24</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="41">41</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="31">31</td>
+                    </tr>
+                    <tr>
+                        <td>Tokyo, Tokyo Prefecture, JP</td>
+                        <td>2020-01-28</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="34">34</td>
+                    </tr>
+                    <tr>
+                        <td>Tokyo, Tokyo Prefecture, JP</td>
+                        <td>2020-01-27</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="44">44</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
+                    </tr>
+                    <tr>
+                        <td>Tokyo, Tokyo Prefecture, JP</td>
+                        <td>2020-01-26</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="38">38</td>
+                    </tr>
+                    <tr>
+                        <td>Tokyo, Tokyo Prefecture, JP</td>
+                        <td>2020-01-25</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="50">50</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
+                    </tr>
+                    <tr>
+                        <td>Tokyo, Tokyo Prefecture, JP</td>
+                        <td>2020-01-24</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="56">56</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="46">46</td>
+                    </tr>
+                    <tr>
+                        <td>Beijing, CN</td>
+                        <td>2020-01-28</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="43">43</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="25">25</td>
+                    </tr>
+                    <tr>
+                        <td>Beijing, CN</td>
+                        <td>2020-01-27</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="25">25</td>
+                    </tr>
+                    <tr>
+                        <td>Beijing, CN</td>
+                        <td>2020-01-26</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="21">21</td>
+                    </tr>
+                    <tr>
+                        <td>Beijing, CN</td>
+                        <td>2020-01-25</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="42">42</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="20">20</td>
+                    </tr>
+                    <tr>
+                        <td>Beijing, CN</td>
+                        <td>2020-01-24</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="40">40</td>
+                        <td class="fahrenheit" data-orig-unit="F" data-orig-temp="22">22</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
 </body>
 </html>

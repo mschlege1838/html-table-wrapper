@@ -10,30 +10,30 @@ end, but there's a little more coding you'll have to do.
 First off, the fields for filtering by category need to be defined. In the example, this is inserted just before the table definition:
 ``` html
 <body>
-	<h1>Gradebook</h1>
-	<div>
-		<span>Show:</span>
-		<span>
-			<input id="gradeCategoryAll" class="grade-category" type="radio" name="gradeCategory" value="all" checked />
-			<label for="gradeCategoryAll">All</label>
-		</span>
-		<span>
-			<input id="gradeCategoryPassing" class="grade-category" type="radio" name="gradeCategory" value="passing" />
-			<label for="gradeCategoryPassing">Passing</label>
-		</span>
-		<span>
-			<input id="gradeCategoryFailing" class="grade-category" type="radio" name="gradeCategory" value="failing" />
-			<label for="gradeCategoryFailing">Failing</label>
-		</span>
-	</div>
-	<table id="grades">
-		<thead>
-			<tr>
-				<th>Last Name</th>
-				<th>First Name</th>
-				<th>Assignment</th>
-				<th>Grade</th>
-			</tr>
+    <h1>Gradebook</h1>
+    <div>
+        <span>Show:</span>
+        <span>
+            <input id="gradeCategoryAll" class="grade-category" type="radio" name="gradeCategory" value="all" checked />
+            <label for="gradeCategoryAll">All</label>
+        </span>
+        <span>
+            <input id="gradeCategoryPassing" class="grade-category" type="radio" name="gradeCategory" value="passing" />
+            <label for="gradeCategoryPassing">Passing</label>
+        </span>
+        <span>
+            <input id="gradeCategoryFailing" class="grade-category" type="radio" name="gradeCategory" value="failing" />
+            <label for="gradeCategoryFailing">Failing</label>
+        </span>
+    </div>
+    <table id="grades">
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Assignment</th>
+                <th>Grade</th>
+            </tr>
 <!-- ... -->
 ```
 
@@ -43,25 +43,25 @@ references to host objects on which we've added ourselves as listeners, so we ca
 `dispose` function, which is not shown here; see [`grade-controls.js`](grade-controls.js) for details):
 ``` javascript
 function ClickSortListener(tableWrapper) {
-	'use strict';
-	
-	this.tableWrapper = tableWrapper;
+    'use strict';
+    
+    this.tableWrapper = tableWrapper;
 }
 
 // ...
 
 ClickSortListener.prototype.init = function () {
-	'use strict';
-	
-	var tableHeaderCache, tableHeaders, i, tableHeader;
-	
-	tableHeaderCache = this.tableHeaderCache = [];
-	tableHeaders = this.tableWrapper.getTableElement().tHead.rows[0].cells;
-	for (i = 0; i < tableHeaders.length; ++i) {
-		tableHeader = tableHeaders[i];
-		tableHeader.addEventListener('click', this, false);
-		tableHeaderCache.push(tableHeader);
-	}
+    'use strict';
+    
+    var tableHeaderCache, tableHeaders, i, tableHeader;
+    
+    tableHeaderCache = this.tableHeaderCache = [];
+    tableHeaders = this.tableWrapper.getTableElement().tHead.rows[0].cells;
+    for (i = 0; i < tableHeaders.length; ++i) {
+        tableHeader = tableHeaders[i];
+        tableHeader.addEventListener('click', this, false);
+        tableHeaderCache.push(tableHeader);
+    }
 };
 ```
 
@@ -72,46 +72,46 @@ with a [SimpleSortDescriptor]({{link-to-doc}}) each time a column header is clic
 one before, the previous column's state is cleared:
 ``` javascript
 ClickSortListener.prototype.handleEvent = function (event) {
-	'use strict';
-	
-	var header, headerClassList, columnIndex, tableWrapper, lastColumnIndex, tableHeaderCache;
-	
-	// Setup.
-	tableWrapper = this.tableWrapper;
-	tableHeaderCache = this.tableHeaderCache;
-	header = event.target;
-	
-	// Error conditions.
-	columnIndex = tableHeaderCache.indexOf(header);
-	if (columnIndex === -1) {
-		throw new Error('Unrecognized column.');
-	}
-	
-	// Clear last sorted column.
-	lastColumnIndex = this.lastColumnIndex;
-	if (lastColumnIndex !== -1 && columnIndex !== lastColumnIndex) {
-		headerClassList = tableHeaderCache[lastColumnIndex].classList;
-		headerClassList.remove(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
-		headerClassList.remove(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
-	}
-	this.lastColumnIndex = columnIndex;
-	
-	// Sort requested column.
-	headerClassList = header.classList;
-	if (headerClassList.contains(ClickSortListener.ASCENDING_SORT_CLASS_NAME)) {
-		headerClassList.remove(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
-		headerClassList.add(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
-		
-		tableWrapper.sort(new SimpleSortDescriptor(columnIndex, true));
-	} else if (headerClassList.contains(ClickSortListener.DESCENDING_SORT_CLASS_NAME)) {
-		headerClassList.remove(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
-		
-		tableWrapper.clearSort();
-	} else {
-		headerClassList.add(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
-		
-		tableWrapper.sort(new SimpleSortDescriptor(columnIndex, false));
-	}
+    'use strict';
+    
+    var header, headerClassList, columnIndex, tableWrapper, lastColumnIndex, tableHeaderCache;
+    
+    // Setup.
+    tableWrapper = this.tableWrapper;
+    tableHeaderCache = this.tableHeaderCache;
+    header = event.target;
+    
+    // Error conditions.
+    columnIndex = tableHeaderCache.indexOf(header);
+    if (columnIndex === -1) {
+        throw new Error('Unrecognized column.');
+    }
+    
+    // Clear last sorted column.
+    lastColumnIndex = this.lastColumnIndex;
+    if (lastColumnIndex !== -1 && columnIndex !== lastColumnIndex) {
+        headerClassList = tableHeaderCache[lastColumnIndex].classList;
+        headerClassList.remove(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
+        headerClassList.remove(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
+    }
+    this.lastColumnIndex = columnIndex;
+    
+    // Sort requested column.
+    headerClassList = header.classList;
+    if (headerClassList.contains(ClickSortListener.ASCENDING_SORT_CLASS_NAME)) {
+        headerClassList.remove(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
+        headerClassList.add(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
+        
+        tableWrapper.sort(new SimpleSortDescriptor(columnIndex, true));
+    } else if (headerClassList.contains(ClickSortListener.DESCENDING_SORT_CLASS_NAME)) {
+        headerClassList.remove(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
+        
+        tableWrapper.clearSort();
+    } else {
+        headerClassList.add(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
+        
+        tableWrapper.sort(new SimpleSortDescriptor(columnIndex, false));
+    }
 };
 ```
 
@@ -122,24 +122,24 @@ this case, the `HTMLInputElement`s that toggle filtering):
 
 ``` javascript
 function GradeCategoryListener(tableWrapper, gradeColumnIndex, gradeCategoryInputs) {
-	'use strict';
-	
-	this.tableWrapper = tableWrapper;
-	this.gradeColumnIndex = gradeColumnIndex;
-	this.gradeCategoryInputs = gradeCategoryInputs;
+    'use strict';
+    
+    this.tableWrapper = tableWrapper;
+    this.gradeColumnIndex = gradeColumnIndex;
+    this.gradeCategoryInputs = gradeCategoryInputs;
 }
 
 // ...
 
 GradeCategoryListener.prototype.init = function () {
-	'use strict';
-	
-	var gradeCategoryInputs, i;
-	
-	gradeCategoryInputs = this.gradeCategoryInputs;
-	for (i = 0; i < gradeCategoryInputs.length; ++i) {
-		gradeCategoryInputs[i].addEventListener('click', this, false);
-	}
+    'use strict';
+    
+    var gradeCategoryInputs, i;
+    
+    gradeCategoryInputs = this.gradeCategoryInputs;
+    for (i = 0; i < gradeCategoryInputs.length; ++i) {
+        gradeCategoryInputs[i].addEventListener('click', this, false);
+    }
 };
 ```
 
@@ -147,25 +147,25 @@ We'll also need to declare a function that handles filtering based upon the diff
 the constructor. Based upon the value, we call [filter] with an appropriately configured [SimpleFilterDescriptor]:
 ``` javascript
 GradeCategoryListener.prototype.filterByCategory = function (category) {
-	'use strict';
-	
-	var tableWrapper, gradeColumnIndex;
-	
-	tableWrapper = this.tableWrapper;
-	gradeColumnIndex = this.gradeColumnIndex;
-	
-	switch (category) {
-		case 'passing':
-			tableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '<='));
-			break;
-		case 'failing':
-			tableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '>'));
-			break;
-		case 'all':
-		default:
-			tableWrapper.clearFilter();
-			break;
-	}
+    'use strict';
+    
+    var tableWrapper, gradeColumnIndex;
+    
+    tableWrapper = this.tableWrapper;
+    gradeColumnIndex = this.gradeColumnIndex;
+    
+    switch (category) {
+        case 'passing':
+            tableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '<='));
+            break;
+        case 'failing':
+            tableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '>'));
+            break;
+        case 'all':
+        default:
+            tableWrapper.clearFilter();
+            break;
+    }
 
 };
 ```
@@ -173,9 +173,9 @@ GradeCategoryListener.prototype.filterByCategory = function (category) {
 This makes our definition of `handleEvent` event easy:
 ``` javascript
 GradeCategoryListener.prototype.handleEvent = function (event) {
-	'use strict';
-	
-	this.filterByCategory(event.target.value);
+    'use strict';
+    
+    this.filterByCategory(event.target.value);
 };
 ```
 
@@ -186,15 +186,15 @@ With those two classes implemented, the page initialization script will look lik
 <script>
 
 document.addEventListener('DOMContentLoaded', function () {
-	'use strict';
-	
-	var tableWrapper, gradeCategoryInputs;
-	
-	tableWrapper = new HTMLTableWrapper(document.getElementById('grades'));
-	gradeCategoryInputs = document.getElementsByClassName('grade-category');
-	
-	new ClickSortListener(tableWrapper).init();
-	new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init();
+    'use strict';
+    
+    var tableWrapper, gradeCategoryInputs;
+    
+    tableWrapper = new HTMLTableWrapper(document.getElementById('grades'));
+    gradeCategoryInputs = document.getElementsByClassName('grade-category');
+    
+    new ClickSortListener(tableWrapper).init();
+    new GradeCategoryListener(tableWrapper, 3, gradeCategoryInputs).init();
 });
 
 </script>

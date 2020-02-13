@@ -78,9 +78,9 @@
  * </div>
  */
 function SimpleEventDispatcher() {
-	'use strict';
-	
-	this.listeners = {};
+    'use strict';
+    
+    this.listeners = {};
 }
 
 // Static methods
@@ -94,16 +94,16 @@ function SimpleEventDispatcher() {
  * @throws {TypeError} If type is not a string.
  */
 SimpleEventDispatcher.processType = function (type) {
-	'use strict';
-	
-	if (!type) {
-		throw new ReferenceError('Event type must be defined (and have a length greater than 0).');
-	}
-	if (typeof type !== 'string' && !(type instanceof String)) {
-		throw new TypeError('Event type must be a string.');
-	}
-	
-	return type.toLowerCase();
+    'use strict';
+    
+    if (!type) {
+        throw new ReferenceError('Event type must be defined (and have a length greater than 0).');
+    }
+    if (typeof type !== 'string' && !(type instanceof String)) {
+        throw new TypeError('Event type must be a string.');
+    }
+    
+    return type.toLowerCase();
 };
 
 
@@ -119,32 +119,32 @@ SimpleEventDispatcher.processType = function (type) {
  * @throws {TypeError} If type is not a `string`; if `listener` does not implement {@link SimpleEventListener} or is not a function.
  */
 SimpleEventDispatcher.prototype.addEventListener = function (type, listener, useCapture) {
-	'use strict';
-	
-	var listeners;
-	
-	if (useCapture && console && console.warn) {
-		console.warn('Capture/bubble phase not supported by this event listener; events are simply dispatched to listeners in the order they are registered.');
-	}
-	
-	type = SimpleEventDispatcher.processType(type);
-	
-	if (!listener) {
-		throw new ReferenceError('Listener must be defined.');
-	}
-	if (typeof listener.handleEvent !== 'function' && typeof listener !== 'function') {
-		throw new TypeError('Listener must either define a handleEvent function or be a function itself.');
-	}
+    'use strict';
+    
+    var listeners;
+    
+    if (useCapture && console && console.warn) {
+        console.warn('Capture/bubble phase not supported by this event listener; events are simply dispatched to listeners in the order they are registered.');
+    }
+    
+    type = SimpleEventDispatcher.processType(type);
+    
+    if (!listener) {
+        throw new ReferenceError('Listener must be defined.');
+    }
+    if (typeof listener.handleEvent !== 'function' && typeof listener !== 'function') {
+        throw new TypeError('Listener must either define a handleEvent function or be a function itself.');
+    }
 
 
-	listeners = this.listeners[type];
-	if (!listeners) {
-		listeners = this.listeners[type] = [];
-	}
-	
-	if (listeners.indexOf(listener) === -1) {
-		listeners.push(listener);
-	}
+    listeners = this.listeners[type];
+    if (!listeners) {
+        listeners = this.listeners[type] = [];
+    }
+    
+    if (listeners.indexOf(listener) === -1) {
+        listeners.push(listener);
+    }
 };
 
 /**
@@ -158,28 +158,28 @@ SimpleEventDispatcher.prototype.addEventListener = function (type, listener, use
  * @throws {TypeError} If `type` is not a string.
  */
 SimpleEventDispatcher.prototype.removeEventListener = function (type, listener, useCapture) {
-	'use strict';
-	
-	var listeners, targetIndex;gh
-	
-	if (useCapture && console && console.warn) {
-		console.warn('Capture/bubble phase not supported by this event listener; events are simply dispatched to listeners in the order they are registered.');
-	}
-	
-	type = SimpleEventDispatcher.processType(type);
-	
-	
-	listeners = this.listeners[type];
-	if (!listeners) {
-		return;
-	}
-	
-	targetIndex = listeners.indexOf(listener);
-	if (targetIndex === -1) {
-		return;
-	}
-	
-	listeners.splice(targetIndex, 1);
+    'use strict';
+    
+    var listeners, targetIndex;gh
+    
+    if (useCapture && console && console.warn) {
+        console.warn('Capture/bubble phase not supported by this event listener; events are simply dispatched to listeners in the order they are registered.');
+    }
+    
+    type = SimpleEventDispatcher.processType(type);
+    
+    
+    listeners = this.listeners[type];
+    if (!listeners) {
+        return;
+    }
+    
+    targetIndex = listeners.indexOf(listener);
+    if (targetIndex === -1) {
+        return;
+    }
+    
+    listeners.splice(targetIndex, 1);
 };
 
 
@@ -191,34 +191,34 @@ SimpleEventDispatcher.prototype.removeEventListener = function (type, listener, 
  * @throws {TypeError} If `event` does not implement {@link SimpleEventIntf}.
  */
 SimpleEventDispatcher.prototype.dispatchEvent = function (event) {
-	'use strict';
-	
-	var listeners, listener, i;
-	
-	if (!event) {
-		throw new ReferenceError('Event must be defined.');
-	}
-	
-	if (typeof event.type !== 'string' && !(event.type instanceof String)) {
-		throw new TypeError('Event must, at minimum, define a type property.');
-	}
-	
-	
-	listeners = this.listeners[event.type.toLowerCase()];
-	if (!listeners) {
-		return;
-	}
-	
-	for (i = 0; i < listeners.length; ++i) {
-		listener = listeners[i];
-		
-		if (typeof listener.handleEvent === 'function') {
-			listener.handleEvent(event);
-		} else {
-			listener(event);
-		}
-	}
-	
+    'use strict';
+    
+    var listeners, listener, i;
+    
+    if (!event) {
+        throw new ReferenceError('Event must be defined.');
+    }
+    
+    if (typeof event.type !== 'string' && !(event.type instanceof String)) {
+        throw new TypeError('Event must, at minimum, define a type property.');
+    }
+    
+    
+    listeners = this.listeners[event.type.toLowerCase()];
+    if (!listeners) {
+        return;
+    }
+    
+    for (i = 0; i < listeners.length; ++i) {
+        listener = listeners[i];
+        
+        if (typeof listener.handleEvent === 'function') {
+            listener.handleEvent(event);
+        } else {
+            listener(event);
+        }
+    }
+    
 };
 
 
@@ -254,17 +254,17 @@ SimpleEventDispatcher.prototype.dispatchEvent = function (event) {
  *
  */
 SimpleEventDispatcher.SimpleEvent = function (type, target) {
-	'use strict';
-	
-	this.type = type;
-	
-	/**
-	 * Target of this event.
-	 */
-	this.target = target;
-	
-	/**
-	 * Added for consistency with DOM event definition; same as {@link SimpleEventDispatcher.SimpleEvent#target}.
-	 */
-	this.currentTarget = target;
+    'use strict';
+    
+    this.type = type;
+    
+    /**
+     * Target of this event.
+     */
+    this.target = target;
+    
+    /**
+     * Added for consistency with DOM event definition; same as {@link SimpleEventDispatcher.SimpleEvent#target}.
+     */
+    this.currentTarget = target;
 };

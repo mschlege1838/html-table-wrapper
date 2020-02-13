@@ -12,16 +12,16 @@
  * Simple/direct implementation of {@link SortDescriptor}. 
  */
 function SimpleSortDescriptor(columnIndex, descending, columnType) {
-	'use strict';
-	
-	this.columnIndex = columnIndex;
-	
-	if (descending) {
-		this.descending = true;
-	}
-	if (columnType && columnType !== HTMLTableWrapperUtils.COLUMN_TYPE_INFER) {
-		this.columnType = columnType;
-	}
+    'use strict';
+    
+    this.columnIndex = columnIndex;
+    
+    if (descending) {
+        this.descending = true;
+    }
+    if (columnType && columnType !== HTMLTableWrapperUtils.COLUMN_TYPE_INFER) {
+        this.columnType = columnType;
+    }
 }
 
 
@@ -41,41 +41,41 @@ SimpleSortDescriptor.prototype.columnType = HTMLTableWrapperUtils.COLUMN_TYPE_IN
 
 // Instance Methods
 SimpleSortDescriptor.prototype.compare = function (cellA, cellB) {
-	'use strict';
-	
-	var aVal, bVal, result, columnType, aNum, aNaN, bNum, bNaN;
-	
-	aVal = IE8Compatibility.getTextContent(cellA).trim();
-	bVal = IE8Compatibility.getTextContent(cellB).trim();
-	
-	columnType = this.columnType;
-	switch (columnType) {
-		case HTMLTableWrapperUtils.COLUMN_TYPE_INFER:
-			aNum = HTMLTableWrapperUtils.getNumber(aVal, true);
-			aNaN = IE8Compatibility.isNaN(aNum);
-			bNum = HTMLTableWrapperUtils.getNumber(bVal, true);
-			bNaN = IE8Compatibility.isNaN(bNum);
-			
-			if (aNaN && bNaN) {
-				result = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
-			} else if (aNaN) {
-				result = 1;
-			} else if (bNaN) {
-				result = -1;
-			} else {
-				result = aNum - bNum;
-			}
-			break;
-		case HTMLTableWrapperUtils.COLUMN_TYPE_TEXT:
-			result = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
-			break;
-		default:
-			result = 0;
-	}
-	
-	if (!result) {
-		return 0;
-	}
-	
-	return this.descending ? -1 * result : result;
+    'use strict';
+    
+    var aVal, bVal, result, columnType, aNum, aNaN, bNum, bNaN;
+    
+    aVal = IE8Compatibility.getTextContent(cellA).trim();
+    bVal = IE8Compatibility.getTextContent(cellB).trim();
+    
+    columnType = this.columnType;
+    switch (columnType) {
+        case HTMLTableWrapperUtils.COLUMN_TYPE_INFER:
+            aNum = HTMLTableWrapperUtils.getNumber(aVal, true);
+            aNaN = IE8Compatibility.isNaN(aNum);
+            bNum = HTMLTableWrapperUtils.getNumber(bVal, true);
+            bNaN = IE8Compatibility.isNaN(bNum);
+            
+            if (aNaN && bNaN) {
+                result = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
+            } else if (aNaN) {
+                result = 1;
+            } else if (bNaN) {
+                result = -1;
+            } else {
+                result = aNum - bNum;
+            }
+            break;
+        case HTMLTableWrapperUtils.COLUMN_TYPE_TEXT:
+            result = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
+            break;
+        default:
+            result = 0;
+    }
+    
+    if (!result) {
+        return 0;
+    }
+    
+    return this.descending ? -1 * result : result;
 };

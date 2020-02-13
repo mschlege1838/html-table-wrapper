@@ -18,13 +18,13 @@ var IEGeneralCompatibility = {};
  * @returns {number} The integer representation of the given `val`, or `NaN` if `val` cannot be parsed.
  */
 IEGeneralCompatibility.parseInt = function (val) {
-	'use strict';
-	
-	if (typeof Number.parseInt === 'function') {
-		return Number.parseInt(val);
-	}
-	
-	return parseInt(val);
+    'use strict';
+    
+    if (typeof Number.parseInt === 'function') {
+        return Number.parseInt(val);
+    }
+    
+    return parseInt(val);
 };
 
 /**
@@ -35,13 +35,13 @@ IEGeneralCompatibility.parseInt = function (val) {
  * @returns {number} The floating point representation of the given `val`, or `NaN` if `val` cannot be parsed.
  */
 IEGeneralCompatibility.parseFloat = function (val) {
-	'use strict';
-	
-	if (typeof Number.parseFloat === 'function') {
-		return Number.parseFloat(val);
-	}
-	
-	return parseFloat(val);
+    'use strict';
+    
+    if (typeof Number.parseFloat === 'function') {
+        return Number.parseFloat(val);
+    }
+    
+    return parseFloat(val);
 };
 
 /**
@@ -51,11 +51,11 @@ IEGeneralCompatibility.parseFloat = function (val) {
  * @returns {boolean} `true` if (and only if) `val` is `NaN`, otherwise `false`.
  */
 IEGeneralCompatibility.isNaN = function (val) {
-	'use strict';
-	
-	if (typeof Number.isNaN === 'function') {
-		return Number.isNaN(val);
-	}
-	
-	return val !== val;
+    'use strict';
+    
+    if (typeof Number.isNaN === 'function') {
+        return Number.isNaN(val);
+    }
+    
+    return val !== val;
 };

@@ -81,25 +81,25 @@
  * ```
  */
 function ContextControl(horizontalOffset, verticalOffset) {
-	'use strict';
-	
-	SimpleEventDispatcher.call(this);
-	
-	/**
-	 * The offset in pixels to be applied to the `left` `CSSStyleDeclaration` of this control's element with respect
-	 * to the current offset element (last passed to {@link ContextControl#open}) when not in mobile view state.
-	 *
-	 * @type {number}
-	 */
-	this.horizontalOffset = horizontalOffset !== 0 && !horizontalOffset ? ContextControl.defaultHorizontalOffset : horizontalOffset;
-	
-	/**
-	 * The offset in pixels to be applied to the `top` `CSSStyleDeclaration` of this control's element with respect
-	 * to the current offset element (last passed to {@link ContextControl#open}) when not in mobile view state.
-	 *
-	 * @type {number}
-	 */
-	this.verticalOffset = verticalOffset !== 0 && !verticalOffset ? ContextControl.defaultVerticalOffset : verticalOffset;
+    'use strict';
+    
+    SimpleEventDispatcher.call(this);
+    
+    /**
+     * The offset in pixels to be applied to the `left` `CSSStyleDeclaration` of this control's element with respect
+     * to the current offset element (last passed to {@link ContextControl#open}) when not in mobile view state.
+     *
+     * @type {number}
+     */
+    this.horizontalOffset = horizontalOffset !== 0 && !horizontalOffset ? ContextControl.defaultHorizontalOffset : horizontalOffset;
+    
+    /**
+     * The offset in pixels to be applied to the `top` `CSSStyleDeclaration` of this control's element with respect
+     * to the current offset element (last passed to {@link ContextControl#open}) when not in mobile view state.
+     *
+     * @type {number}
+     */
+    this.verticalOffset = verticalOffset !== 0 && !verticalOffset ? ContextControl.defaultVerticalOffset : verticalOffset;
 }
 
 
@@ -175,14 +175,14 @@ ContextControl.defaultVerticalOffset = 10;
  * @returns {HTMLDivElement} An empty (detached) control element.
  */
 ContextControl.createControl = function () {
-	'use strict';
-	
-	var controlElement;
-	
-	controlElement = document.createElement('div');
-	controlElement.className = ContextControl.contextElementClassName;
-	
-	return controlElement;
+    'use strict';
+    
+    var controlElement;
+    
+    controlElement = document.createElement('div');
+    controlElement.className = ContextControl.contextElementClassName;
+    
+    return controlElement;
 };
 
 /**
@@ -193,11 +193,11 @@ ContextControl.createControl = function () {
  * @returns {ContextControl.OffsetCoordinates} Coordinates of the given element's viewport offset.
  */
 ContextControl.getOffset = function (el) {
-	'use strict';
-	
-	var result = new ContextControl.OffsetCoordinates();
-	ContextControl._getOffset(el, result);
-	return result;
+    'use strict';
+    
+    var result = new ContextControl.OffsetCoordinates();
+    ContextControl._getOffset(el, result);
+    return result;
 };
 
 /**
@@ -208,15 +208,15 @@ ContextControl.getOffset = function (el) {
  * @param {ContextControl.OffsetCoordinates} coordinates Coordinates being processed.
  */
 ContextControl._getOffset = function (el, coordinates) {
-	'use strict';
-	
-	if (el == null) {
-		return;
-	}
-	
-	coordinates.x += el.offsetLeft;
-	coordinates.y += el.offsetTop;
-	ContextControl._getOffset(el.offsetParent, coordinates);
+    'use strict';
+    
+    if (el == null) {
+        return;
+    }
+    
+    coordinates.x += el.offsetLeft;
+    coordinates.y += el.offsetTop;
+    ContextControl._getOffset(el.offsetParent, coordinates);
 };
 
 
@@ -262,20 +262,20 @@ ContextControl.prototype.mobileViewState = null;
  * control element, if present.
  */
 ContextControl.prototype.dispose = function () {
-	'use strict';
-	
-	var controlElement;
+    'use strict';
+    
+    var controlElement;
 
-	controlElement = this.controlElement;
-	
-	this.close();
-	if (controlElement) {
-		document.body.removeChild(controlElement);
-	}
-	this.controlElement = null;
-	
-	this.offsetElement = null;
-	
+    controlElement = this.controlElement;
+    
+    this.close();
+    if (controlElement) {
+        document.body.removeChild(controlElement);
+    }
+    this.controlElement = null;
+    
+    this.offsetElement = null;
+    
 };
 
 
@@ -285,16 +285,16 @@ ContextControl.prototype.dispose = function () {
  * @param {Event} event Event being dispatched.
  */
 ContextControl.prototype.handleEvent = function (event) {
-	
-	if (event.type !== 'resize') {
-		if (console && console.warn) {
-			console.warn('Unrecognized event: ' + event.type);
-			console.warn(event);
-		}
-		return;
-	}
-	
-	this.position();
+    
+    if (event.type !== 'resize') {
+        if (console && console.warn) {
+            console.warn('Unrecognized event: ' + event.type);
+            console.warn(event);
+        }
+        return;
+    }
+    
+    this.position();
 };
 
 
@@ -310,42 +310,42 @@ ContextControl.prototype.handleEvent = function (event) {
  * @throws {ReferenceError} If `offsetElement` is not defined.
  */
 ContextControl.prototype.open = function (offsetElement) {
-	'use strict';
-	
-	var controlElement;
-	
-	if (!offsetElement) {
-		throw new ReferenceError('Offset element must be defined.');
-	}
-	
-	controlElement = this.controlElement;
-	
-	// Create dialogue if it doesn't exist.
-	if (!controlElement) {
-		controlElement = this.controlElement = ContextControl.createControl();
-		document.body.appendChild(controlElement);
-		this.dispatchEvent(new SimpleEventDispatcher.SimpleEvent(ContextControl.EVENT_TYPE_CREATE, this));
-	}
-	
-	// Store reference to given offset element.
-	this.offsetElement = offsetElement;
-	
-	
-	// Begin opening sequence.
-	IE8Compatibility.removeClass(controlElement, ContextControl.dialogueClosedClassName);
-	
-	
-	// Position control.
-	this.position();
-	
-	// Register for resize events (for re-positioning).
-	IE8Compatibility.addEventListener(window, 'resize', this, false);
-	
-	
-	// Finish opening sequence.
-	IE8Compatibility.addClass(controlElement, ContextControl.dialogueOpenedClassName);
-	
-	return controlElement;
+    'use strict';
+    
+    var controlElement;
+    
+    if (!offsetElement) {
+        throw new ReferenceError('Offset element must be defined.');
+    }
+    
+    controlElement = this.controlElement;
+    
+    // Create dialogue if it doesn't exist.
+    if (!controlElement) {
+        controlElement = this.controlElement = ContextControl.createControl();
+        document.body.appendChild(controlElement);
+        this.dispatchEvent(new SimpleEventDispatcher.SimpleEvent(ContextControl.EVENT_TYPE_CREATE, this));
+    }
+    
+    // Store reference to given offset element.
+    this.offsetElement = offsetElement;
+    
+    
+    // Begin opening sequence.
+    IE8Compatibility.removeClass(controlElement, ContextControl.dialogueClosedClassName);
+    
+    
+    // Position control.
+    this.position();
+    
+    // Register for resize events (for re-positioning).
+    IE8Compatibility.addEventListener(window, 'resize', this, false);
+    
+    
+    // Finish opening sequence.
+    IE8Compatibility.addClass(controlElement, ContextControl.dialogueOpenedClassName);
+    
+    return controlElement;
 };
 
 
@@ -358,59 +358,59 @@ ContextControl.prototype.open = function (offsetElement) {
  * `left` and `top` CSS properties are set to `0`.
  */
 ContextControl.prototype.position = function () {
-	'use strict';
-	
-	var controlElement, offset, windowWidth, windowHeight, areaRatio, dialogueHeight, dialogueWidth, lastOverflow,
-		mobileViewState, proposedLeft, proposedTop, referenceHeader, offsetElement;
-	
-	// If no offset element, not opened yet; return.
-	offsetElement = this.offsetElement;
-	if (!offsetElement) {
-		return;
-	}
-	
-	// Initialization.
-	controlElement = this.controlElement;
-	mobileViewState = this.mobileViewState;
-	
-	windowWidth = 'innerWidth' in window ? window.innerWidth : document.documentElement.clientWidth;
-	windowHeight = 'innerHeight' in window ? window.innerHeight : document.documentElement.clientHeight;
-	dialogueWidth = mobileViewState ? mobileViewState.initialWidth : controlElement.offsetWidth;
-	dialogueHeight = mobileViewState ? mobileViewState.initialHeight : controlElement.offsetHeight;
-	
-	
-	// Calculate dialogue:window ratio.
-	areaRatio = (dialogueHeight * dialogueWidth) / (windowHeight * windowWidth);
-	
-	// If over the 'mobile-view' threshold (takes up the configured percentage of the screen, expand to
-	// fill entire screen. Otherwise position relative to offset control.
-	if (areaRatio >= ContextControl.mobileThresholdRatio) {
-		if (!mobileViewState) {
-			mobileViewState = this.mobileViewState = new ContextControl.MobileViewState(controlElement);
-			mobileViewState.setupMobileView();
-		}
-	} else {
-		// Restore default view if transitioning from mobile state.
-		if (mobileViewState) {
-			mobileViewState.restoreDefaultView();
-			this.mobileViewState = null;
-			dialogueWidth = controlElement.offsetWidth;
-			dialogueHeight = controlElement.offsetHeight;
-		}
-		
-		// Calculate offset of offset element.
-		offset = ContextControl.getOffset(offsetElement);
-		
-		// Calculate proposed dialogue coordinates relative to offset element.
-		proposedLeft = offset.x + this.horizontalOffset;
-		proposedTop = offset.y + offsetElement.offsetHeight + this.verticalOffset;
-		
-		// Place dialogue along right edge of screen if placing it at proposed left would extend beyond the screen's width, otherwise proposed left.
-		controlElement.style.left = (proposedLeft + dialogueWidth > window.innerWidth ? window.innerWidth - dialogueWidth - (window.outerWidth - window.innerWidth) : proposedLeft) + 'px';
-		// Place dialogue along bottom of screen if placing it at proposed top would extend beyond the screens height, otherwise proposed height.
-		controlElement.style.top = (proposedTop + dialogueHeight > window.innerHeight ? Math.max(0, window.innerHeight - dialogueHeight) : proposedTop) + 'px';
-	}
-	
+    'use strict';
+    
+    var controlElement, offset, windowWidth, windowHeight, areaRatio, dialogueHeight, dialogueWidth, lastOverflow,
+        mobileViewState, proposedLeft, proposedTop, referenceHeader, offsetElement;
+    
+    // If no offset element, not opened yet; return.
+    offsetElement = this.offsetElement;
+    if (!offsetElement) {
+        return;
+    }
+    
+    // Initialization.
+    controlElement = this.controlElement;
+    mobileViewState = this.mobileViewState;
+    
+    windowWidth = 'innerWidth' in window ? window.innerWidth : document.documentElement.clientWidth;
+    windowHeight = 'innerHeight' in window ? window.innerHeight : document.documentElement.clientHeight;
+    dialogueWidth = mobileViewState ? mobileViewState.initialWidth : controlElement.offsetWidth;
+    dialogueHeight = mobileViewState ? mobileViewState.initialHeight : controlElement.offsetHeight;
+    
+    
+    // Calculate dialogue:window ratio.
+    areaRatio = (dialogueHeight * dialogueWidth) / (windowHeight * windowWidth);
+    
+    // If over the 'mobile-view' threshold (takes up the configured percentage of the screen, expand to
+    // fill entire screen. Otherwise position relative to offset control.
+    if (areaRatio >= ContextControl.mobileThresholdRatio) {
+        if (!mobileViewState) {
+            mobileViewState = this.mobileViewState = new ContextControl.MobileViewState(controlElement);
+            mobileViewState.setupMobileView();
+        }
+    } else {
+        // Restore default view if transitioning from mobile state.
+        if (mobileViewState) {
+            mobileViewState.restoreDefaultView();
+            this.mobileViewState = null;
+            dialogueWidth = controlElement.offsetWidth;
+            dialogueHeight = controlElement.offsetHeight;
+        }
+        
+        // Calculate offset of offset element.
+        offset = ContextControl.getOffset(offsetElement);
+        
+        // Calculate proposed dialogue coordinates relative to offset element.
+        proposedLeft = offset.x + this.horizontalOffset;
+        proposedTop = offset.y + offsetElement.offsetHeight + this.verticalOffset;
+        
+        // Place dialogue along right edge of screen if placing it at proposed left would extend beyond the screen's width, otherwise proposed left.
+        controlElement.style.left = (proposedLeft + dialogueWidth > window.innerWidth ? window.innerWidth - dialogueWidth - (window.outerWidth - window.innerWidth) : proposedLeft) + 'px';
+        // Place dialogue along bottom of screen if placing it at proposed top would extend beyond the screens height, otherwise proposed height.
+        controlElement.style.top = (proposedTop + dialogueHeight > window.innerHeight ? Math.max(0, window.innerHeight - dialogueHeight) : proposedTop) + 'px';
+    }
+    
 };
 
 /**
@@ -420,28 +420,28 @@ ContextControl.prototype.position = function () {
  * will be added to the backing element.
  */
 ContextControl.prototype.close = function () {
-	'use strict';
-	
-	var controlElement, mobileViewState;
-	
-	controlElement = this.controlElement;
-	
-	if (!controlElement) {
-		return;
-	}
-	
-	IE8Compatibility.removeClass(controlElement, ContextControl.dialogueOpenedClassName);
-	
-	
-	if (mobileViewState = this.mobileViewState) {
-		mobileViewState.restoreDefaultView();
-		this.mobileViewState = null;
-	}
-	
-	IE8Compatibility.removeEventListener(window, 'resize', this, false);
-	
-	
-	IE8Compatibility.addClass(controlElement, ContextControl.dialogueClosedClassName);
+    'use strict';
+    
+    var controlElement, mobileViewState;
+    
+    controlElement = this.controlElement;
+    
+    if (!controlElement) {
+        return;
+    }
+    
+    IE8Compatibility.removeClass(controlElement, ContextControl.dialogueOpenedClassName);
+    
+    
+    if (mobileViewState = this.mobileViewState) {
+        mobileViewState.restoreDefaultView();
+        this.mobileViewState = null;
+    }
+    
+    IE8Compatibility.removeEventListener(window, 'resize', this, false);
+    
+    
+    IE8Compatibility.addClass(controlElement, ContextControl.dialogueClosedClassName);
 };
 
 
@@ -452,9 +452,9 @@ ContextControl.prototype.close = function () {
  * @returns Backing `HTMLDivElement` provided this control has been opened and is not disposed.
  */
 ContextControl.prototype.getControlElement = function () {
-	'use strict';
-	
-	return this.controlElement;
+    'use strict';
+    
+    return this.controlElement;
 };
 
 
@@ -477,31 +477,31 @@ ContextControl.prototype.getControlElement = function () {
  * by {@link ContextControl}.
  */
 ContextControl.MobileViewState = function (controlElement) {
-	'use strict';
-	
-	/**
-	 * Parent {@link ContextControl}'s backing element.
-	 *
-	 * @private
-	 * @type {HTMLElement}
-	 */
-	this.controlElement = controlElement;
-	
-	/**
-	 * Width of the backing element at the time mobile-view state was entered.
-	 *
-	 * @package
-	 * @type {number}
-	 */
-	this.initialWidth = controlElement.offsetWidth;
-	
-	/**
-	 * Height of the backing element at the time mobile-view state was entered.
-	 *
-	 * @package
-	 * @type {number}
-	 */
-	this.initialHeight = controlElement.offsetHeight;
+    'use strict';
+    
+    /**
+     * Parent {@link ContextControl}'s backing element.
+     *
+     * @private
+     * @type {HTMLElement}
+     */
+    this.controlElement = controlElement;
+    
+    /**
+     * Width of the backing element at the time mobile-view state was entered.
+     *
+     * @package
+     * @type {number}
+     */
+    this.initialWidth = controlElement.offsetWidth;
+    
+    /**
+     * Height of the backing element at the time mobile-view state was entered.
+     *
+     * @package
+     * @type {number}
+     */
+    this.initialHeight = controlElement.offsetHeight;
 };
 
 /**
@@ -511,17 +511,17 @@ ContextControl.MobileViewState = function (controlElement) {
  * @package
  */
 ContextControl.MobileViewState.prototype.setupMobileView = function () {
-	'use strict';
-	
-	var controlElement, controlStyle;
-	
-	controlElement = this.controlElement;
-	controlStyle = controlElement.style;
-	
-	controlStyle.left = controlStyle.top = '0px';
-	
-	IE8Compatibility.addClass(controlElement, ContextControl.mobileViewClassName);
-	IE8Compatibility.addClass(document.body, ContextControl.mobileViewClassName);
+    'use strict';
+    
+    var controlElement, controlStyle;
+    
+    controlElement = this.controlElement;
+    controlStyle = controlElement.style;
+    
+    controlStyle.left = controlStyle.top = '0px';
+    
+    IE8Compatibility.addClass(controlElement, ContextControl.mobileViewClassName);
+    IE8Compatibility.addClass(document.body, ContextControl.mobileViewClassName);
 };
 
 /**
@@ -532,14 +532,14 @@ ContextControl.MobileViewState.prototype.setupMobileView = function () {
  * @package
  */
 ContextControl.MobileViewState.prototype.restoreDefaultView = function () {
-	'use strict';
-	
-	var controlElement;
-	
-	controlElement = this.controlElement;
-		
-	IE8Compatibility.removeClass(controlElement, ContextControl.mobileViewClassName);
-	IE8Compatibility.removeClass(document.body, ContextControl.mobileViewClassName);
+    'use strict';
+    
+    var controlElement;
+    
+    controlElement = this.controlElement;
+        
+    IE8Compatibility.removeClass(controlElement, ContextControl.mobileViewClassName);
+    IE8Compatibility.removeClass(document.body, ContextControl.mobileViewClassName);
 };
 
 
@@ -556,15 +556,15 @@ ContextControl.MobileViewState.prototype.restoreDefaultView = function () {
  *
  */
 ContextControl.OffsetCoordinates = function () {
-	'use strict';
-	
-	/**
-	 * Offset x (`left`) coordinate.
-	 */
-	this.x = 0;
-	
-	/**
-	 * Offset y (`top`) coordinate.
-	 */
-	this.y = 0;
+    'use strict';
+    
+    /**
+     * Offset x (`left`) coordinate.
+     */
+    this.x = 0;
+    
+    /**
+     * Offset y (`top`) coordinate.
+     */
+    this.y = 0;
 };

@@ -1,14 +1,14 @@
 {
-	"plugins": ["plugins/markdown"]
-	
-	, "templates": {
-		"default": {
-			"staticFiles": {
-				"include": [
-					"./jsdoc/static"
-				]
-			}
-			, "layoutFile": "./jsdoc/layout.tmpl"
-		}
-	}
+    "plugins": ["plugins/markdown"]
+    
+    , "templates": {
+        "default": {
+            "staticFiles": {
+                "include": [
+                    "./jsdoc/static"
+                ]
+            }
+            , "layoutFile": "./jsdoc/layout.tmpl"
+        }
+    }
 }

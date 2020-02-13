@@ -14,14 +14,14 @@ var IE8Compatibility = {};
 
 
 (function (src, target) {
-	'use strict';
-	
-	var name;
-	
-	for (name in src) {
-		target[name] = src[name];
-	}
-	
+    'use strict';
+    
+    var name;
+    
+    for (name in src) {
+        target[name] = src[name];
+    }
+    
 })(IE9Compatibility, IE8Compatibility);
 
 
@@ -50,40 +50,40 @@ IE8Compatibility.allRegisteredHandlers = null;
  * @param {(boolean|object)} [useCapture=false] Use capture/options argument for `addEventListener`; ignored if necessary to fall back to `attachEvent`.
  */
 IE8Compatibility.addEventListener = function (target, type, listener, useCapture) {
-	'use strict';
-	
-	var handlerFunction, allRegisteredHandlers, nominalType;
-	
-	if (target.addEventListener) {
-		target.addEventListener(type, listener, useCapture);
-		return;
-	}
-	
-	if (useCapture && console && console.warn) {
-		console.warn('Falling back to attachEvent; useCapture/options will be ignored.');
-	}
-	
-	
-	if (listener && typeof listener.handleEvent === 'function') {
-		allRegisteredHandlers = IE8Compatibility.allRegisteredHandlers;
-		if (!allRegisteredHandlers) {
-			allRegisteredHandlers = IE8Compatibility.allRegisteredHandlers = [];
-		}
-		
-		nominalType = type.toLowerCase();
-		if (IE8Compatibility.getHandlerIndex(target, nominalType, listener) !== -1) {
-			return;
-		}
-		
-		handlerFunction = function (event) {
-			listener.handleEvent(event)
-		};
-		allRegisteredHandlers.push(new IE8Compatibility.IE8EventHandler(target, nominalType, listener, handlerFunction));
-	} else {
-		handlerFunction = listener;
-	}
-	
-	target.attachEvent('on' + type, handlerFunction);
+    'use strict';
+    
+    var handlerFunction, allRegisteredHandlers, nominalType;
+    
+    if (target.addEventListener) {
+        target.addEventListener(type, listener, useCapture);
+        return;
+    }
+    
+    if (useCapture && console && console.warn) {
+        console.warn('Falling back to attachEvent; useCapture/options will be ignored.');
+    }
+    
+    
+    if (listener && typeof listener.handleEvent === 'function') {
+        allRegisteredHandlers = IE8Compatibility.allRegisteredHandlers;
+        if (!allRegisteredHandlers) {
+            allRegisteredHandlers = IE8Compatibility.allRegisteredHandlers = [];
+        }
+        
+        nominalType = type.toLowerCase();
+        if (IE8Compatibility.getHandlerIndex(target, nominalType, listener) !== -1) {
+            return;
+        }
+        
+        handlerFunction = function (event) {
+            listener.handleEvent(event)
+        };
+        allRegisteredHandlers.push(new IE8Compatibility.IE8EventHandler(target, nominalType, listener, handlerFunction));
+    } else {
+        handlerFunction = listener;
+    }
+    
+    target.attachEvent('on' + type, handlerFunction);
 };
 
 /**
@@ -96,37 +96,37 @@ IE8Compatibility.addEventListener = function (target, type, listener, useCapture
  * @param {(boolean|object)} [useCapture=false] Use capture/options argument for `removeEventListener`; ignored if necessary to fall back to `detachEvent`.
  */
 IE8Compatibility.removeEventListener = function (target, type, listener, useCapture) {
-	'use strict';
-	
-	var handlerFunction, allRegisteredHandlers, listenerIndex, nominalType, handler;
-	
-	if (target.removeEventListener) {
-		target.removeEventListener(type, listener, useCapture);
-		return;
-	}
-	
-	if (useCapture && console && console.warn) {
-		console.warn('Falling back to detachEvent; useCapture/options will be ignored.');
-	}
-	
-	if (listener && typeof listener.handleEvent === 'function') {
-		nominalType = type.toLowerCase();
-		
-		allRegisteredHandlers = IE8Compatibility.allRegisteredHandlers;
-		if (!allRegisteredHandlers || (listenerIndex = IE8Compatibility.getHandlerIndex(target, nominalType, listener)) === -1) {
-			return;
-		}
-		
-		handler = allRegisteredHandlers[listenerIndex];
-		handlerFunction = handler.handlerFunction;
-		
-		allRegisteredHandlers.splice(listenerIndex, 1);
-		handler.dispose();
-	} else {
-		handlerFunction = listener;
-	}
-	
-	target.detachEvent('on' + type, handlerFunction);
+    'use strict';
+    
+    var handlerFunction, allRegisteredHandlers, listenerIndex, nominalType, handler;
+    
+    if (target.removeEventListener) {
+        target.removeEventListener(type, listener, useCapture);
+        return;
+    }
+    
+    if (useCapture && console && console.warn) {
+        console.warn('Falling back to detachEvent; useCapture/options will be ignored.');
+    }
+    
+    if (listener && typeof listener.handleEvent === 'function') {
+        nominalType = type.toLowerCase();
+        
+        allRegisteredHandlers = IE8Compatibility.allRegisteredHandlers;
+        if (!allRegisteredHandlers || (listenerIndex = IE8Compatibility.getHandlerIndex(target, nominalType, listener)) === -1) {
+            return;
+        }
+        
+        handler = allRegisteredHandlers[listenerIndex];
+        handlerFunction = handler.handlerFunction;
+        
+        allRegisteredHandlers.splice(listenerIndex, 1);
+        handler.dispose();
+    } else {
+        handlerFunction = listener;
+    }
+    
+    target.detachEvent('on' + type, handlerFunction);
 };
 
 /**
@@ -136,13 +136,13 @@ IE8Compatibility.removeEventListener = function (target, type, listener, useCapt
  * @returns The `event.target` property of `event` if `target` is a defined property on `event`, otherwise `event.srcElement`.
  */
 IE8Compatibility.getEventTarget = function (event) {
-	'use strict';
-	
-	if ('target' in event) {
-		return event.target;
-	}
-	
-	return event.srcElement;
+    'use strict';
+    
+    if ('target' in event) {
+        return event.target;
+    }
+    
+    return event.srcElement;
 };
 
 
@@ -152,17 +152,17 @@ IE8Compatibility.getEventTarget = function (event) {
  * @param {object} proto Prototype property of the desired parent (superclass) constructor.
  */
 IE8Compatibility.extend = function (proto) {
-	'use strict';
-	
-	var anon;
-	
-	if (Object.create) {
-		return Object.create(proto);
-	}
-	
-	anon = function () {};
-	anon.prototype = proto;
-	return new anon();
+    'use strict';
+    
+    var anon;
+    
+    if (Object.create) {
+        return Object.create(proto);
+    }
+    
+    anon = function () {};
+    anon.prototype = proto;
+    return new anon();
 };
 
 /**
@@ -187,39 +187,39 @@ IE8Compatibility.extend = function (proto) {
  * @see https://dom.spec.whatwg.org/#dom-node-textcontent
  */
 IE8Compatibility.getTextContent = function (node) {
-	'use strict';
-	
-	var children;
-	
-	if ('textContent' in node) {
-		return node.textContent;
-	}
-	
-	switch (node.nodeType) {
-		case 1: // ELEMENT_NODE
-		case 11: // DOCUMENT_FRAGMENT_NODE
-			children = node.childNodes;
-			return children.length ? IE8Compatibility._getTextContent(children) : '';
-			
-		case 3: // TEXT_NODE
-		case 4: // CDATA_SECTION_NODE
-		case 7: // PROCESSING_INSTRUCTION_NODE
-		case 8: // COMMENT_NODE
-			return node.nodeValue;
-			
-		case 2: // ATTRIBUTE_NODE (Deprecated)
-			return node.value;
-		
-		// Default includes:
-		//   5/ENTITY_REFERENCE_NODE (Deprecated)
-		//   6/ENTITY_NODE (Deprecated)
-		//   9/DOCUMENT_NODE
-		//   10/DOCUMENT_TYPE_NODE
-		//   12/NOTATION_NODE (Deprecated)
-		default:
-			return null;
-	}
-	
+    'use strict';
+    
+    var children;
+    
+    if ('textContent' in node) {
+        return node.textContent;
+    }
+    
+    switch (node.nodeType) {
+        case 1: // ELEMENT_NODE
+        case 11: // DOCUMENT_FRAGMENT_NODE
+            children = node.childNodes;
+            return children.length ? IE8Compatibility._getTextContent(children) : '';
+            
+        case 3: // TEXT_NODE
+        case 4: // CDATA_SECTION_NODE
+        case 7: // PROCESSING_INSTRUCTION_NODE
+        case 8: // COMMENT_NODE
+            return node.nodeValue;
+            
+        case 2: // ATTRIBUTE_NODE (Deprecated)
+            return node.value;
+        
+        // Default includes:
+        //   5/ENTITY_REFERENCE_NODE (Deprecated)
+        //   6/ENTITY_NODE (Deprecated)
+        //   9/DOCUMENT_NODE
+        //   10/DOCUMENT_TYPE_NODE
+        //   12/NOTATION_NODE (Deprecated)
+        default:
+            return null;
+    }
+    
 };
 
 /**
@@ -230,45 +230,45 @@ IE8Compatibility.getTextContent = function (node) {
  * @see https://dom.spec.whatwg.org/#dom-node-textcontent
  */
 IE8Compatibility.setTextContent = function (node, text) {
-	'use strict';
-	
-	var children;
-	
-	if ('textContent' in node) {
-		node.textContent = text;
-		return;
-	}
-	
-	switch (node.nodeType) {
-		case 1: // ELEMENT_NODE
-		case 11: // DOCUMENT_FRAGMENT_NODE
-			children = node.childNodes;
-			while (children.length) {
-				node.removeChild(children[0]);
-			}
-			
-			node.appendChild(document.createTextNode(text));
-			break;
-			
-		case 3: // TEXT_NODE
-		case 4: // CDATA_SECTION_NODE
-		case 7: // PROCESSING_INSTRUCTION_NODE
-		case 8: // COMMENT_NODE
-			node.nodeValue = text;
-			break;
-			
-		case 2: // ATTRIBUTE_NODE (Deprecated)
-			node.value = text;
-			break;
-		
-		// Default includes:
-		//   5/ENTITY_REFERENCE_NODE (Deprecated)
-		//   6/ENTITY_NODE (Deprecated)
-		//   9/DOCUMENT_NODE
-		//   10/DOCUMENT_TYPE_NODE
-		//   12/NOTATION_NODE (Deprecated)
-		default:
-	}
+    'use strict';
+    
+    var children;
+    
+    if ('textContent' in node) {
+        node.textContent = text;
+        return;
+    }
+    
+    switch (node.nodeType) {
+        case 1: // ELEMENT_NODE
+        case 11: // DOCUMENT_FRAGMENT_NODE
+            children = node.childNodes;
+            while (children.length) {
+                node.removeChild(children[0]);
+            }
+            
+            node.appendChild(document.createTextNode(text));
+            break;
+            
+        case 3: // TEXT_NODE
+        case 4: // CDATA_SECTION_NODE
+        case 7: // PROCESSING_INSTRUCTION_NODE
+        case 8: // COMMENT_NODE
+            node.nodeValue = text;
+            break;
+            
+        case 2: // ATTRIBUTE_NODE (Deprecated)
+            node.value = text;
+            break;
+        
+        // Default includes:
+        //   5/ENTITY_REFERENCE_NODE (Deprecated)
+        //   6/ENTITY_NODE (Deprecated)
+        //   9/DOCUMENT_NODE
+        //   10/DOCUMENT_TYPE_NODE
+        //   12/NOTATION_NODE (Deprecated)
+        default:
+    }
 };
 
 /**
@@ -280,27 +280,27 @@ IE8Compatibility.setTextContent = function (node, text) {
  * @returns {string} The depth-first concatenation of the values of all descendant child nodes that are of type `TEXT_NODE` (3).
  */
 IE8Compatibility._getTextContent = function (nodeList) {
-	'use strict';
-	
-	var i, node, children, text;
-	
-	text = '';
-	for (i = 0; i < nodeList.length; ++i) {
-		node = nodeList[i];
-		
-		// Depth-first traversal.
-		children = node.childNodes;
-		if (children.length) {
-			text += IE8Compatibility._getTextContent(children);
-		}
-		
-		// if node is of type TEXT_NODE...
-		if (node.nodeType == 3) {
-			text += node.nodeValue;
-		}
-	}
-	
-	return text;
+    'use strict';
+    
+    var i, node, children, text;
+    
+    text = '';
+    for (i = 0; i < nodeList.length; ++i) {
+        node = nodeList[i];
+        
+        // Depth-first traversal.
+        children = node.childNodes;
+        if (children.length) {
+            text += IE8Compatibility._getTextContent(children);
+        }
+        
+        // if node is of type TEXT_NODE...
+        if (node.nodeType == 3) {
+            text += node.nodeValue;
+        }
+    }
+    
+    return text;
 };
 
 /**
@@ -316,19 +316,19 @@ IE8Compatibility._getTextContent = function (nodeList) {
  *   if no matching {@link IE8Compatibility.IE8EventHandler} could be found.
  */
 IE8Compatibility.getHandlerIndex = function (target, type, listener) {
-	'use strict';
-	
-	var handlers, handler, i;
-	
-	handlers = IE8Compatibility.allRegisteredHandlers;
-	for (i = 0; i < handlers.length; ++i) {
-		handler = handlers[i];
-		if (handler.target === target && handler.type === type && handler.listener === listener) {
-			return i;
-		}
-	}
-	
-	return -1;
+    'use strict';
+    
+    var handlers, handler, i;
+    
+    handlers = IE8Compatibility.allRegisteredHandlers;
+    for (i = 0; i < handlers.length; ++i) {
+        handler = handlers[i];
+        if (handler.target === target && handler.type === type && handler.listener === listener) {
+            return i;
+        }
+    }
+    
+    return -1;
 };
 
 
@@ -349,40 +349,40 @@ IE8Compatibility.getHandlerIndex = function (target, type, listener) {
  *   the actual registered listener can be detached when it is no longer needed.
  */
 IE8Compatibility.IE8EventHandler = function (target, type, listener, handlerFunction) {
-	'use strict';
-	
-	/**
-	 * `EventTarget` to which {@link IE8Compatibility.IE8EventHandler#listener} is registered.
-	 *
-	 * @type {EventTarget}
-	 */
-	this.target = target;
-	
-	/**
-	 * Event type for which {@link IE8Compatibility.IE8EventHandler#listener} is registered.
-	 *
-	 * @type {string}
-	 */
-	this.type = type;
-	
-	/**
-	 * `EventListener` registered on {@link IE8Compatibility.IE8EventHandler#target} for events of type
-	 * {@link IE8Compatibility.IE8EventHandler#type}.
-	 *
-	 * @type {EventListener}
-	 */
-	this.listener = listener;
-	
-	/**
-	 * @type {function}
-	 */
-	this.handlerFunction = handlerFunction;
+    'use strict';
+    
+    /**
+     * `EventTarget` to which {@link IE8Compatibility.IE8EventHandler#listener} is registered.
+     *
+     * @type {EventTarget}
+     */
+    this.target = target;
+    
+    /**
+     * Event type for which {@link IE8Compatibility.IE8EventHandler#listener} is registered.
+     *
+     * @type {string}
+     */
+    this.type = type;
+    
+    /**
+     * `EventListener` registered on {@link IE8Compatibility.IE8EventHandler#target} for events of type
+     * {@link IE8Compatibility.IE8EventHandler#type}.
+     *
+     * @type {EventListener}
+     */
+    this.listener = listener;
+    
+    /**
+     * @type {function}
+     */
+    this.handlerFunction = handlerFunction;
 };
 
 IE8Compatibility.IE8EventHandler.prototype.dispose = function () {
-	'use strict';
-	
-	this.target = this.listener = this.handlerFunction = null;
+    'use strict';
+    
+    this.target = this.listener = this.handlerFunction = null;
 };
 
 

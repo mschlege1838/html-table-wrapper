@@ -22,14 +22,14 @@
  * ```
  */
 function ColumnValueSet() {
-	'use strict';
-	
-	if (window.Set) {
-		this.values = new Set();
-	} else {
-		this.values = [];
-		this.fallback = true;
-	}
+    'use strict';
+    
+    if (window.Set) {
+        this.values = new Set();
+    } else {
+        this.values = [];
+        this.fallback = true;
+    }
 }
 
 /**
@@ -57,22 +57,22 @@ ColumnValueSet.prototype.fallback = false;
  * @param {boolean} [noTrim] If `true`, `value` will be added to this set, as given, otherwise it will be `trim`med first.
  */
 ColumnValueSet.prototype.add = function (value, noTrim) {
-	'use strict';
-	
-	var values;
-	
-	values = this.values;
-	if (!noTrim) {
-		value = value.trim();
-	}
-	
-	if (this.fallback) {
-		if (values.indexOf(value) === -1) {
-			values.push(value);
-		}
-	} else {
-		values.add(value);
-	}
+    'use strict';
+    
+    var values;
+    
+    values = this.values;
+    if (!noTrim) {
+        value = value.trim();
+    }
+    
+    if (this.fallback) {
+        if (values.indexOf(value) === -1) {
+            values.push(value);
+        }
+    } else {
+        values.add(value);
+    }
 };
 
 /**
@@ -81,29 +81,29 @@ ColumnValueSet.prototype.add = function (value, noTrim) {
  * @returns {Iterator} An object that implements the ES6 protocol for Iterators. 
  */
 ColumnValueSet.prototype.iterator = function () {
-	'use strict';
-	
-	return this.fallback ? new ColumnValueSet.FallbackIterator(this.values) : this.values.values();
+    'use strict';
+    
+    return this.fallback ? new ColumnValueSet.FallbackIterator(this.values) : this.values.values();
 };
 
 if (window.Symbol && Symbol.iterator) {
-	ColumnValueSet.prototype[Symbol.iterator] = ColumnValueSet.prototype.iterator;
+    ColumnValueSet.prototype[Symbol.iterator] = ColumnValueSet.prototype.iterator;
 }
 
 /**
  * Clears all values from this `ColumnValueSet`.
  */
 ColumnValueSet.prototype.clear = function () {
-	'use strict';
-	
-	var values;
-	
-	values = this.values;
-	if (this.fallback) {
-		values.length = 0;
-	} else {
-		values.clear();
-	}
+    'use strict';
+    
+    var values;
+    
+    values = this.values;
+    if (this.fallback) {
+        values.length = 0;
+    } else {
+        values.clear();
+    }
 };
 
 
@@ -117,10 +117,10 @@ ColumnValueSet.prototype.clear = function () {
  * back the set.
  */
 ColumnValueSet.FallbackIterator = function (values) {
-	'use strict';
-	
-	this.values = values;
-	this.i = -1;
+    'use strict';
+    
+    this.values = values;
+    this.i = -1;
 }
 
 /**
@@ -129,14 +129,14 @@ ColumnValueSet.FallbackIterator = function (values) {
  * @returns {IterationValue} The next `IteratorResult` for this iterator.
  */
 ColumnValueSet.FallbackIterator.prototype.next = function () {
-	'use strict';
-	
-	var i, values;
-	
-	i = ++this.i;
-	values = this.values;
-	
-	return i < values.length ? new IterationValue(false, values[i]) : new IterationValue(true);
+    'use strict';
+    
+    var i, values;
+    
+    i = ++this.i;
+    values = this.values;
+    
+    return i < values.length ? new IterationValue(false, values[i]) : new IterationValue(true);
 };
 
 
