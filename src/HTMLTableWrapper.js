@@ -194,7 +194,7 @@ HTMLTableWrapper.prototype.sort = function () {
             
             columnIndex = sortDescriptor.columnIndex;
             
-            if (typeof columnIndex === 'number' && columnIndex > 0) {
+            if (typeof columnIndex === 'number' && columnIndex >= 0) {
                 cellA = rowA.cells[columnIndex];
                 cellB = rowB.cells[columnIndex];
                 compareValue = sortDescriptor.compare(cellA, cellB);
@@ -272,7 +272,7 @@ HTMLTableWrapper.prototype.filter = function () {
             
             columnIndex = filterDescriptor.columnIndex;
             
-            if (typeof columnIndex === 'number' && columnIndex > 0) {
+            if (typeof columnIndex === 'number' && columnIndex >= 0) {
                 shouldInclude = filterDescriptor.include(cells[columnIndex]);
             } else {
                 shouldInclude = filterDescriptor.include(row);

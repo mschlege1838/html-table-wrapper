@@ -937,16 +937,20 @@ HTMLTableWrapperControl.ColumnValueFilter.prototype.currentCellCache = null;
 HTMLTableWrapperControl.ColumnValueFilter.prototype.include = function (cell) {
     'use strict';
     
-    var cellInterpreter, currentCellCache, itr, itrVal;
+    var cellInterpreter, currentCellCache, itr, itrVal, defaultProcessing;
     
     cellInterpreter = this.cellInterpreter;
     
     if (cellInterpreter) {
         currentCellCache = this.currentCellCache;
         if (cellInterpreter.populateCellValues) {
-            cellInterpreter.populateCellValues(cell, currentCellCache)
+            defaultProcessing = cellInterpreter.populateCellValues(cell, currentCellCache)
         } else {
-            cellInterpreter(cell, currentCellCache);
+            defaultProcessing = cellInterpreter(cell, currentCellCache);
+        }
+        
+        if (defaultProcessing) {
+            currentCellCache.add(IE8Compatibility.getTextContent(cell));
         }
         
         itr = currentCellCache.iterator();
