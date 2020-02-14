@@ -21,32 +21,19 @@
  * @classdesc
  *
  * Simple implementation of an HTML DOM based context control. This class (lazily) creates a blank `HTMLDivElement` to hold the control's content, and applies class
- * names corresponding to when the control is opened, closed or should take on the 'mobile view' state.
+ * names corresponding to when the control is opened or closed. The control also repositions itself when the window is resized.
  * 
  * The first time a control is {@link ContextControl#open opened}, the {@link ContextControl#event:create create} event is fired. It is expected client code
  * will listen for this event and populate the control's element with desired content. The control's element can be obtained in such a listener via
  * `{@link ContextControl#getControlElement event.target.getControlElement()}`.
  * 
- * The control enters and exits the 'mobile view' state based upon the percentage of the window its backing element occupies. When not in mobile view state, the `left` and
- * `top` `CSSStyleDeclaration` properties of the control's backing element are set based upon the position of the offset element last passed to the {@link ContextControl#open} function,
- * and the {@link ContextControl#horizontalOffset} and {@link ContextControl#verticalOffset} properties of this class. When in mobile view state, the `left` and `top` properties
- * of the element's `CSSStyleDeclaration` are both set to `0`, and the class name {@link ContextControl.mobileViewClassName} is added to the element as well as `document.body`. When
- * the control exists mobile view state, the class name is removed (from both the element and `document.body`), and the `left` and `top` CSS properties are re-set in the manner
- * stated previously.
- * 
  * Upon being {@link ContextControl#open opened}, this class will begin listening for window resize events and {@link ContextControl#position position} itself upon
  * receiving them. Upon being {@link ContextControl#close closed}, this class will stop listening for resize events.
- *
- * Due to the fact `ContextControl` relies only on the window's size for determining mobile view state, it gives rise to the possiblity that more than one `ContextControl`
- * could be opened in non-mobile view state, but the window is resized such that mobile view state is entered. In this case, both `ContextControl`s would enter mobile view state,
- * but (assuming default styling), only one would be visible. Due to the unlikelihood of this scenario, it is not handled by this class, however if it is determined to be more
- * likely for a particular application, that application should implement communication between `ContextControl`s to handle this situation appropritely.
  * 
  * Of note, this class *only* sets element class names, and a limited set of CSS properties; most styling should be handled by dedicated stylesheets. The following is a baseline
  * stylesheet that uses the default class names:
  *
  * ``` css
- * /&ast; Common &ast;/
  * .context-control {
  *     position: absolute;
  *     opacity: 0;
@@ -64,20 +51,6 @@
  * .context-control.context-control-closed {
  *     display: none;
  * }
- * 
- * 
- * /&ast; Mobile View &ast;/
- * .context-control.context-control-mobile-view {
- *     height: 100%;
- *     width: 100%;
- *     left: 0;
- *     top: 0;
- *     overflow: auto;
- * }
- * 
- * body.context-control-mobile-view {
- *     overflow: hidden;
- * }
  * ```
  */
 function ContextControl(horizontalOffset, verticalOffset) {
@@ -87,7 +60,7 @@ function ContextControl(horizontalOffset, verticalOffset) {
     
     /**
      * The offset in pixels to be applied to the `left` `CSSStyleDeclaration` of this control's element with respect
-     * to the current offset element (last passed to {@link ContextControl#open}) when not in mobile view state.
+     * to the current offset element (last passed to {@link ContextControl#open}).
      *
      * @type {number}
      */
@@ -95,7 +68,7 @@ function ContextControl(horizontalOffset, verticalOffset) {
     
     /**
      * The offset in pixels to be applied to the `top` `CSSStyleDeclaration` of this control's element with respect
-     * to the current offset element (last passed to {@link ContextControl#open}) when not in mobile view state.
+     * to the current offset element (last passed to {@link ContextControl#open}).
      *
      * @type {number}
      */
@@ -135,21 +108,6 @@ ContextControl.dialogueOpenedClassName = 'context-control-opened';
  * @type {string}
  */
 ContextControl.dialogueClosedClassName = 'context-control-closed';
-
-/**
- * Class name added to control elements and `document.body` when the mobile view state is entered. Default value is `'context-control-mobile-view'`.
- * 
- * @type {string}
- */
-ContextControl.mobileViewClassName = 'context-control-mobile-view';
-
-/**
- * Decimal percentage of the screen a `ContextControl`'s element should occupy to trigger entry into mobile view state. Default value
- * is `0.35`.
- *
- * @type {number}
- */
-ContextControl.mobileThresholdRatio = 0.35;
 
 /**
  * Default horizontal offset in pixels. Default value is `10`.
@@ -247,14 +205,6 @@ ContextControl.prototype.controlElement = null;
  */
 ContextControl.prototype.offsetElement = null;
 
-/**
- * Current mobile view state information. `null` if this `ContextControl` is not in mobile view state.
- *
- * @private
- * @type {ContextControl.MobileViewState}
- */
-ContextControl.prototype.mobileViewState = null;
-
 
 // Instance Methods
 /**
@@ -301,7 +251,7 @@ ContextControl.prototype.handleEvent = function (event) {
 /**
  * Opens this `ContextControl`. If this is the first time the control is opened, the {@link ContextControl#event:create create} event will be fired, where it is
  * expected client code will populate the control with desired content. In any case, the {@link ContextControl.dialogueClosedClassName} class will be removed from
- * the control element, it will be {@link ContextControl#position positioned} relative to the given `offsetElement` (or mobile view state will be entered), this
+ * the control element, it will be {@link ContextControl#position positioned} relative to the given `offsetElement`, this
  * `ContextControl` will add itself as a listener for window resize events, and finally, the {@link ContextControl.dialogueOpenedClassName} class will be added to
  * the control element.
  *
@@ -341,88 +291,46 @@ ContextControl.prototype.open = function (offsetElement) {
     // Register for resize events (for re-positioning).
     IE8Compatibility.addEventListener(window, 'resize', this, false);
     
-    
     // Finish opening sequence.
     IE8Compatibility.addClass(controlElement, ContextControl.dialogueOpenedClassName);
     
-    return controlElement;
 };
 
 
 /**
- * Evaluates the percentage of the window this control's backing element occupies, and enters/exits mobile view state as necessary, based upon
- * {@link ContextControl.mobileThresholdRatio}. If it is determined mobile view state should not be entered, the element's `left` and `top` 
+ * Positions this control. The `left` and `top` 
  * `CSSStyleDeclaration` properties will be set based upon the position of the current offset element (last passed to {@link ContextControl#open})
- * and the {@link ContextControl#horizontalOffset} and {@link ContextControl#verticalOffset} properties of this control. If it is determined mobile
- * view state should be entered, the {@link ContextControl.mobileViewClassName} class is added to both the element and  `document.body`, and the 
- * `left` and `top` CSS properties are set to `0`.
+ * and the {@link ContextControl#horizontalOffset} and {@link ContextControl#verticalOffset} properties of this control.
  */
 ContextControl.prototype.position = function () {
     'use strict';
     
-    var controlElement, offset, windowWidth, windowHeight, areaRatio, dialogueHeight, dialogueWidth, lastOverflow,
-        mobileViewState, proposedLeft, proposedTop, referenceHeader, offsetElement;
+    var controlElement, offset,  proposedLeft, proposedTop,  offsetElement;
     
-    // If no offset element, not opened yet; return.
     offsetElement = this.offsetElement;
-    if (!offsetElement) {
+    controlElement = this.controlElement;
+    if (!offsetElement || !controlElement) {
         return;
     }
     
-    // Initialization.
-    controlElement = this.controlElement;
-    mobileViewState = this.mobileViewState;
+    // Calculate offset of offset element.
+    offset = ContextControl.getOffset(offsetElement);
     
-    windowWidth = 'innerWidth' in window ? window.innerWidth : document.documentElement.clientWidth;
-    windowHeight = 'innerHeight' in window ? window.innerHeight : document.documentElement.clientHeight;
-    dialogueWidth = mobileViewState ? mobileViewState.initialWidth : controlElement.offsetWidth;
-    dialogueHeight = mobileViewState ? mobileViewState.initialHeight : controlElement.offsetHeight;
-    
-    
-    // Calculate dialogue:window ratio.
-    areaRatio = (dialogueHeight * dialogueWidth) / (windowHeight * windowWidth);
-    
-    // If over the 'mobile-view' threshold (takes up the configured percentage of the screen, expand to
-    // fill entire screen. Otherwise position relative to offset control.
-    if (areaRatio >= ContextControl.mobileThresholdRatio) {
-        if (!mobileViewState) {
-            mobileViewState = this.mobileViewState = new ContextControl.MobileViewState(controlElement);
-            mobileViewState.setupMobileView();
-        }
-    } else {
-        // Restore default view if transitioning from mobile state.
-        if (mobileViewState) {
-            mobileViewState.restoreDefaultView();
-            this.mobileViewState = null;
-            dialogueWidth = controlElement.offsetWidth;
-            dialogueHeight = controlElement.offsetHeight;
-        }
-        
-        // Calculate offset of offset element.
-        offset = ContextControl.getOffset(offsetElement);
-        
-        // Calculate proposed dialogue coordinates relative to offset element.
-        proposedLeft = offset.x + this.horizontalOffset;
-        proposedTop = offset.y + offsetElement.offsetHeight + this.verticalOffset;
-        
-        // Place dialogue along right edge of screen if placing it at proposed left would extend beyond the screen's width, otherwise proposed left.
-        controlElement.style.left = (proposedLeft + dialogueWidth > window.innerWidth ? window.innerWidth - dialogueWidth - (window.outerWidth - window.innerWidth) : proposedLeft) + 'px';
-        // Place dialogue along bottom of screen if placing it at proposed top would extend beyond the screens height, otherwise proposed height.
-        controlElement.style.top = (proposedTop + dialogueHeight > window.innerHeight ? Math.max(0, window.innerHeight - dialogueHeight) : proposedTop) + 'px';
-    }
-    
+    // Calculate proposed dialogue coordinates relative to offset element.
+    controlElement.style.left = (offset.x + this.horizontalOffset) + 'px';
+    controlElement.style.top = (offset.y + offsetElement.offsetHeight + this.verticalOffset) + 'px';
 };
 
 /**
  * Closes this `ContextControl`. The {@link ContextControl.dialogueOpenedClassName} will be removed from this
- * control's backing element, mobile view state will be exited (if currently active), this `ContextControl` will remove
+ * control's backing element, this `ContextControl` will remove
  * itself as a listener for window resize events, and finally, the {@link ContextControl.dialogueClosedClassName}
  * will be added to the backing element.
  */
 ContextControl.prototype.close = function () {
     'use strict';
     
-    var controlElement, mobileViewState;
+    var controlElement;
     
     controlElement = this.controlElement;
     
@@ -432,14 +340,7 @@ ContextControl.prototype.close = function () {
     
     IE8Compatibility.removeClass(controlElement, ContextControl.dialogueOpenedClassName);
     
-    
-    if (mobileViewState = this.mobileViewState) {
-        mobileViewState.restoreDefaultView();
-        this.mobileViewState = null;
-    }
-    
     IE8Compatibility.removeEventListener(window, 'resize', this, false);
-    
     
     IE8Compatibility.addClass(controlElement, ContextControl.dialogueClosedClassName);
 };
@@ -465,84 +366,6 @@ ContextControl.prototype.getControlElement = function () {
 
 
 // Nested Types
-// MobileViewState
-/**
- * 
- * @constructor
- * @private
- * @param {HTMLElement} controlElement The backing element for the `ContextControl` being processed.
- * @classdesc
- *
- * Maintains the information necessary for entering and exiting 'mobile view' state. Used internally
- * by {@link ContextControl}.
- */
-ContextControl.MobileViewState = function (controlElement) {
-    'use strict';
-    
-    /**
-     * Parent {@link ContextControl}'s backing element.
-     *
-     * @private
-     * @type {HTMLElement}
-     */
-    this.controlElement = controlElement;
-    
-    /**
-     * Width of the backing element at the time mobile-view state was entered.
-     *
-     * @package
-     * @type {number}
-     */
-    this.initialWidth = controlElement.offsetWidth;
-    
-    /**
-     * Height of the backing element at the time mobile-view state was entered.
-     *
-     * @package
-     * @type {number}
-     */
-    this.initialHeight = controlElement.offsetHeight;
-};
-
-/**
- * Removes the `left` and `top` `CSSStyleDeclaration` properties from the backing element; assigns the
- * {@link ContextControl.mobileViewClassName} class name to the backing element and `document.body`.
- *
- * @package
- */
-ContextControl.MobileViewState.prototype.setupMobileView = function () {
-    'use strict';
-    
-    var controlElement, controlStyle;
-    
-    controlElement = this.controlElement;
-    controlStyle = controlElement.style;
-    
-    controlStyle.left = controlStyle.top = '0px';
-    
-    IE8Compatibility.addClass(controlElement, ContextControl.mobileViewClassName);
-    IE8Compatibility.addClass(document.body, ContextControl.mobileViewClassName);
-};
-
-/**
- * Removes the {@link ContextControl.mobileViewClassName} class name from the backing element and `document.body`.
- * It is assumed the `left` and `top` `CSSStyleDeclaration` properties will be calculated and assigned by calling
- * code.
- *
- * @package
- */
-ContextControl.MobileViewState.prototype.restoreDefaultView = function () {
-    'use strict';
-    
-    var controlElement;
-    
-    controlElement = this.controlElement;
-        
-    IE8Compatibility.removeClass(controlElement, ContextControl.mobileViewClassName);
-    IE8Compatibility.removeClass(document.body, ContextControl.mobileViewClassName);
-};
-
-
 
 // OffsetCoordinates
 /**

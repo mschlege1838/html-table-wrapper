@@ -1,5 +1,3 @@
-
-/* Common */
 .context-control {
     position: absolute;
     opacity: 0;
@@ -17,19 +15,3 @@
 .context-control.context-control-closed {
     display: none;
 }
-
-
-/* Mobile View */
-.context-control.context-control-mobile-view {
-    height: 100%;
-    width: 100%;
-    left: 0;
-    top: 0;
-    overflow: auto;
-}
-
-body.context-control-mobile-view {
-    overflow: hidden;
-}
-
-
