@@ -71,7 +71,7 @@ make calls back to their parent to trigger table-wide processing via [processTab
 
 This example makes use of another class defined within the full configuration of HTMLTableWrapper.js called [ContextControl].
 A [ContextControl] is a convenience class that creates an `HTMLDivElement` as a 'content box', and handles positioning it relative to another
-element, adjusting to small window sizes, and hiding it when [close]d. Its model for defining content is 'lazy initialization;' upon the first
+element when [opened], as well as hiding it when [close]d. Its model for defining content is 'lazy initialization;' upon the first
 call to its [open] method, it will dispatch a `create` event to anything that has added itself via `addEventListener`. Content should be defined 
 in the handlers of this event.
 
