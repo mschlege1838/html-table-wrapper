@@ -41,4 +41,4 @@ document.addEventListener('DOMContentLoaded', function {
 </script>
 ```
 
-The full example can be found [here](examples/basic/gradebook.html).
+The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/examples/gradebook.html).
