@@ -25,7 +25,8 @@ Consider the simple example of a webpage that shows a gradebook:
 <!-- ... -->
 ```
 
-Adding the default sort/filter dialogue to the table is as simple as adding something akin to the following to your webpage:
+Adding the default sort/filter dialogue to the table is as simple as adding something akin to the following 
+to your webpage:
 
 ``` html
 <link rel="stylesheet" href="../html-table-wrapper.min.css" />

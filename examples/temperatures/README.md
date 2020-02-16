@@ -1,7 +1,8 @@
 # Defining Custom Controls
 
-Sometimes tables present specialized data for which the default dialogue isn't necessarily a good fit. In these cases, a [`ColumnControlFactory`][ColumnControlFactory]
-can be defined to return custom [`ColumnControl`][ColumnControl]s.
+Sometimes tables present specialized data for which the default dialogue isn't necessarily a good fit. In 
+these cases, a [`ColumnControlFactory`][ColumnControlFactory] can be defined to return custom 
+[`ColumnControl`][ColumnControl]s.
 
 Consider a webpage that shows historical temperature readings from various cities around the world:
 ```html
@@ -46,37 +47,45 @@ Consider a webpage that shows historical temperature readings from various citie
 <!-- ... -->
 ```
 
-Suppose for the columns holding temperature data, a custom control is desired that presents the option to convert all the temperatures
-in the column from one temperature unit to another, and provides a simple filter field for temperatures greater than, less than, equal
-to, etc. to an entered temperature.
+Suppose for the columns holding temperature data, a custom control is desired that presents the option to convert 
+all the temperatures in the column from one temperature unit to another, and provides a simple filter field for 
+temperatures greater than, less than, equal to, etc. to an entered temperature.
 
-To implement this, we first define some supporting objects/classes. As these are not directly related to using HTMLTableWrapper.js, we
-only explain them enough to make clear their function. For details on their implementation, consult the source files directly:
+To implement this, we first define some supporting objects/classes. As these are not directly related to using 
+HTMLTableWrapper.js, we only explain them enough to make clear their function. For details on their implementation, 
+consult the source files directly:
+
 - [`conversions.js`](conversions.js)
 
    Defines direct temperature-to-temperature conversions, and wraps them in a 'dictionary' object describing them.
 
 - [`TemperatureConverter`](TemperatureConverter.js)
 
-   A helper class that takes the 'dictionary' object from `conversions.js` and a backing `HTMLTableElement` containing temperature-related
-   data. It exports a single method: `convertTo(columnIndex, unit)`. As its name implies, the function converts the column `columnIndex` of
-   the backing table to the given `unit`, rounded to the nearest hundredth. To avoid data loss, conversions are always performed based upon
-   the `data-orig-temp` and `data-orig-unit` attributes.
+   A helper class that takes the 'dictionary' object from `conversions.js` and a backing `HTMLTableElement` 
+   containing temperature-related data. It exports a single method: `convertTo(columnIndex, unit)`. As its name 
+   implies, the function converts the column `columnIndex` of the backing table to the given `unit`, rounded 
+   to the nearest hundredth. To avoid data loss, conversions are always performed based upon the `data-orig-temp` 
+   and `data-orig-unit` attributes.
 
 Next, we declare a [`ColumnControl`][ColumnControl] that makes use of `TemperatureConverter`. 
 
-A [`ColumnControl`][ColumnControl] is a special object that defines functions its parent [`HTMLTableWrapperListener`][HTMLTableWrapperListener] calls on
-to [`open`][ColumnControl-open], [`close`][ColumnControl-close], and determine how the control's column should be [`sorted`][ColumnControl-getSortDescriptor] 
-and [`filtered`][ColumnControl-getFilterDescriptor] based upon the its state. [`ColumnControl`][ColumnControl]s can optionally (and will typically)
-make calls back to their parent to trigger table-wide processing via [`processTable`][HTMLTableWrapperListener-processTable].
+A [`ColumnControl`][ColumnControl] is a special object that defines functions its parent 
+[`HTMLTableWrapperListener`][HTMLTableWrapperListener] calls on to [`open`][ColumnControl-open], 
+[`close`][ColumnControl-close], and determine how the control's column should be 
+[`sorted`][ColumnControl-getSortDescriptor] and [`filtered`][ColumnControl-getFilterDescriptor] based upon its 
+state. [`ColumnControl`][ColumnControl]s can optionally (and will typically) make calls back to their parent 
+to trigger table-wide processing via [`processTable`][HTMLTableWrapperListener-processTable].
 
-This example makes use of another class defined within the full configuration of HTMLTableWrapper.js called [`ContextControl`][ContextControl].
-A [`ContextControl`][ContextControl] is a convenience class that creates an `HTMLDivElement` as a 'content box', and handles positioning it relative to another
-element when [`open`][ContextControl-open]ed, as well as hiding it when [`close`][ContextControl-close]d. Its model for defining content is 'lazy initialization;' upon the first
-call to its [`open`][ContextControl-open] method, it will dispatch a [`create`][ContextControl_event-create] event to anything that has added itself via 
+This example makes use of another class defined within the full configuration of HTMLTableWrapper.js called 
+[`ContextControl`][ContextControl]. A [`ContextControl`][ContextControl] is a convenience class that creates 
+an `HTMLDivElement` as a 'content box', and handles positioning it relative to another element when 
+[`open`][ContextControl-open]ed, as well as hiding it when [`close`][ContextControl-close]d. Its model for 
+defining content is 'lazy initialization;' upon the first call to its [`open`][ContextControl-open] method, 
+it will dispatch a [`create`][ContextControl_event-create] event to anything that has added itself via 
 [`addEventListener`][ContextControl-addEventListener]. Content should be defined in the handlers of this event.
 
-With that, we can define our constructor `TemperatureColumnControl`, as well as its `init`, `open` and `close` functions:
+With that, we can define our constructor `TemperatureColumnControl`, as well as its `init`, `open` and 
+`close` functions:
 ``` javascript
 function TemperatureColumnControl(columnIndex, parent, temperatureConverter) {
     'use strict';
@@ -106,7 +115,8 @@ TemperatureColumnControl.prototype.close = function () {
 };
 ```
 
-We also know we'll need to convert the temperatures of the column the `TemperatureColumnControl` owns using the backing `TemperatureConverter`:
+We also know we'll need to convert the temperatures of the column the `TemperatureColumnControl` owns using 
+the backing `TemperatureConverter`:
 ``` javascript
 TemperatureColumnControl.prototype.convertTo = function (unit) {
     'use strict';
@@ -115,14 +125,17 @@ TemperatureColumnControl.prototype.convertTo = function (unit) {
 };
 ```
 
-To define the control's content, we make use of another helper class defined in the full configuration: [`XMLBuilder`][XMLBuilder]. [`XMLBuilder`][XMLBuilder] is a simple 
-builder for XML strings that 'escapes' (replaces with corresponding entities) all reserved XML characters in the data passed to it. It presents 
-a simple, state-based, interface allowing client code to [`startTag`][XMLBuilder-startTag]s, add [`attribute`][XMLBuilder-attribute]s to them, define their [`content`][XMLBuilder-content], 
-and [`closeTag`][XMLBuilder-closeTag]s that are completed.
+To define the control's content, we make use of another helper class defined in the full configuration: 
+[`XMLBuilder`][XMLBuilder]. [`XMLBuilder`][XMLBuilder] is a simple builder for XML strings that 'escapes' 
+(replaces with corresponding entities) all reserved XML characters in the data passed to it. It presents a 
+simple, state-based, interface allowing client code to [`startTag`][XMLBuilder-startTag]s, add 
+[`attribute`][XMLBuilder-attribute]s to them, define their [`content`][XMLBuilder-content], and 
+[`closeTag`][XMLBuilder-closeTag]s that are completed.
 
-In our control's content, we will also make use of labeled fields, so we also need to define a mechanism for generating DOM IDs that are unique to the document.
-To this end, we use a simple counter-based strategy where we return a unique 'base' string that is built upon to generate the ID for each individual field in a
-single control:
+In our control's content, we will also make use of labeled fields, so we also need to define a mechanism for
+generating DOM IDs that are unique to the document. To this end, we use a simple counter-based strategy where 
+we return a unique 'base' string that is built upon to generate the ID for each individual field in a single
+control:
 ``` javascript
 TemperatureColumnControl.idCounter = 0;
 
@@ -133,8 +146,9 @@ TemperatureColumnControl.getIdBase = function () {
 };
 ```
 
-With that, we can declare the `defineContent` function. In it, we will build all the unique IDs we need, build our XML string, use `insertAdjacentHTML` to inject
-it into the containing element, and then register to listen for various events on relevant elements in the control.
+With that, we can declare the `defineContent` function. In it, we will build all the unique IDs we need, build 
+our XML string, use `insertAdjacentHTML` to inject it into the containing element, and then register to listen 
+for various events on relevant elements in the control.
 ``` javascript
 TemperatureColumnControl.prototype.defineContent = function (container) {
     'use strict';
@@ -160,18 +174,24 @@ TemperatureColumnControl.prototype.defineContent = function (container) {
     .closeTag()
     .startTag('div').attribute('class', 'unit-selection')
         .startTag('span')
-            .startTag('input').attribute('id', fId).attribute('class', 'temperature-unit').attribute('name', unitInputSetName)
-                    .attribute('value', 'F').attribute('type', 'radio').closeTag()
+            .startTag('input').attribute('id', fId).attribute('class', 'temperature-unit')
+                    .attribute('name', unitInputSetName)
+                    .attribute('value', 'F')
+                    .attribute('type', 'radio').closeTag()
             .startTag('label').attribute('for', fId).attribute('class', 'fahrenheit').closeTag(true)
         .closeTag()
         .startTag('span')
-            .startTag('input').attribute('id', cId).attribute('class', 'temperature-unit').attribute('name', unitInputSetName)
-                    .attribute('value', 'C').attribute('type', 'radio').closeTag()
+            .startTag('input').attribute('id', cId).attribute('class', 'temperature-unit')
+                    .attribute('name', unitInputSetName)
+                    .attribute('value', 'C')
+                    .attribute('type', 'radio').closeTag()
             .startTag('label').attribute('for', cId).attribute('class', 'celsius').closeTag(true)
         .closeTag()
         .startTag('span')
-            .startTag('input').attribute('id', kId).attribute('class', 'temperature-unit').attribute('name', unitInputSetName)
-                    .attribute('value', 'K').attribute('type', 'radio').closeTag()
+            .startTag('input').attribute('id', kId).attribute('class', 'temperature-unit')
+                    .attribute('name', unitInputSetName)
+                    .attribute('value', 'K')
+                    .attribute('type', 'radio').closeTag()
             .startTag('label').attribute('for', kId).attribute('class', 'kelvin').closeTag(true)
         .closeTag()
     .closeTag()
@@ -202,7 +222,8 @@ TemperatureColumnControl.prototype.defineContent = function (container) {
 };
 ```
 
-We can now declare necessary [`getFilterDescriptor`][ColumnControl-getFilterDescriptor] and [`getSortDescriptor`][ColumnControl-getSortDescriptor] callback functions. As we're not implementing sorting in this
+We can now declare necessary [`getFilterDescriptor`][ColumnControl-getFilterDescriptor] and 
+[`getSortDescriptor`][ColumnControl-getSortDescriptor] callback functions. As we're not implementing sorting in this
 example, [`getSortDescriptor`][ColumnControl-getSortDescriptor]'s definition is simple:
 ``` javascript
 TemperatureColumnControl.prototype.getSortDescriptor = function () {
@@ -228,17 +249,20 @@ TemperatureColumnControl.prototype.getFilterDescriptor = function () {
     
     operand = Number.parseFloat(controlElement.querySelector('.temperature-filter-operand').value);
     if (Number.isNaN(operand)) {
-        // Though SimpleFilterDescriptor can handle it, we're opting not to filter if the entered value is not a number.
+        // Though SimpleFilterDescriptor can handle it, we're opting not to filter if the entered value 
+        // is not a number.
         return null;
     }
     
-    return new SimpleFilterDescriptor(this.columnIndex, operand, controlElement.querySelector('.temperature-filter-operator').value);
+    return new SimpleFilterDescriptor(this.columnIndex, operand, 
+            controlElement.querySelector('.temperature-filter-operator').value);
 };
 ```
 
-With that, we can wire everything together in our `handleEvent` function. We also declare a distinct function for updating the parent. In it
-we make the expected call to [`processTable`][HTMLTableWrapperListener-processTable], but also re[`position`][ColumnControl-position] the [`ContextControl`][ContextControl]
-afterwards, as it is often the case column widths will change in auto-sized tables after changes in the displayed rows.
+With that, we can wire everything together in our `handleEvent` function. We also declare a distinct function 
+for updating the parent. In it we make the expected call to [`processTable`][HTMLTableWrapperListener-processTable],
+but also re[`position`][ColumnControl-position] the [`ContextControl`][ContextControl] afterwards, as it is often 
+the case column widths will change in auto-sized tables after changes in the displayed rows.
 ``` javascript
 TemperatureColumnControl.prototype.handleEvent = function (event) {
     'use strict';
@@ -277,10 +301,13 @@ TemperatureColumnControl.prototype.updateParent = function () {
 };
 ```
 
-We next declare a [`ColumnControlFactory`][ColumnControlFactory] that returns instances of `TemperatureColumnControl`s for temperature related columns. A [`ColumnControlFactory`][ColumnControlFactory] is
-a [`function`][HTMLTableWrapperListener~getColumnControl] or an object that declares a function called [`getColumnControl`][ColumnControlFactory-getColumnControl] that takes the arguments of the `columnIndex` for which a column control is being
-requested, and the `parent` [`HTMLTableWrapperListener`][HTMLTableWrapperListener]. If the factory supports the column, it should return an appropriate [`ColumnControl`][ColumnControl], otherwise it is
-permissable to return nothing.
+We next declare a [`ColumnControlFactory`][ColumnControlFactory] that returns instances of `TemperatureColumnControl`s
+for temperature related columns. A [`ColumnControlFactory`][ColumnControlFactory] is a 
+[`function`][HTMLTableWrapperListener~getColumnControl] or an object that declares a function called 
+[`getColumnControl`][ColumnControlFactory-getColumnControl] that takes the arguments of the `columnIndex` for 
+which a column control is being requested, and the `parent` [`HTMLTableWrapperListener`][HTMLTableWrapperListener]. 
+If the factory supports the column, it should return an appropriate [`ColumnControl`][ColumnControl], otherwise 
+it is permissable to return nothing.
 
 Because we share one instance of `TemperatureConverter` in this example, we use the object-based approach:
 ``` javascript
@@ -317,7 +344,8 @@ document.addEventListener('DOMContentLoaded', function () {
     
     table = document.getElementById('temperatures');
     
-    new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init();
+    new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(
+            new TemperatureConverter(table, temperatureDescriptions))).init();
 });
 
 </script>
