@@ -165,7 +165,17 @@ found [here](https://mschlege1838.github.io/html-table-wrapper/LICENSE).
 
 ## Reporting Issues
 
+Please report any issues or bugs encountered in using HTMLTableWrapper.js through this repository's
+[issues](https://github.com/mschlege1838/html-table-wrapper/issues) section.
+
 ## Contributing
+
+If you'd like to develop an enhancement, or fix a bug yourself, please fork this repository, make your change,
+and submit a pull request.
+
+We ask that pull requests only contain changes to the HTMLTableWrapper.js library itself; if you're developing
+a plugin to it, please create and maintain it in your own repositry, and simply list HTMLTableWrapper.js as
+a dependency.
 
 ## Building
 HTMLTableWrapper.js uses [Gulp](https://gulpjs.com/) to build its distribution package. All build dependencies 
