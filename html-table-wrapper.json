@@ -1,8 +1,8 @@
 {
   "name": "html-table-wrapper",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A standalone sort/filter utility for HTMLTableElements.",
-  "keywords": "html table sort filter",
+  "keywords": ["html", "table", "sort", "filter"],
   "author": {
     "name": "Marty Schlegel",
     "email": "martin.schlegel.1838@outlook.com"
