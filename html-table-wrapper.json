@@ -8,7 +8,7 @@
     "email": "martin.schlegel.1838@outlook.com"
   },
   "license": "MIT AND BSD-3-Clause",
-  "browser": "html-table-wrapper.min.js"
+  "browser": "html-table-wrapper.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/mschlege1838/html-table-wrapper"

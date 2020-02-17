@@ -1,7 +1,7 @@
 {
   "name": "html-table-wrapper-src",
   "version": "1.0.0",
-  "private": true
+  "private": true,
   "description": "Source/Build package for html-table-wrapper",
   "author": {
     "name": "Marty Schlegel",
