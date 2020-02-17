@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>HTMLTableWrapper.js - Drinks</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper.min.js"></script>
+
+<!-- Function-based Interpretation -->
+<script src="list-cell-interpreter-fn.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
+    
+    new HTMLTableWrapperListener(document.getElementById('drinks'), null, interpretListCell).init();
+});
+</script>
+
+
+<!-- Traditional object-based Interpretation -->
+<!-- <script src="list-cell-interpreter.js"></script> -->
+<!-- <script> -->
+<!-- document.addEventListener('DOMContentLoaded', function () { -->
+    <!-- 'use strict'; -->
+    
+    <!-- new HTMLTableWrapperListener(document.getElementById('drinks'), null, new ListCellInterpreter()).init(); -->
+<!-- }); -->
+<!-- </script> -->
+
+
+<!-- ES6 object-based Interpretation -->
+<!-- <script src="list-cell-interpreter-es6.js"></script>  -->
+<!-- <script> -->
+<!-- document.addEventListener('DOMContentLoaded', () => { -->
+    <!-- 'use strict'; -->
+    
+    <!-- new HTMLTableWrapperListener(document.getElementById('drinks'), null, new ListCellInterpreter()).init(); -->
+<!-- }); -->
+<!-- </script> -->
+
+
+
+
+
+</head>
+<body>
+    <h1>Drink Receipes</h1>
+    <table id="drinks">
+        <thead>
+            <tr>
+                <th>Drink</th>
+                <th>Source</th>
+                <th>Ingredients</th>
+                <th>Instructions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Manhattan (Traditional)</td>
+                <td><a href="https://www.makersmark.com/cocktails/makers-46-manhattan">Maker's Mark</a></td>
+                <td>
+                    <ul>
+                        <li>Bourbon(2 parts)</li>
+                        <li>Sweet Vermouth(1 part)</li>
+                        <li>Bitters(2 dashes)</li>
+                        <li>Maraschino Cherry</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Combine Bourbon, Vermouth and Bitters in a mixing glass</li>
+                        <li>Stir and strain into a chilled cocktail glass neat, or on the rocks</li>
+                        <li>Garnish with cherry</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td>Manhattan (Traditional)</td>
+                <td><a href="https://www.allrecipes.com/recipe/222415/manhattan-cocktail">Allrecipes</a></td>
+                <td>
+                    <ul>
+                        <li>Rye(2 oz)</li>
+                        <li>Sweet Vermouth(1/2 oz)</li>
+                        <li>Bitters(1 dash)</li>
+                        <li>Maraschino Cherry</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Combine rye, vermouth, and bitters in a cocktail mixing class. Add ice and stir until chilled. Strain into a chilled cocktail glass.</li>
+                        <li>Garnish with a maraschino cherry.</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td>Manhattan (Perfect)</td>
+                <td><a href="https://www.liquor.com/recipes/bulleit-perfect-manhattan">Liquor.com</a></td>
+                <td>
+                    <ul>
+                        <li>Rye(3/4 oz)</li>
+                        <li>Dry Vermouth(1/4 oz)</li>
+                        <li>Sweet Vermouth(1/2 oz)</li>
+                        <li>Orange Bitters(1 dash)</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Add the rye and both vermouths to a mixing glass and fill with ice.</li>
+                        <li>Stir, and strain into a rocks glass filled with fresh ice.</li>
+                        <li>Top with the bitters and garnish with a Maraschino cherry.</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td>Old Fashioned</td>
+                <td><a href="https://www.makersmark.com/cocktails/old-fashioned">Maker's Mark</a></td>
+                <td>
+                    <ul>
+                        <li>Bourbon(1-1/2 parts)</li>
+                        <li>Water(1 splash)</li>
+                        <li>Bitters(2 dashes)</li>
+                        <li>Sugar(1 tsp)</li>
+                        <li>Orange(1 peel)</li>
+                        <li>Maraschino Cherry</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Dissolve or muddle sugar with a splash of water in an Old Fashioned glass.</li>
+                        <li>Fill glass 3/4 full of ice.</li>
+                        <li>Add bourbon and bitters.</li>
+                        <li>Garnish with orange peel and cherry.</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td>Old Fashioned (Muddled)</td>
+                <td><a href="https://www.makersmark.com/cocktails/old-fashioned">Maker's Mark</a></td>
+                <td>
+                    <ul>
+                        <li>Bourbon(1-1/2 parts)</li>
+                        <li>Water(1 splash)</li>
+                        <li>Bitters(2 dashes)</li>
+                        <li>Sugar(1 tsp)</li>
+                        <li>Orange(1 slice)</li>
+                        <li>Maraschino Cherry</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Muddle sugar, bitters, orange slice, cherry and water in an Old Fashioned glass.</li>
+                        <li>Remove the orange rind.</li>
+                        <li>Fill glass 3/4 full of ice.</li>
+                        <li>Add borbon and stir.</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td>Old Fashioned</td>
+                <td><a href="https://www.allrecipes.com/recipe/162397/classic-old-fashioned/">Allrecipes</a></td>
+                <td>
+                    <ul>
+                        <li>Simple Syrup(2 tsp)</li>
+                        <li>Water(1 tsp)</li>
+                        <li>Bitters(2 dashes)</li>
+                        <li>Ice Cubes(1 cup)</li>
+                        <li>Bourbon(1-1/2 oz)</li>
+                        <li>Orange(1 slice)</li>
+                        <li>Maraschino Cherry</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Pour the simple syrup, water, and bitters into a whiskey glass.</li>
+                        <li>Stir to combine, then place the ice cubes in the glass.</li>
+                        <li>Pour bourbon over the ice and garnish with the orange slice and maraschino cherry.</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td>Old Fashioned</td>
+                <td><a href="https://www.esquire.com/food-drink/drinks/recipes/a3880/old-fashioned-drink-recipe/">Esquire</a></td>
+                <td>
+                    <ul>
+                        <li>Bourbon(2 oz)</li>
+                        <li>Bitters(2 dashes)</li>
+                        <li>Sugar(1 cube)</li>
+                        <li>Club Soda</li>
+                        <li>Orange(1 twist)</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Place the sugar cube in an Old Fashioned glass.</li>
+                        <li>Wet it down with Angostura bitters and a short splash of club soda.</li>
+                        <li>Crush the sugar with a wooden muddler, then rotate the glass so that the sugar grains and bitters give it a lining. </li>
+                        <li>Add a large ice cube. Pour in the bourbon.</li>
+                        <li>Garnish with an orange twist, and serve with a stirring rod if you're so inclined.</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td>Cosmopolitan</li>
+                <td><a href="https://www.allrecipes.com/recipe/221891/cosmopolitan-cocktail/">Allrecipes</a></td>
+                <td>
+                    <ul>
+                        <li>Vodka(1-1/2 oz)</li>
+                        <li>Lime Juice(1/4 oz)</li>
+                        <li>Triple Sec(1/4 oz)</li>
+                        <li>Cranberry Juice(1/4 oz)</li>
+                        <li>Ice Cubes(1 cup)</li>
+                        <li>Lime(1 wedge)</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Combine vodka, lime juice, triple sec, and cranberry juice in a cocktail shaker. Add ice, cover and shake until chilled. Strain into a chilled cocktail glass.</li>
+                        <li>Garnish with a lime wedge.</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td>Cosmopolitan</td>
+                <td><a href="https://www.liquor.com/recipes/cosmopolitan/#gs.vi5vkt">Liquor.com</a></td>
+                <td>
+                    <ul>
+                        <li>Vodka, Citrus(1-1/2 oz)</li>
+                        <li>Cointreau(1 oz)</li>
+                        <li>Lime Juice(1/2 oz)</li>
+                        <li>Cranberry Juice(1 dash)</li>
+                        <li>Lime(1 wheel)</li>
+                    </ul>
+                </td>
+                <td>
+                    <ol>
+                        <li>Add vodka, Cointreau, lime juice and cranberry juice into a shaker with ice and shake.</li>
+                        <li>Strain into a chilled cocktail glass.</li>
+                        <li>Garnish with a lime wheel.</li>
+                    </ol>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

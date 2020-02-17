@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: SimpleSortDescriptor</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: SimpleSortDescriptor</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>SimpleSortDescriptor<span class="signature">(columnIndex, descending<span class="signature-attributes">opt</span>, columnType<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description"><p>Simple/direct implementation of <a href="SortDescriptor.html">SortDescriptor</a>.</p></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="SimpleSortDescriptor"><span class="type-signature"></span>new SimpleSortDescriptor<span class="signature">(columnIndex, descending<span class="signature-attributes">opt</span>, columnType<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>columnIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Column index for which this descriptor applies.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>descending</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p><code>true</code> if the result of this descriptor is to be inverted.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>columnType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <a href="HTMLTableWrapperUtils.html#.COLUMN_TYPE_INFER">HTMLTableWrapperUtils.COLUMN_TYPE_INFER</a>
+                
+                </td>
+            
+
+            <td class="description last"><p><code>HTMLTableWrapperUtils.COLUMN_TYPE_*</code> constant indicating how this column is to be sorted.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="implements">Implements:</dt>
+    <dd class="implements"><ul>
+        
+            <li><a href="SortDescriptor.html">SortDescriptor</a></li>
+        
+    </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="SimpleSortDescriptor.js.html">SimpleSortDescriptor.js</a>, <a href="SimpleSortDescriptor.js.html#line17">line 17</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="columnIndex"><span class="type-signature"></span>columnIndex<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Optional property indicating the index of the column this <code>SortDescriptor</code> describes how to sort. If this property
+is not a positive number, it will be assumed this <code>SortDescriptor</code> describes how to sort entire rows.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="implements">Implements:</dt>
+    <dd class="implements"><ul>
+        
+            <li><a href="SortDescriptor.html#columnIndex">SortDescriptor#columnIndex</a></li>
+        
+    </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapper.js.html">HTMLTableWrapper.js</a>, <a href="HTMLTableWrapper.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="columnType"><span class="type-signature"></span>columnType<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>How this column is to be sorted. If <a href="HTMLTableWrapperUtils.html#.COLUMN_TYPE_INFER">HTMLTableWrapperUtils.COLUMN_TYPE_INFER</a>, will attempt to convert values to
+numbers prior to running the sort comparison; values that cannot be converted will be compared as strings,
+and will be sorted under those successfully converted to numbers. If <a href="HTMLTableWrapperUtils.html#.COLUMN_TYPE_TEXT">HTMLTableWrapperUtils.COLUMN_TYPE_TEXT</a>, all
+values will be compared as strings only.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="SimpleSortDescriptor.js.html">SimpleSortDescriptor.js</a>, <a href="SimpleSortDescriptor.js.html#line42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="compare"><span class="type-signature"></span>compare<span class="signature">(itemA, itemB)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Callback comparator function that compares one cell or row to another. If <a href="SortDescriptor.html#columnIndex">SortDescriptor#columnIndex</a> is defined, and
+a postiive number, <code>HTMLTableCellElement</code>s in the approprite position within the rows being compared will be passed to this
+function corresponding to this <code>SortDescriptor</code>'s <a href="SortDescriptor.html#columnIndex">SortDescriptor#columnIndex</a> property, otherwise the <code>HTMLTableRowElement</code>s
+undergoing comparison will be passed.</p>
+<p>If this function returns a value greater than 0, the relevant row corresponding to the first given item will be sorted below the second,
+if a value less than 0, the first will be sorted above the second, and if 0, no preference will be applied.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>itemA</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLCellElement</span>
+|
+
+<span class="param-type">HTMLTableRowElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Reference cell or row.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>itemB</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLCellElement</span>
+|
+
+<span class="param-type">HTMLTableRowElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Compare cell or row.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="implements">Implements:</dt>
+    <dd class="implements"><ul>
+        
+            <li><a href="SortDescriptor.html#compare">SortDescriptor#compare</a></li>
+        
+    </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapper.js.html">HTMLTableWrapper.js</a>, <a href="HTMLTableWrapper.js.html#line21">line 21</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A value greater than 0 if <code>itemA</code> should be sorted below <code>itemB</code>, less than 0 for above, 0 for no preference.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ColumnValueSet.html">ColumnValueSet</a></li><li><a href="ColumnValueSet.FallbackIterator.html">FallbackIterator</a></li><li><a href="ContextControl.html">ContextControl</a></li><li><a href="ContextControl.OffsetCoordinates.html">OffsetCoordinates</a></li><li><a href="HTMLTableWrapper.html">HTMLTableWrapper</a></li><li><a href="HTMLTableWrapperControl.html">HTMLTableWrapperControl</a></li><li><a href="HTMLTableWrapperControl.ColumnValueFilter.html">ColumnValueFilter</a></li><li><a href="HTMLTableWrapperListener.html">HTMLTableWrapperListener</a></li><li><a href="HTMLTableWrapperUtils.html">HTMLTableWrapperUtils</a></li><li><a href="IE8Compatibility.html">IE8Compatibility</a></li><li><a href="IE8Compatibility.IE8EventHandler.html">IE8EventHandler</a></li><li><a href="IE9Compatibility.html">IE9Compatibility</a></li><li><a href="IEGeneralCompatibility.html">IEGeneralCompatibility</a></li><li><a href="IterationValue.html">IterationValue</a></li><li><a href="SimpleEventDispatcher.html">SimpleEventDispatcher</a></li><li><a href="SimpleEventDispatcher.SimpleEvent.html">SimpleEvent</a></li><li><a href="SimpleFilterDescriptor.html">SimpleFilterDescriptor</a></li><li><a href="SimpleSortDescriptor.html">SimpleSortDescriptor</a></li><li><a href="XMLBuilder.html">XMLBuilder</a></li></ul><h3>Interfaces</h3><ul><li><a href="CellInterpreter.html">CellInterpreter</a></li><li><a href="ColumnControl.html">ColumnControl</a></li><li><a href="ColumnControlFactory.html">ColumnControlFactory</a></li><li><a href="Disposable.html">Disposable</a></li><li><a href="FilterDescriptor.html">FilterDescriptor</a></li><li><a href="MinimalList.html">MinimalList</a></li><li><a href="Nothing.html">Nothing</a></li><li><a href="SimpleEventIntf.html">SimpleEventIntf</a></li><li><a href="SimpleEventListener.html">SimpleEventListener</a></li><li><a href="SortDescriptor.html">SortDescriptor</a></li></ul><h3>Events</h3><ul><li><a href="ContextControl.html#event:event:create">create</a></li></ul><h3>Global</h3><ul><li><a href="global.html#values">values</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Feb 17 2020 15:16:13 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

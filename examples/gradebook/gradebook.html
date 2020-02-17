@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>HTMLTableWrapper.js - Gradebook</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper.min.js"></script>
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
+    
+    new HTMLTableWrapperListener(document.getElementById('grades')).init();
+});
+
+</script>
+
+</head>
+<body>
+    <h1>Gradebook</h1>
+    <table id="grades">
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Assignment</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Smith</td>
+                <td>John</td>
+                <td>Homework #1</td>
+                <td>C</td>
+            </tr>
+            <tr>
+                <td>Wimbleton</td>
+                <td>Julie</td>
+                <td>Homework #1</td>
+                <td>D</td>
+            </tr>
+            <tr>
+                <td>Doe</td>
+                <td>Jane</td>
+                <td>Homework #1</td>
+                <td>A</td>
+            </tr>
+            <tr>
+                <td>Grey</td>
+                <td>William</td>
+                <td>Homework #1</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>Smith</td>
+                <td>John</td>
+                <td>Homework #2</td>
+                <td>A</td>
+            </tr>
+            <tr>
+                <td>Wimbleton</td>
+                <td>Julie</td>
+                <td>Homework #2</td>
+                <td>F</td>
+            </tr>
+            <tr>
+                <td>Doe</td>
+                <td>Jane</td>
+                <td>Homework #2</td>
+                <td>C</td>
+            </tr>
+            <tr>
+                <td>Grey</td>
+                <td>William</td>
+                <td>Homework #2</td>
+                <td>D</td>
+            </tr>
+            <tr>
+                <td>Smith</td>
+                <td>John</td>
+                <td>Midterm #1</td>
+                <td>A</td>
+            </tr>
+            <tr>
+                <td>Wimbleton</td>
+                <td>Julie</td>
+                <td>Midterm #1</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>Doe</td>
+                <td>Jane</td>
+                <td>Midterm #1</td>
+                <td>D</td>
+            </tr>
+            <tr>
+                <td>Grey</td>
+                <td>William</td>
+                <td>Midterm #1</td>
+                <td>F</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
