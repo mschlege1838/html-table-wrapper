@@ -1,7 +1,7 @@
 /*
-    Copied from the Mozilla Developer Network:
-    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim#Polyfill
-*/
+ *  Copied from the Mozilla Developer Network:
+ *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim#Polyfill
+ */
 if (!String.prototype.trim) {
   String.prototype.trim = function () {
     return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
@@ -12,10 +12,10 @@ if (!String.prototype.trim) {
 
 
 /*
-    Copied from the Mozilla Developer Network:
-    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill
-    (Standards-based Polyfill)
-*/
+ *  Copied from the Mozilla Developer Network:
+ *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill
+ *  (Standards-based Polyfill)
+ */
 // Production steps of ECMA-262, Edition 5, 15.4.4.14
 // Reference: http://es5.github.io/#x15.4.4.14
 if (!Array.prototype.indexOf) {
