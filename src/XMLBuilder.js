@@ -1,4 +1,7 @@
-
+/*
+ * Copyright 2020 Martin F. Schlegel Jr. | MIT AND BSD-3-Clause
+ */
+ 
 // Constructor
 /**
  * Default constructor.

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2020 Martin F. Schlegel Jr. | MIT AND BSD-3-Clause
+ */
+
 // Callbacks
 /**
  * Called by {@link HTMLTableWrapperListener} to obtain a {@link ColumnControl} for a given column. If a value is returned, it will be used as the 

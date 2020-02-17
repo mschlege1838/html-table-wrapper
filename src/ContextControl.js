@@ -1,4 +1,7 @@
-
+/*
+ * Copyright 2020 Martin F. Schlegel Jr. | MIT AND BSD-3-Clause
+ */
+ 
 // Virtual Events
 /**
  * Fired the first time a `ContextControl` is {@link ContextControl#open opened}. The `target` and `currentTarget`

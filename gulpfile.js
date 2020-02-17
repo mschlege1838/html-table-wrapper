@@ -178,6 +178,12 @@ function copyPackage() {
     return fs.createReadStream(OUT_PACKAGE_JSON).pipe(fs.createWriteStream(`${OUT_DIR}/package.json`));
 }
 
+function copyAdmin() {
+    'use strict';
+    
+    return gulp.src(['README.md', 'LICENSE']).pipe(gulp.dest(OUT_DIR));
+}
+
 function generateDoc() {
     'use strict';
     
@@ -222,6 +228,7 @@ exports.default = gulp.series(
         , copySrc
         , copyStyle
         , copyPackage
+        , copyAdmin
         , generateDoc
     )
 );

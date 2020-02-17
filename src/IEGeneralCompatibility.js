@@ -1,4 +1,7 @@
-
+/*
+ * Copyright 2020 Martin F. Schlegel Jr. | MIT AND BSD-3-Clause
+ */
+ 
 /**
  * Not actually a constructor as there are no instance methods; underlying definition is an empty object.
  * Documented as a class for the purposes of this documentation generator only.

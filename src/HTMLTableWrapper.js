@@ -1,4 +1,6 @@
-
+/*
+ * Copyright 2020 Martin F. Schlegel Jr. | MIT AND BSD-3-Clause
+ */
 
 // Virtual Interfaces
 

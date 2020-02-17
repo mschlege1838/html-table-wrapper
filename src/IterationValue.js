@@ -1,4 +1,7 @@
-
+/*
+ * Copyright 2020 Martin F. Schlegel Jr. | MIT AND BSD-3-Clause
+ */
+ 
 /**
  * @param {boolean} done Whether the parent iterator is complete, and has no more values.
  * @param {*} value Current value of the parent iterator.
