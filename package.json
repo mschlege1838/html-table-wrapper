@@ -2,8 +2,20 @@
   "name": "html-table-wrapper-src",
   "version": "1.0.0",
   "description": "Source/Build package for html-table-wrapper",
-  "author": "Marty Schlegel",
+  "keywords": "html table sort filter",
+  "author": {
+    "name": "Marty Schlegel",
+    "email": "martin.schlegel.1838@outlook.com"
+  },
   "license": "MIT AND BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mschlege1838/html-table-wrapper"
+  },
+  "bugs": {
+    "url": "https://github.com/mschlege1838/html-table-wrapper/issues",
+    "email": "martin.schlegel.1838@outlook.com"
+  },
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-rename": "^2.0.0",

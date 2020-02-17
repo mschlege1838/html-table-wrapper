@@ -2,6 +2,19 @@
   "name": "html-table-wrapper",
   "version": "1.0.0",
   "description": "A standalone sort/filter utility for HTMLTableElements.",
-  "author": "Marty Schlegel",
-  "license": "MIT AND BSD-3-Clause"
+  "keywords": "html table sort filter",
+  "author": {
+    "name": "Marty Schlegel",
+    "email": "martin.schlegel.1838@outlook.com"
+  },
+  "license": "MIT AND BSD-3-Clause",
+  "browser": "html-table-wrapper.min.js"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mschlege1838/html-table-wrapper"
+  },
+  "bugs": {
+    "url": "https://github.com/mschlege1838/html-table-wrapper/issues",
+    "email": "martin.schlegel.1838@outlook.com"
+  }
 }
