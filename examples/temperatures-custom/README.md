@@ -475,10 +475,10 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 ```
 
-The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/temperatures-custom.html).
+The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/examples/temperatures-custom/temperatures-custom.html).
 
 
-[temperatures-example]: https://github.com/mschlege1838/html-table-wrapper/examples/temperatures
+[temperatures-example]: https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/temperatures
 
 
 [HTMLTableWrapper]: https://mschlege1838.github.io/html-table-wrapper/HTMLTableWrapper.html

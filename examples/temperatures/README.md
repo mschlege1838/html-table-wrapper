@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 ```
 
-The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/examples/temperatures.html).
+The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/examples/temperatures/temperatures.html).
 
 
 [ColumnControlFactory]: https://mschlege1838.github.io/html-table-wrapper/ColumnControlFactory.html

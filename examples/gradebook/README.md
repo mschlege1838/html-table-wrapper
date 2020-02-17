@@ -42,4 +42,4 @@ document.addEventListener('DOMContentLoaded', function {
 </script>
 ```
 
-The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/examples/gradebook.html).
+The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/examples/gradebook/gradebook.html).

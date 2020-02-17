@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 ```
 
-The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/examples/drinks.html).
+The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/examples/drinks/drinks.html).
 
 
 
@@ -104,4 +104,4 @@ The working webpage can be found [here](https://mschlege1838.github.io/html-tabl
 [ColumnControlFactory]: https://mschlege1838.github.io/html-table-wrapper/ColumnControlFactory.html
 [HTMLTableWrapperControl~populateCellValues]: https://mschlege1838.github.io/html-table-wrapper/HTMLTableWrapperControl.html#~populateCellValues
 
-[next-example]: https://github.com/mschlege1838/html-table-wrapper/examples/temperatures
+[next-example]: https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/temperatures

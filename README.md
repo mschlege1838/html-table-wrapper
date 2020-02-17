@@ -126,34 +126,34 @@ themselves, though, use the traditional syntax.
 ## A Simple Table
 A basic example that uses the "full" configuration.
 
-- [Example](https://github.com/mschlege1838/html-table-wrapper/examples/gradebook)
-- [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/gradebook.html)
+- [Example](https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/gradebook)
+- [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/gradebook/gradebook.html)
 
 ## Changing How Cells Are Interpreted
 A slightly more complex example that plugs into the "full" configuration using a 
 [`CellInterpreter`][CellInterpreter].
 
-- [Example](https://github.com/mschlege1838/html-table-wrapper/examples/drinks)
-- [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/drinks.html)
+- [Example](https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/drinks)
+- [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/drinks/drinks.html)
 
 ## Defining Custom Controls
 Another plug-in to the "full" configuration, using a [`ColumnControlFactory`][ColumnControlFactory] that 
 returns a custom [`ColumnControl`][ColumnControl].
 
-- [Example](https://github.com/mschlege1838/html-table-wrapper/examples/temperatures)
-- [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/temperatures.html)
+- [Example](https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/temperatures)
+- [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/temperatures/temperatures.html)
 
 ## Using HTMLTableWrapper.js Directly
 An example of using the "utility" configuration.
 
-- [Example](https://github.com/mschlege1838/html-table-wrapper/examples/gradebook-minimal)
-- [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/gradebook-minimal.html)
+- [Example](https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/gradebook-minimal)
+- [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/gradebook-minimal/gradebook-minimal.html)
 
 ## An Entirely Custom Implementation
 An example of using the "core" configuration.
 
-- [Example](https://github.com/mschlege1838/html-table-wrapper/examples/temperatures-custom)
-- [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/temperatures-custom.html)
+- [Example](https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/temperatures-custom)
+- [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/temperatures-custom/temperatures-custom.html)
 
 
 # Administrivia
@@ -161,7 +161,7 @@ An example of using the "core" configuration.
 ## License
 
 HTMLTableWrapper.js is licenced under the MIT and BSD 3-Clause Free Software Licenses. A full copy can be 
-found [here](https://mschlege1838.github.io/html-table-wrapper/LICENSE).
+found [here](https://github.com/mschlege1838/html-table-wrapper/LICENSE).
 
 ## Reporting Issues
 
