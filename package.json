@@ -1,8 +1,8 @@
 {
   "name": "html-table-wrapper-src",
   "version": "1.0.0",
+  "private": true
   "description": "Source/Build package for html-table-wrapper",
-  "keywords": "html table sort filter",
   "author": {
     "name": "Marty Schlegel",
     "email": "martin.schlegel.1838@outlook.com"
