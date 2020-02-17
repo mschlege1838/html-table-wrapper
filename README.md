@@ -161,7 +161,7 @@ An example of using the "core" configuration.
 ## License
 
 HTMLTableWrapper.js is licenced under the MIT and BSD 3-Clause Free Software Licenses. A full copy can be 
-found [here](https://github.com/mschlege1838/html-table-wrapper/LICENSE).
+found [here](https://github.com/mschlege1838/html-table-wrapper/tree/master/LICENSE).
 
 ## Reporting Issues
 
