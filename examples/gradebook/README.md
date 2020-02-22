@@ -1,5 +1,5 @@
 # A Simple Table
-Consider the simple example of a webpage that shows a gradebook:
+Consider a webpage that shows a gradebook:
 
 ``` html
 <table id="grades">
@@ -25,12 +25,12 @@ Consider the simple example of a webpage that shows a gradebook:
 <!-- ... -->
 ```
 
-Adding the default sort/filter dialogue to the table is as simple as adding something akin to the following 
-to your webpage:
+Adding the default sort/filter dialog to the table is as simple as adding the following to your webpage:
 
 ``` html
-<link rel="stylesheet" href="../html-table-wrapper.min.css" />
-<script src="../html-table-wrapper.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper.min.js"></script>
+
 <script>
 
 document.addEventListener('DOMContentLoaded', function {
