@@ -1,9 +1,9 @@
 
 # HTMLTableWrapper.js
 
-HTMLTableWrapper.js is a standalone, lightweight, completely pluggable library for the arbitrary sorting 
-and filtering of "typical" `HTMLTableElement`s. The easiest way to get up-and-running with HTMLTableWrapper.js 
-is to use its "full" configuration:
+HTMLTableWrapper.js is a standalone, lightweight, completely pluggable library for user-defined sorting 
+and filtering of `HTMLTableElement`s following the typical vertical layout. The easiest way to get up-and-
+running with HTMLTableWrapper.js is to use its [_full_](#configurationFull) configuration:
 
 ``` html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper.min.css" />
@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 ```
 
-Or, if you prefer to trigger sorting and filtering directly, the "utility" configuration should be sufficient:
+Or, if you prefer to trigger sorting and filtering directly, the [_utility_](#configurationUtility) or 
+[_core_](#configurationCore) configurations are sufficient (_utility_ shown below):
 ``` html
 <link rel="stylesheet" 
         href="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper-util.min.css" />
@@ -42,36 +43,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
 ## Installation
 
-To use HTMLTableWrapper.js on your webpages, you need only include the desired combination JavaScript/CSS file
-combination. These are detailed below:
+To use HTMLTableWrapper.js on your webpages, you need only include the desired combination of JavaScript/CSS 
+files shown beloww:
 
-- Full
+- <a name="configurationFull"></a>Full
     - `html-table-wrapper.min.js`
     - `html-table-wrapper.min.css`
     
-    Fully featured, and end-user friendly. This is the easiest configuration to use.
-- Utility
+    Fully featured, and end-user friendly, this is the easiest configuration to use.
+- <a name="configurationUtility"></a>Utility
     - `html-table-wrapper-util.min.js`
     - `html-table-wrapper-util.min.css`
     
-    Includes the contents of the core configuration (below) with a couple extra classes that assist in using
-    HTMLTableWrapper.js, but no UI elements.
-- Core
+    The [_core_](#configurationCore) configuration with extra classes and functions to assist in using 
+    HTMLTableWrapper.js. No UI-related classes are included.
+- <a name="configurationCore"></a>Core
     - `html-table-wrapper-core.min.js`
     - `html-table-wrapper-core.min.css`
     
-    Includes only the definition of [`HTMLTableWrapper`][HTMLTableWrapper], and supporting compatibility classes 
-    for Internet Explorer.
+    Includes only the definition of [`HTMLTableWrapper`][HTMLTableWrapper] and supporting compatibility 
+    functions for Internet Explorer.
 
 
-All the above files are included in the NPM package, along with their un-minified versions, HTMLTableWrapper.js's 
-individual source files and associated documentation. If you use NPM these can be installed in your local project via:
+All files are included in the NPM package. If you use NPM, these can be installed in your local project via:
 ```
 > npm i html-table-wrapper
 ```
 The desired files can then be copied/linked from your `./node_modules/html-table-wrapper/` directory.
 
-Alternatively, the desired source files can be linked or downloaded directly via the JSDelivr CDN (all examples 
+Alternatively, the desired files can be linked to or downloaded directly via the JSDelivr CDN (all examples 
 link directly to the CDN):
 ``` html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper[-util|-core].min.css" />
@@ -80,77 +80,61 @@ link directly to the CDN):
 
 
 ## Compatibility
-HTMLTableWrapper.js is compatible with modern desktop and mobile browsers, as well as MS Internet Explorer 
-down to version 8.
-
-## API Overview
-At its core, HTMLTableWrapper.js only coordinates sorting and filtering for a given `HTMLTableElement`; the 
-definition of how the actual data within the table is to be treated, as well as calls to trigger the sorting
-and filtering of that table are completely up to the client. The utility and full configurations build on 
-HTMLTableWrapper.js's core, and provide more concrete functionality that handles the vast majority of use-cases, 
-but clients are, by no means, required to use them. 
-
-
-## Motivation
-Although there are a multitude of other libraries that perform similar functions to HTMLTableWrapper.js, most 
-require the importation of supporting libraries, offer many unneeded features, with few required features, and 
-lend themselves poorly to customization. The motivation behind HTMLTableWrapper.js is to serve as a free, standalone, 
-(semi-)lightweight, more flexible alternative to all the other HTML table processing libraries available.
+HTMLTableWrapper.js is compatible with modern desktop and mobile browsers, as well as with MS Internet Explorer 
+back to version 8.
 
 
 ## Documentation
-The API Documentation for HTMLTableWrapper.js is shipped in the `/doc` directory of its NPM package, and can 
-be found online [here](https://mschlege1838.github.io/html-table-wrapper).
+The API Documentation is shipped in the `/doc` directory of the NPM package, and can also be found 
+[here](https://mschlege1838.github.io/html-table-wrapper).
 
 Because all declarations in HTMLTableWrapper.js are made in the strictly 'traditional' manner, all constructors, 
-functions, and fields are fully accessible by client code. For this reason, all declared constructors and members 
-are documented, however client code should only rely on those members that are declared 'public'; anything labeled 
-'private', 'package', etc. can be used, but may be subject to change without notice.
+functions, and fields are fully accessible by client code. For this reason, all declared members 
+are documented, however, client code should only rely on those members declared `public`. Anything labeled 
+`private`, `package`, etc. can be used, but may be subject to change without notice.
 
-This project's documentation is generated with [JSDoc](https://jsdoc.app/), and hosted on 
+This project's documentation is generated with [JSDoc](https://jsdoc.app/) and hosted on 
 [GitHub Pages](https://pages.github.com/). 
 
 
 # Usage Examples
 
-Usage examples and descriptions can be found in their respective subdirectories. Their links are below.
-Links to the working webpages are also provided.
+Links to the examples and working webpages are provided below.
 
-Of note, although HTMLTableWrapper.js is compatible with IE back to version 8, the examples are not; they 
-require a modern browser with an up-to-date DOM and ES6 implementation. Due, however, to the relative novelty 
-of the added ES6 syntax elements, a version of the source code for the examples is written using both the 
-'traditional' and newer ES6 syntax (ES6 files are suffixed with `-es6.js`). The code snippets in the examples, 
-themselves, though, use the traditional syntax.
+Although HTMLTableWrapper.js is compatible with IE back to version 8, the examples are not. They require a 
+modern browser with an up-to-date DOM and ECMAScript implementation. Due to the relative novelty of ES6+ 
+syntax elements, the examples use pre-ES6 syntax.
+
+If you prefer the newer ES6+ syntax, a version of each example source file written in this syntax is provided 
+with a `-es6.js` suffix. These will be kept up-to-date as possible with the ECMA-262 latest draft.
 
 
 ## A Simple Table
-A basic example that uses the "full" configuration.
+Example using the [_full_](#configurationFull) configuration:
 
 - [Example](https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/gradebook)
 - [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/gradebook/gradebook.html)
 
-## Changing How Cells Are Interpreted
-A slightly more complex example that plugs into the "full" configuration using a 
-[`CellInterpreter`][CellInterpreter].
+## Changing Cell Interpretation
+Example using a [`CellInterpreter`][CellInterpreter]:
 
 - [Example](https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/drinks)
 - [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/drinks/drinks.html)
 
 ## Defining Custom Controls
-Another plug-in to the "full" configuration, using a [`ColumnControlFactory`][ColumnControlFactory] that 
-returns a custom [`ColumnControl`][ColumnControl].
+Example using a [`ColumnControl`][ColumnControl]:
 
 - [Example](https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/temperatures)
 - [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/temperatures/temperatures.html)
 
-## Using HTMLTableWrapper.js Directly
-An example of using the "utility" configuration.
+## Using [`HTMLTableWrapper`][HTMLTableWrapper] Directly
+Example using the [_utility_](#configurationUtility) configuration.
 
 - [Example](https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/gradebook-minimal)
 - [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/gradebook-minimal/gradebook-minimal.html)
 
-## An Entirely Custom Implementation
-An example of using the "core" configuration.
+## Programming For [`HTMLTableWrapper`][HTMLTableWrapper]
+Example of using the [_core_](#configurationCore) configuration.
 
 - [Example](https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/temperatures-custom)
 - [Webpage](https://mschlege1838.github.io/html-table-wrapper/examples/temperatures-custom/temperatures-custom.html)
@@ -165,7 +149,7 @@ found [here](https://github.com/mschlege1838/html-table-wrapper/tree/master/LICE
 
 ## Reporting Issues
 
-Please report any issues or bugs encountered in using HTMLTableWrapper.js through this repository's
+Please report any issues or bugs encountered using HTMLTableWrapper.js through this repository's
 [issues](https://github.com/mschlege1838/html-table-wrapper/issues) section.
 
 ## Contributing
@@ -173,34 +157,31 @@ Please report any issues or bugs encountered in using HTMLTableWrapper.js throug
 If you'd like to develop an enhancement, or fix a bug yourself, please fork this repository, make your change,
 and submit a pull request.
 
-We ask that pull requests only contain changes to the HTMLTableWrapper.js library itself; if you're developing
-a plugin to it, please create and maintain it in your own repositry, and simply list HTMLTableWrapper.js as
-a dependency.
+We ask that pull requests contain only changes to the HTMLTableWrapper.js library itself. If you're developing
+a plugin to it, please create and maintain your own repositry, and simply list HTMLTableWrapper.js as a dependency.
 
 ## Building
-HTMLTableWrapper.js uses [Gulp](https://gulpjs.com/) to build its distribution package. All build dependencies 
-are listed in the `package.json` file of the source repository's root directory, with the only exception of 
-`gulp-cli`, which it assumes is installed globally. I.e., from the project's root directory, the following should 
-be sufficient for a first time setup ([node.js](https://nodejs.org) also needs to be installed):
+HTMLTableWrapper.js uses [Gulp](https://gulpjs.com/) to build its distribution package. If you do not have 
+Gulp installed on your machine, you can do so through NPM (distributed with [node.js](https://nodejs.org)):
 
 ```
 > npm i -g gulp-cli
+```
+
+Development dependencies are also installed with NPM. From your cloned repository's root directory, run:
+
+```
 > npm i
 ```
 
-From there, `gulp` can be ran directly to build HTMLTableWrapper.js's distribution package:
+The distribution package can then be built using the `default` Gulp task:
 
 ```
 > gulp
 ```
 
-HTMLTableWrapper.js does not follow the typical conventions of an NPM package in that its distribution package 
-is not the same as its source package; building the source package produces a new directory containing the 
-distribution package. This setup is in preference to maintaining an `nmpignore` file for clarity and conciceness; 
-no configuration needs to be inspected to see what is, or is not included the distribution. The distribution
-is, simply, the newly created package. This also removes cluttering in the distribution's `package.json` file, 
-as items related only to development (e.g. `devDependencies`) don't need to be specified.
-
+After running Gulp, a new subdirectory will be created: `html-table-wrapper`. This subdirectory is the 
+"distribution" package.
 
 
 [HTMLTableWrapper]: https://mschlege1838.github.io/html-table-wrapper/HTMLTableWrapper.html
