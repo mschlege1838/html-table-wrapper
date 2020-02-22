@@ -38,7 +38,7 @@ function ColumnValueSet() {
  * Backing collection containing values added to this set from {@link CellInterpreter} or {@link HTMLTableWrapperControl~populateCellValues}
  * implementations. If the `Set` constructor is defined, will be a `Set`, otherwise will fall back to an `Array`.
  *
- * @member values
+ * @member ColumnValueSet#values
  * @type {Set|Array}
  * @private
  */
