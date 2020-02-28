@@ -40,40 +40,40 @@
 
 
 <!-- Traditional -->
-<script src="TemperatureConverter.js"></script>
-<script src="TemperatureColumnControl.js"></script>
-<script src="TemperatureColumnControlFactory.js"></script>
-<script>
-
-document.addEventListener('DOMContentLoaded', function () {
-    'use strict';
-    
-    var table;
-    
-    table = document.getElementById('temperatures');
-    
-    new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init();
-});
-
-</script>
-
-
-
-<!-- ES6 -->
-<!-- <script src="TemperatureConverter-es6.js"></script> -->
-<!-- <script src="TemperatureColumnControl-es6.js"></script> -->
-<!-- <script src="TemperatureColumnControlFactory-es6.js"></script> -->
+<!-- <script src="TemperatureConverter.js"></script> -->
+<!-- <script src="TemperatureColumnControl.js"></script> -->
+<!-- <script src="TemperatureColumnControlFactory.js"></script> -->
 <!-- <script> -->
 
-<!-- document.addEventListener('DOMContentLoaded', () => { -->
+<!-- document.addEventListener('DOMContentLoaded', function () { -->
     <!-- 'use strict'; -->
     
-    <!-- const table = document.getElementById('temperatures'); -->
+    <!-- var table; -->
+    
+    <!-- table = document.getElementById('temperatures'); -->
     
     <!-- new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init(); -->
 <!-- }); -->
 
 <!-- </script> -->
+
+
+
+<!-- ES6 -->
+<script src="TemperatureConverter-es6.js"></script>
+<script src="TemperatureColumnControl-es6.js"></script>
+<script src="TemperatureColumnControlFactory-es6.js"></script>
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    'use strict';
+    
+    const table = document.getElementById('temperatures');
+    
+    new HTMLTableWrapperListener(table, new TemperatureColumnControlFactory(new TemperatureConverter(table, temperatureDescriptions))).init();
+});
+
+</script>
 
 
 
