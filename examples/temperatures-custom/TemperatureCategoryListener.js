@@ -1,9 +1,9 @@
 
 
-function TemperatureCategoryListener(tableWrapper, categoryInputs, highColumnIndex, lowColumnIndex) {
+function TemperatureCategoryListener(htmlTableWrapper, categoryInputs, highColumnIndex, lowColumnIndex) {
     'use strict';
     
-    this.tableWrapper = tableWrapper;
+    this.htmlTableWrapper = htmlTableWrapper;
     this.categoryInputs = categoryInputs;
     this.highColumnIndex = highColumnIndex;
     this.lowColumnIndex = lowColumnIndex;
@@ -40,9 +40,9 @@ TemperatureCategoryListener.prototype.handleEvent = function () {
 TemperatureCategoryListener.prototype.updateTable = function () {
     'use strict';
     
-    var tableWrapper, categoryInputs, i, input, tableFilters, classList, highColumnIndex, lowColumnIndex, gt, lte;
+    var htmlTableWrapper, categoryInputs, i, input, tableFilters, classList, highColumnIndex, lowColumnIndex, gt, lte;
     
-    tableWrapper = this.tableWrapper;
+    htmlTableWrapper = this.htmlTableWrapper;
     categoryInputs = this.categoryInputs;
     highColumnIndex = this.highColumnIndex;
     lowColumnIndex = this.lowColumnIndex;
@@ -76,6 +76,6 @@ TemperatureCategoryListener.prototype.updateTable = function () {
         }
     }
     
-    // Call HTMLTableWrapper.
-    tableWrapper.filter(tableFilters);
+    // Call HTMLhtmlTableWrapper.
+    htmlTableWrapper.filter(tableFilters);
 };

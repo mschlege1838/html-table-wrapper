@@ -1,106 +1,134 @@
-# An Entirely Custom Implementation
+# Programming For [`HTMLTableWrapper`][HTMLTableWrapper]
 
-All the previous examples used 'helper' classes provided in HTMLTableWrapper.js to assist in the use of 
-[`HTMLTableWrapper`][HTMLTableWrapper], but none of these are required; so long as the requirements of using 
-the class are met, it will function perfectly well.
+HTMLTableWrapper.js' [_full_][configuration-full] and [_utility_][configuration-utility] libraries ship with
+classes that streamline its use, but they are not required. This example uses the [_core_][configuration-core]
+library, and walks through programming for and interacting directly with [`HTMLTableWrapper`][HTMLTableWrapper].
 
-Consider the [temperature][temperatures-example] example from before, but with a slightly different spin: we 
-want to define an off-table control than handles unit conversions, allows for filtering the table by category: 
-hot/warm/cool/cold for highs and lows and low/medium/high for the differences between highs and lows (swing), 
-and also allows for sorting the table based upon the daily high, low, and difference between them:
+Consider the [temperatures][temperatures-example] example from before, but with a category-based filtering and 
+sorting interface:
+
+![interface](img/interface.PNG)
+
+The 'Temperature Unit' option buttons have their `value` set to the unit they represent:
 ``` html
-<!-- ... -->
-<div class="control-group">
-    <div class="field-group">
-        <h4>Temperature Unit</h4>
-        <span>
-            <input id="temperatureUnitFahrenheit" class="temperature-unit"  type="radio" 
-                    name="temperatureUnit" value="F" checked />
-            <label for="temperatureUnitFahrenheit" class="fahrenheit" title="Fahrenheit"></label>
-        </span>
-        <span>
-            <input id="temperatureUnitCelsius" class="temperature-unit" type="radio" 
-                    name="temperatureUnit" value="C" />
-            <label for="temperatureUnitCelsius" class="celsius" title="Celsius"></label>
-<!-- ... -->
-    <div class="field-group" id="temperatureCategories">
-        <h4>Filter By Category</h4>
-        <div class="field">
-            <span>High:</span>
-            <span>
-                <input id="temperatureCategoryHighNone" class="temperature-category high" type="radio" 
-                        name="temperatureCategoryHigh" value="none" checked />
-                <label for="temperatureCategoryHighNone">None</label>
-            </span>
-            <span>
-                <input id="temperatureCategoryHighHot" class="temperature-category high" type="radio" 
-                        name="temperatureCategoryHigh" value="hot" data-orig-unit="F" data-orig-gt="75" />
-                <label for="temperatureCategoryHighHot">Hot</label>
-            </span>
-            <span>
-                <input id="temperatureCategoryHighWarm" class="temperature-category high" type="radio" 
-                        name="temperatureCategoryHigh" value="warm" data-orig-unit="F" 
-                                data-orig-lte="75" data-orig-gt="63" />
-                <label for="temperatureCategoryHighWarm">Warm</label>
-            </span>
-<!-- ... -->
-<div class="field-group" id="sortOptions">
-    <h4>Sort By Temperature</h4>
-    <div>
-        <input id="temperatureSortNone" class="temperature-sort" type="radio" name="temperatureSort" 
-                data-category="none" checked />
-        <label for="temperatureSortNone">None</label>
-    </div>
-    <div>
-        <span>
-            <input id="temperatureSortHighAscending" class="temperature-sort" type="radio" 
-                    name="temperatureSort" data-category="high" value="asc" />
-            <label for="temperatureSortHighAscending">High, Ascending</label>
-        </span>
-        <span>
-            <input id="temperatureSortHighDescending" class="temperature-sort" type="radio" 
-                    name="temperatureSort" data-category="high" value="desc" />
-            <label for="temperatureSortHighDescending">High, Descending</label>
+<h4>Temperature Unit</h4>
+<span>
+    <input id="temperatureUnitFahrenheit" class="temperature-unit"  type="radio" 
+            name="temperatureUnit" value="F" checked />
+    <label for="temperatureUnitFahrenheit" class="fahrenheit" title="Fahrenheit"></label>
+</span>
+<span>
+    <input id="temperatureUnitCelsius" class="temperature-unit" type="radio" 
+            name="temperatureUnit" value="C" />
+    <label for="temperatureUnitCelsius" class="celsius" title="Celsius"></label>
+</span>
 <!-- ... -->
 ```
 
-Because the 'categories' by which we want to filter correspond to temperature ranges, we define two new attributes: 
-`data-orig-gt` and `data-orig-lte` to define the 'greater than' and 'less than or equal to' bounds of the range, 
-respectively. E.g. for 'warm' highs, the attributes `data-orig-unit="F"`, `data-orig-lte="75"`, and `data-orig-gt="63"` 
-are set, indicating a 'warm high' is considered a high temperature _T_ satisfying _63 < T <= 75_ degrees Fahrenheit.
+The 'Filter By Category' option buttons define temperature ranges. Their `data-orig-gt` and `data-orig-lte`
+attributes set up the inequality:
 
-Similar to the [temperatures][temperatures-example] example, we define some helper objects/classes that are 
-not directly related to using HTMLTableWrapper.js, so we only explain them here. Their source files can be 
-consulted for details:
+> `data-orig-gt < T <= data-orig-lte`, where `T` is a given temperature.
+
+As in the previous [example][temperatures-example], the `data-orig-unit` attribute indicates the original 
+unit in which the range is specified. The category of the option button is stored in its `class`:
+``` html
+<span>High:</span>
+<span>
+    <input id="temperatureCategoryHighNone" class="temperature-category high" type="radio" 
+            name="temperatureCategoryHigh" value="none" checked />
+    <label for="temperatureCategoryHighNone">None</label>
+</span>
+<span>
+    <input id="temperatureCategoryHighHot" class="temperature-category high" type="radio" 
+            name="temperatureCategoryHigh" value="hot" data-orig-unit="F" data-orig-gt="75" />
+    <label for="temperatureCategoryHighHot">Hot</label>
+</span>
+<!-- ... -->
+```
+
+The `data-orig-*` attributes are used in performing temperature conversions to avoid data loss.
+
+The 'Sort By Temperature' option buttons define their category through the `data-category` attribute and sort
+direction through their `value`:
+``` html
+<span>
+    <input id="temperatureSortHighAscending" class="temperature-sort" type="radio" 
+            name="temperatureSort" data-category="high" value="asc" />
+    <label for="temperatureSortHighAscending">High, Ascending</label>
+</span>
+<span>
+    <input id="temperatureSortHighDescending" class="temperature-sort" type="radio" 
+            name="temperatureSort" data-category="high" value="desc" />
+    <label for="temperatureSortHighDescending">High, Descending</label>
+</span>
+<!-- ... -->
+```
+
+## API Explanation
+
+The [`HTMLTableWrapper.filter`][HTMLTableWrapper-filter] function is called with one or more
+[`FilterDescriptor`][FilterDescriptor]s.
+
+A [`FilterDescriptor`][FilterDescriptor] is a callback interface describing the values to be included after
+[`filter`][HTMLTableWrapper-filter] is called. If it defines a `columnIndex` property, it is column-based. If
+not, it is row-based. Its implementation is as follows:
+- `get` [`columnIndex`][FilterDescriptor-columnIndex]: Optional zero-based index of the target column. If it
+   is not a positive number, the [`FilterDescriptor`][FilterDescriptor] is row-based.
+- `function` [`include`][FilterDescriptor-include]: Called by [`filter`][HTMLTableWrapper-filter] for each
+  row in the table to see whether it should be included. Returning `true` indicates the row should be included.
+  Returning `false` will result in it being filtered. If the [`FilterDescriptor`][FilterDescriptor] is
+  column-based, it will be passed the target `HTMLTableCellElement` for each row. Otherwise, it will be
+  passed the `HTMLTableRowElement`, itself.
+
+
+The [`HTMLTableWrapper.sort`][HTMLTableWrapper-sort] function is called with one or more 
+[`SortDescriptor`][SortDescriptor]s.
+
+A [`SortDescriptor`][SortDescriptor] is a callback interface describing how values in the table compare to
+one another. If it defines a `columnIndex` property, it is column-based. If not, it is row-based. Its 
+implementation is as follows:
+- `get` [`columnIndex`][SortDescriptor-columnIndex]: Optional zero-based index of the target column. If it
+   is not a positive number, the [`SortDescriptor`][SortDescriptor] is row-based.
+- `function` [`compare`][SortDescriptor-compare]: Called by [`sort`][HTMLTableWrapper-sort] to compare two
+  rows to each other. Returning a value less than `0` indicates the first row should be sorted above the second.
+  Returning a value greater than `0` indicates the first should be sorted below the second. Returning `0`
+  indicates no preference. If the [`SortDescriptor`][SortDescriptor] is column-based, it will be passed the
+  target `HTMLTableCellElement`s of each row. Otheriwse, it will be passed the `HTMLTableRowElement`s,
+  themselves.
+
+
+## Notes
+
+This example includes supporting objects/classes that are not directly related to HTMLTableWrapper.js. They
+are briefly explained here. Consult their source files for details.
 
 - [`conversions.js`](conversions.js)
 
-   Similar to the same file in the [temperatures] example, except we add unit-to-unit conversions to handle 
-   converting the 'swing' category. ('Swing' is actually a measure of magnitude, not an absolute temperature.)
+   Defines direct temperature-to-temperature and unit-to-unit conversions. Builds these into a lookup 
+   dictionary object.
 
 - [`TemperatureConversionListener`](TemperatureConversionListener.js)
 
-   Listens for click events on the unit selection inputs. In response to click events, it converts the relevant 
-   columns in a backing `HTMLTableElement` to the desired unit and sets the converted version of the range attributes 
-   on the category filter fields: `data-lt` and `data-gte`. Similar to the previous [temperatures][temperatures-example] 
-   example, this is done to avoid data loss from conversion to conversion. Also similar to the previous example, 
-   the 'dictionary' object from `conversions.js` is used to lookup conversion functions.
+   Converts temperature-related data in response to click events on the 'Temperature Unit' option buttons.
+   As in the previous [example][temperatures-example], temperature-related columns in the table are
+   converted based on thier `data-orig-unit` and `data-orig-temp` attributes. The 'Filter By Category'
+   option buttons have their `data-current-gt` and `data-current-lte` attributes set based on the converted
+   values of their `data-orig-gt` and `data-orig-lte` attributes. The `data-current-*` attributes are used 
+   for subsequent processing.
 
-Next, we declare our [`FilterDescriptor`][FilterDescriptor]s. A [`FilterDescriptor`][FilterDescriptor] is an 
-object that defines an [`include`][FilterDescriptor-include] function that takes as an argument either an
-`HTMLTableCellElement` or `HTMLTableRowElement`, and is called by [`HTMLTableWrapper`][HTMLTableWrapper] upon 
-calls to [`filter`][HTMLTableWrapper-filter]. Whether [`HTMLTableWrapper`][HTMLTableWrapper] ends up passing
-an `HTMLTableCellElement` or `HTMLTableRowElement` depends upon whether or not the [`FilterDescriptor`][FilterDescriptor] 
-also defines a property called [`columnIndex`][FilterDescriptor-columnIndex]. If [`columnIndex`][FilterDescriptor-columnIndex] 
-is a positive number, the argument will be an `HTMLTableCellElement` corresponding to the cell at `columnIndex` 
-within the relevant row, otherwise it will be the `HTMLTableRowElement` itself. In either case, 
-[`include`][FilterDescriptor-include] must return a `boolean` indicating whether the row should be kept (`true`)
-or filtered (`false`).
+## Implementation
 
-For this example, we define two such [`FilterDescriptor`][FilterDescriptor]s: one for filtering based upon 
-highs and lows, which uses [`columnIndex`][FilterDescriptor-columnIndex], and the other for filtering based 
-upon swings (differences between highs and lows), which does not. Both, though, take a 'greater than' and 
-'less than or equal to' number that defines the filter's range:
+We perform sorting and filtering based on high &amp; low temperatures and the difference between them (swing).
+The [`Filter`][FilterDescriptor] and [`SortDescriptor`][SortDescriptor]s handling high and low temperatures 
+will be column-based, but those handling the swing will be row-based.
+
+We start by defining [`FilterDescriptor`][FilterDescriptor]s.
+
+<a name="highLowFilter"></a>
+The [`FilterDescriptor`][FilterDescriptor] for high and low temperatures is [`HighLowFilter`](HighLowFilter.js).
+The arguments to its constructor are the target `columnIndex` and the low and high bounds of the temperature 
+range it represents: `gtRange` and `ltRange`:
 ``` javascript
 function HighLowFilter(columnIndex, gtRange, lteRange) {
     'use strict';
@@ -109,31 +137,46 @@ function HighLowFilter(columnIndex, gtRange, lteRange) {
     this.gtRange = gtRange;
     this.lteRange = lteRange;
 }
+```
 
+Its [`include`][FilterDescriptor-include] function tests whether or not a given `cell`'s value is within the
+required range. If nothing is `NaN`, and the `cell`'s value falls within the required range, the function 
+returns `true`, otherwise `false`:
+``` javascript
 HighLowFilter.prototype.include = function (cell) {
     'use strict';
     
     var gtRange, lteRange, currentValue;
     
+    // Parse current value.
     currentValue = Number.parseFloat(cell.textContent);
     if (Number.isNaN(currentValue)) {
+        // Always filter NaNs
         return false;
     }
     
     gtRange = this.gtRange;
     lteRange = this.lteRange;
     
+    // If the current value is not greater than the lower bound of the range, filter.
     if (!Number.isNaN(gtRange) && !(currentValue > gtRange)) {
         return false;
     }
+    // If the current value is not less than or equal to the upper bound of the range, filter.
     if (!Number.isNaN(lteRange) && !(currentValue <= lteRange)) {
         return false;
     }
     
+    // Otheriwse, include.
     return true;
 };
+```
 
-
+<a name="swingFilter"></a>
+The [`FilterDescriptor`][FilterDescriptor] for temperature swings is [`SwingFilter`](SwingFilter.js). The 
+arguments to its constructor are the high and low bounds of the temperature range it represents (like 
+[`HighLowFilter`](#highLowFilter)), and the index of the high and low temperature columns:
+``` javascript
 function SwingFilter(gtRange, lteRange, highColumnIndex, lowColumnIndex) {
     'use strict';
     
@@ -142,7 +185,12 @@ function SwingFilter(gtRange, lteRange, highColumnIndex, lowColumnIndex) {
     this.highColumnIndex = highColumnIndex;
     this.lowColumnIndex = lowColumnIndex;
 }
+```
 
+Its [`include`][FilterDescriptor-include] function calculates the difference between the high &amp; low
+columns. If nothing is `NaN`, and the difference is within the required range, the function returns `true`,
+otherwise `false`:
+``` javascript
 SwingFilter.prototype.include = function (row) {
     'use strict';
     
@@ -150,35 +198,40 @@ SwingFilter.prototype.include = function (row) {
     
     cells = row.cells;
     
-    currentSwing = Number.parseFloat(cells[this.highColumnIndex].textContent) - 
-            Number.parseFloat(cells[this.lowColumnIndex].textContent)
+    // Calculate difference between the high and low (swing).
+    currentSwing = Number.parseFloat(cells[this.highColumnIndex].textContent) 
+            - Number.parseFloat(cells[this.lowColumnIndex].textContent)
     if (Number.isNaN(currentSwing)) {
+        // Always filter NaNs.
         return false;
     }
     
     gtRange = this.gtRange;
     lteRange = this.lteRange;
     
+    // If the current swing is not greater than the lower bound of the range, filter.
     if (!Number.isNaN(gtRange) && !(currentSwing > gtRange)) {
         return false;
     }
+    // If the current swing is not less than or equal to the upper bound of the range, filter.
     if (!Number.isNaN(lteRange) && !(currentSwing <= lteRange)) {
         return false;
     }
     
+    // Otheriwse, include.
     return true;
 };
 ```
 
-Our listener class for the category fields takes an [`HTMLTableWrapper`][HTMLTableWrapper] to call on in 
-response to click events, the `categoryInputs` themselves, as well as the index of the high and low temperature 
-columns in the backing table. We also declare an `init` and `dispose` function where the listener will add
-and remove (respectively) itself as a listener for click events on `categoryInputs`.
+[`HighLowFilter`](#highLowFilter) and [`SwingFilter`](#swingFilter) are used in 
+[`TemperatureCategoryListener`](TemperatureCategoryListener.js). The arguments to its constructor are an 
+[`HTMLTableWrapper`][HTMLTableWrapper], the 'Filter By Category' option buttons (as `categoryInputs`), and 
+the index of the high and low temperature columns. It listens for click events on `categoryInputs`.
 ``` javascript
-function TemperatureCategoryListener(tableWrapper, categoryInputs, highColumnIndex, lowColumnIndex) {
+function TemperatureCategoryListener(htmlTableWrapper, categoryInputs, highColumnIndex, lowColumnIndex) {
     'use strict';
     
-    this.tableWrapper = tableWrapper;
+    this.htmlTableWrapper = htmlTableWrapper;
     this.categoryInputs = categoryInputs;
     this.highColumnIndex = highColumnIndex;
     this.lowColumnIndex = lowColumnIndex;
@@ -207,16 +260,16 @@ TemperatureCategoryListener.prototype.dispose = function () {
 };
 ```
 
-Next, we define an `updateTable` function that builds a series of [`FilterDescriptor`][FilterDescriptor]s 
-based upon the currently selected category inputs:
+The `updateTable` function builds an `Array` of [`FilterDescriptor`][FilterDescriptor]s based on the selected 
+'Filter By Category' option buttons, and passes them on to [`HTMLTableWrapper.filter`][HTMLTableWrapper-filter]:
 ``` javascript
 TemperatureCategoryListener.prototype.updateTable = function () {
     'use strict';
     
-    var tableWrapper, categoryInputs, i, input, tableFilters, classList, highColumnIndex, lowColumnIndex, 
+    var htmlTableWrapper, categoryInputs, i, input, tableFilters, classList, highColumnIndex, lowColumnIndex, 
         gt, lte;
     
-    tableWrapper = this.tableWrapper;
+    htmlTableWrapper = this.htmlTableWrapper;
     categoryInputs = this.categoryInputs;
     highColumnIndex = this.highColumnIndex;
     lowColumnIndex = this.lowColumnIndex;
@@ -236,7 +289,9 @@ TemperatureCategoryListener.prototype.updateTable = function () {
         }
         
         // Read in range values.
+        // TemperatureConversionListener.CURRENT_GT_ATTRIBUTE === 'data-current-gt'
         gt = Number.parseFloat(input.getAttribute(TemperatureConversionListener.CURRENT_GT_ATTRIBUTE));
+        // TemperatureConversionListener.CURRENT_LTE_ATTRIBUTE === 'data-current-lte'
         lte = Number.parseFloat(input.getAttribute(TemperatureConversionListener.CURRENT_LTE_ATTRIBUTE));
         
         // Add appropriate filter descriptor.
@@ -250,12 +305,12 @@ TemperatureCategoryListener.prototype.updateTable = function () {
         }
     }
     
-    // Call HTMLTableWrapper.
-    tableWrapper.filter(tableFilters);
+    // Call HTMLhtmlTableWrapper.
+    htmlTableWrapper.filter(tableFilters);
 };
 ```
 
-With that, the `handleEvent` function for `TemperatureCategoryListener` is simple:
+We call `updateTable` each time a 'Filter By Category' option button is clicked:
 ``` javascript
 TemperatureCategoryListener.prototype.handleEvent = function () {
     'use strict';
@@ -265,14 +320,11 @@ TemperatureCategoryListener.prototype.handleEvent = function () {
 ```
 
 
-Next, we declare our [`SortDescriptor`][SortDescriptor]s. [`SortDescriptor`][SortDescriptor]s are quite similar 
-to [`FilterDescriptor`][FilterDescriptor]s, only they, instead, define a [`compare`][SortDescriptor-compare]
-function that takes two `HTMLTableCellElement`s or `HTMLTableRowElement`s, depending upon whether or not its 
-[`columnIndex`][SortDescriptor-columnIndex] property is a positive number. The return value for 
-[`compare`][SortDescriptor-compare] is an integer: negative if the first argument should be sorted below the 
-second, positive if it should be sorted above, and zero if there's no preference.
+Next, we define [`SortDescriptor`][SortDescriptor]s.
 
-The [`SortDescriptor`][SortDescriptor]s for this example are quite similar to the [`FilterDescriptor`][FilterDescriptor]s:
+<a name="highLowSortDescriptor"></a>
+The [`SortDescriptor`][SortDescriptor] for high and low temperatures is [`HighLowSortDescriptor`](HighLowSortDescriptor.js).
+The arguments to its constructor are the target `columnIndex`, and if sorting should be in `descending` order:
 ``` javascript
 function HighLowSortDescriptor(columnIndex, descending) {
     'use strict';
@@ -280,15 +332,21 @@ function HighLowSortDescriptor(columnIndex, descending) {
     this.columnIndex = columnIndex;
     this.descending = descending;
 }
+```
 
+Its [`compare`][SortDescriptor-compare] function returns the difference between two given cells. `NaN` values
+are sorted towards the bottom of the table:
+``` javascript
 HighLowSortDescriptor.prototype.compare = function (cellA, cellB) {
     'use strict';
     
     var numA, numB, aNaN, bNaN, result;
     
+    // Parse cell values.
     numA = Number.parseFloat(cellA.textContent);
     numB = Number.parseFloat(cellB.textContent);
     
+    // Test for NaN.
     aNaN = Number.isNaN(numA);
     bNaN = Number.isNaN(numB);
     if (aNaN && bNaN) {
@@ -299,12 +357,17 @@ HighLowSortDescriptor.prototype.compare = function (cellA, cellB) {
         return -1;
     }
     
+    // Return difference, or inverse of the difference if descending.
     result = numA - numB;
     return this.descending ? -1 * result : result;
 };
+```
 
-
-
+<a name="swingSortDescriptor"></a>
+The [`SortDescriptor`][SortDescriptor] for temperature swings is [`SwingSortDescriptor`](SwingSortDescriptor.js).
+The arguments to its constructor are the index of the high and low temperature columns, and if sorting should 
+be in `descending` order.
+``` javascript
 function SwingSortDescriptor(highColumnIndex, lowColumnIndex, descending) {
     'use strict';
     
@@ -312,7 +375,11 @@ function SwingSortDescriptor(highColumnIndex, lowColumnIndex, descending) {
     this.lowColumnIndex = lowColumnIndex;
     this.descending = descending;
 }
+```
 
+Its [`compare`][SortDescriptor-compare] function returns the difference between the swing range of two rows.
+Again, `NaN` values are sorted towards the bottom of the table:
+``` javascript
 SwingSortDescriptor.prototype.compare = function (rowA, rowB) {
     'use strict';
     
@@ -324,11 +391,13 @@ SwingSortDescriptor.prototype.compare = function (rowA, rowB) {
     aCells = rowA.cells;
     bCells = rowB.cells;
     
-    aSwing = Number.parseFloat(aCells[highColumnIndex].textContent) - 
-            Number.parseFloat(aCells[lowColumnIndex].textContent);
-    bSwing = Number.parseFloat(bCells[highColumnIndex].textContent) - 
-            Number.parseFloat(bCells[lowColumnIndex].textContent);
+    // Calculate swings.
+    aSwing = Number.parseFloat(aCells[highColumnIndex].textContent) 
+            - Number.parseFloat(aCells[lowColumnIndex].textContent);
+    bSwing = Number.parseFloat(bCells[highColumnIndex].textContent) 
+            - Number.parseFloat(bCells[lowColumnIndex].textContent);
     
+    // Test for NaNs.
     aNaN = Number.isNaN(aSwing);
     bNaN = Number.isNaN(bSwing);
     if (aNaN && bNaN) {
@@ -339,20 +408,20 @@ SwingSortDescriptor.prototype.compare = function (rowA, rowB) {
         return -1;
     }
     
+    // Return difference between swings, or the inverse thereof if descending.
     result = aSwing - bSwing;
     return this.descending ? -1 * result : result;
 };
 ```
-
-Finally, we declare a listener for the sort fields. Similar to `TemperatureCategoryListener`, it takes a backing 
-[`HTMLTableWrapper`][HTMLTableWrapper], a set of relevant inputs, and the column index of the high and low temperature 
-columns in the backing table. Also similar to `TemperatureCategoryListener`, the `init` and `dispose` functions 
-add and remove (respectively) the listener for click events on relevant inputs.
+[`HighLowSortDescriptor`](#highLowSortDescriptor) and [`SwingSortDescriptor`](#swingSortDescriptor) are used
+in [`TemperatureSortListener`](TemperatureSortListener.js). The arguments to its constructor are an 
+[`HTMLTableWrapper`][HTMLTableWrapper], the 'Sort By Temperature' option buttons (as `sortInputs`) and the 
+index of the high and low temperature columns. It listens for click events on `sortInputs`:
 ``` javascript
-function TemperatureSortListener(tableWrapper, sortInputs, highColumnIndex, lowColumnIndex) {
+function TemperatureSortListener(htmlTableWrapper, sortInputs, highColumnIndex, lowColumnIndex) {
     'use strict';
     
-    this.tableWrapper = tableWrapper;
+    this.htmlTableWrapper = htmlTableWrapper;
     this.sortInputs = sortInputs;
     this.highColumnIndex = highColumnIndex;
     this.lowColumnIndex = lowColumnIndex;
@@ -383,25 +452,23 @@ TemperatureSortListener.prototype.dispose = function () {
 };
 ```
 
-We next declare a `doSort` function that takes a `category` (high/low/swing/none) and `direction` (asc/desc) 
-argument. Based upon those, an appropriate [`SortDescriptor`][SortDescriptor] is built, and passed to the backing 
-[`HTMLTableWrapper`][HTMLTableWrapper]'s [`sort`][HTMLTableWrapper-sort] function. If the 'none' field is selected,
-the sort is [cleared][HTMLTableWrapper-clearSort].
+The arguments to the `doSort` function are `category` and `direction`. Based on `category`, it will build 
+an appropriate [`SortDescriptor`][SortDescriptor], and set its `descending` indicator based on `direction`. 
+If `category` is not recognized, or is `'none'`, sorting is [cleared][HTMLTableWrapper-clearSort]:
 ``` javascript
-TemperatureSortListener.CATEGORY_ATTRIBUTE_NAME = 'data-category';
-
-// ...
-
 TemperatureSortListener.prototype.doSort = function (category, direction) {
     'use strict';
     
-    var tableWrapper, highColumnIndex, lowColumnIndex, descending, sortDescriptor;
+    var htmlTableWrapper, highColumnIndex, lowColumnIndex, descending, sortDescriptor;
     
-    tableWrapper = this.tableWrapper;
+    htmlTableWrapper = this.htmlTableWrapper;
     highColumnIndex = this.highColumnIndex;
     lowColumnIndex = this.lowColumnIndex;
     
+    // direction is 'asc' or 'desc'; descending to true if 'desc':
     descending = direction == 'desc';
+    
+    // Build an appropriate SortDescriptor based on category:
     switch (category) {
         case 'high':
             sortDescriptor = new HighLowSortDescriptor(highColumnIndex, descending);
@@ -417,16 +484,22 @@ TemperatureSortListener.prototype.doSort = function (category, direction) {
             sortDescriptor = null;
     }
     
+    // Call HTMLTableWrapper.
     if (sortDescriptor) {
-        tableWrapper.sort(sortDescriptor);
+        // Sort if a valid SortDescriptor was built.
+        htmlTableWrapper.sort(sortDescriptor);
     } else {
-        tableWrapper.clearSort();
+        // Otherwise clear sorting.
+        htmlTableWrapper.clearSort();
     }
 };
 ```
 
-The `handleEvent` function for `TemperatureSortListener` is also rather simple:
+The `handleEvent` function calls `doSort` based on the clicked option button's `data-category` attribute
+and `value`:
 ``` javascript
+TemperatureSortListener.CATEGORY_ATTRIBUTE_NAME = 'data-category';
+
 TemperatureSortListener.prototype.handleEvent = function (event) {
     'use strict';
     
@@ -438,9 +511,7 @@ TemperatureSortListener.prototype.handleEvent = function (event) {
 };
 ```
 
-
-
-The page initialization script, in this case, looks like this:
+Page initialization looks like this:
 ``` html
 <script src="TemperatureConversionListener.js"></script>
 <script src="TemperatureSortListener.js"></script>
@@ -467,8 +538,7 @@ document.addEventListener('DOMContentLoaded', function () {
     sortInputs = document.getElementsByClassName('temperature-sort');
     
     new TemperatureConversionListener(table, categoryFieldGroup, tempConversions, unitInputs).init();
-    new TemperatureCategoryListener(tableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX)
-            .init();
+    new TemperatureCategoryListener(tableWrapper, categoryInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
     new TemperatureSortListener(tableWrapper, sortInputs, HIGH_COLUMN_INDEX, LOW_COLUMN_INDEX).init();
     
 });
@@ -491,3 +561,8 @@ The working webpage can be found [here](https://mschlege1838.github.io/html-tabl
 [SortDescriptor]: https://mschlege1838.github.io/html-table-wrapper/SortDescriptor.html
 [SortDescriptor-compare]: https://mschlege1838.github.io/html-table-wrapper/SortDescriptor.html#compare
 [SortDescriptor-columnIndex]: https://mschlege1838.github.io/html-table-wrapper/SortDescriptor.html#columnIndex
+
+
+[configuration-full]: https://github.com/mschlege1838/html-table-wrapper#configurationFull
+[configuration-utility]: https://github.com/mschlege1838/html-table-wrapper#configurationUtility
+[configuration-core]: https://github.com/mschlege1838/html-table-wrapper#configurationCore

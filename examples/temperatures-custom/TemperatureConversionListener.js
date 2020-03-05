@@ -15,8 +15,8 @@ TemperatureConversionListener.ORIGINAL_GT_ATTRIBUTE = 'data-orig-gt';
 TemperatureConversionListener.ORIGINAL_LTE_ATTRIBUTE = 'data-orig-lte';
 TemperatureConversionListener.ORIGINAL_READING_ATTRIBUTE = 'data-orig-temp';
 
-TemperatureConversionListener.CURRENT_GT_ATTRIBUTE = 'data-gt';
-TemperatureConversionListener.CURRENT_LTE_ATTRIBUTE = 'data-lte';
+TemperatureConversionListener.CURRENT_GT_ATTRIBUTE = 'data-current-gt';
+TemperatureConversionListener.CURRENT_LTE_ATTRIBUTE = 'data-current-lte';
 
 TemperatureConversionListener.APPLICABLE_INPUT_SELECTOR = '.temperature-category[' + TemperatureConversionListener.ORIGINAL_UNIT_ATTRIBUTE + ']';
 

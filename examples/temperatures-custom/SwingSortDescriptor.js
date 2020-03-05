@@ -19,9 +19,11 @@ SwingSortDescriptor.prototype.compare = function (rowA, rowB) {
     aCells = rowA.cells;
     bCells = rowB.cells;
     
+    // Calculate swings.
     aSwing = Number.parseFloat(aCells[highColumnIndex].textContent) - Number.parseFloat(aCells[lowColumnIndex].textContent);
     bSwing = Number.parseFloat(bCells[highColumnIndex].textContent) - Number.parseFloat(bCells[lowColumnIndex].textContent);
     
+    // Test for NaNs.
     aNaN = Number.isNaN(aSwing);
     bNaN = Number.isNaN(bSwing);
     if (aNaN && bNaN) {
@@ -32,6 +34,7 @@ SwingSortDescriptor.prototype.compare = function (rowA, rowB) {
         return -1;
     }
     
+    // Return difference between swings, or the inverse thereof if descending.
     result = aSwing - bSwing;
     return this.descending ? -1 * result : result;
 };
