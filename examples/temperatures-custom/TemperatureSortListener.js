@@ -1,9 +1,9 @@
 
 
-function TemperatureSortListener(tableWrapper, sortInputs, highColumnIndex, lowColumnIndex) {
+function TemperatureSortListener(htmlTableWrapper, sortInputs, highColumnIndex, lowColumnIndex) {
     'use strict';
     
-    this.tableWrapper = tableWrapper;
+    this.htmlTableWrapper = htmlTableWrapper;
     this.sortInputs = sortInputs;
     this.highColumnIndex = highColumnIndex;
     this.lowColumnIndex = lowColumnIndex;
@@ -48,13 +48,16 @@ TemperatureSortListener.prototype.handleEvent = function (event) {
 TemperatureSortListener.prototype.doSort = function (category, direction) {
     'use strict';
     
-    var tableWrapper, highColumnIndex, lowColumnIndex, descending, sortDescriptor;
+    var htmlTableWrapper, highColumnIndex, lowColumnIndex, descending, sortDescriptor;
     
-    tableWrapper = this.tableWrapper;
+    htmlTableWrapper = this.htmlTableWrapper;
     highColumnIndex = this.highColumnIndex;
     lowColumnIndex = this.lowColumnIndex;
     
+    // direction is 'asc' or 'desc'; descending to true if 'desc':
     descending = direction == 'desc';
+    
+    // Build an appropriate SortDescriptor based on category:
     switch (category) {
         case 'high':
             sortDescriptor = new HighLowSortDescriptor(highColumnIndex, descending);
@@ -70,9 +73,12 @@ TemperatureSortListener.prototype.doSort = function (category, direction) {
             sortDescriptor = null;
     }
     
+    // Call HTMLTableWrapper.
     if (sortDescriptor) {
-        tableWrapper.sort(sortDescriptor);
+        // Sort if a valid SortDescriptor was built.
+        htmlTableWrapper.sort(sortDescriptor);
     } else {
-        tableWrapper.clearSort();
+        // Otherwise clear sorting.
+        htmlTableWrapper.clearSort();
     }
 };

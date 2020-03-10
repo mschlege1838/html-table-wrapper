@@ -1,11 +1,10 @@
-# Changing How Cells Are Interpreted
+# Changing Cell Interpretation
 
-Often the default mode of determining a cell's content isn't quite enough. When dealing with tables that have 
-cells that follow a particular format, a [`CellInterpreter`][CellInterpreter] can be used to tell HTMLTableWrapper.js 
-how to handle them.
+<a name="defaultProcessing"></a>By default, HTMLTableWrapper.js only considers the `textContent` of each cell. 
+When dealing with cells of specialized format, a [`CellInterpreter`][CellInterpreter] can be used.
 
-Consider a webpage that aggregates drink recipes in a table. The columns that show the ingredients and mixing 
-steps will have list elements detailing each:
+Consider a drink recipe aggregator. A table on such a website would have a column detailing each drink's 
+list of ingredients, and another listing steps to combine them:
 ``` html
 <!-- ... -->
 <table id="drinks">
@@ -47,17 +46,30 @@ steps will have list elements detailing each:
 <!-- ... -->
 ```
 
-By default HTMLTableWrapper.js simply considers the `textContent` of each cell as its content, however, in this 
-case such would not be desirable for columns 3 and 4 (index 2 and 3). For this purpose, you can define a `CellInterpreter`.
+Without special instruction, the "Ingredients" and "Instructions" columns don't show meaningful values:
 
-A valid [`CellInterpreter`][CellInterpreter] is a [`function`][HTMLTableWrapperControl~populateCellValues], 
-or an object that defines a function called [`populateCellValues`][CellInterpreter-populateCellValues], that 
-takes the arguments of an `HTMLTableCellElement` and a [`ColumnValueSet`][ColumnValueSet] of values already 
-identified for the column. The function should add all the values logically contained within the cell to the
-set. Returning a value that evaluates to `true` from this function will trigger default processing, in which 
-case the cell's `textContent` will be added to the set.
+![Ingredients Column](img/default-processing-1.PNG) ![Instructions Column](img/default-processing-2.PNG)
 
-For the case of interpreting list cells, the following accomplishes this:
+A [`CellInterpreter`][CellInterpreter] can be used to tell HTMLTableWrapper.js to split these cells
+by the individual items they list.
+
+
+## API Explanation
+
+[`CellInterpreter`][CellInterpreter]s can be given as either standalone JavaScript functions, or as objects
+having a function property called [`populateCellValues`][CellInterpreter-populateCellValues]. In either case,
+it must have this signature:
+
+`boolean (HTMLTableCellElement cell, `[`ColumnValueSet`][ColumnValueSet]` values)`
+
+The [function][HTMLTableWrapperControl~populateCellValues] should add all the values contained in `cell` to
+the given `values`. If `cell` is not in a recognized format, return `true` to defer to 
+[default](#defaultProcessing) processing.
+
+
+## Implementation
+
+For our purposes, a standalone function can be used:
 ``` javascript
 function interpretListCell(cell, values) {
     'use strict';
@@ -65,35 +77,48 @@ function interpretListCell(cell, values) {
     var listElements, i;
     
     listElements = cell.getElementsByTagName('li');
+    
+    // If cell contains no list elements, defer to the default processing.
     if (!listElements.length) {
         return true;
     }
     
+    // Otherwise, add the textContent of each list element to the given set of values.
     for (i = 0; i < listElements.length; ++i) {
         values.add(listElements[i].textContent);
     }
     
     // Not strictly necessary; permissable to not have a return value.
-    // (No return statement implies a return value of undefined.)
+    // (No return statement implies a return value of undefined, which evaluates to false.)
     return false;
 }
 ```
 
-After a [`CellInterpreter`][CellInterpreter] implementation is declared, it must be passed to the relevant 
-[`HTMLTableWrapperListener`][HTMLTableWrapperListener] (as argument index 2; the previous argument, if defined, 
-is a [`ColumnControlFactory`][ColumnControlFactory], which is covered in the next [example][next-example]):
+In order for a [`CellInterpreter`][CellInterpreter] to be used, it must be passed to a relevant
+[`HTMLTableWrapperListener`][HTMLTableWrapperListener]. Note, [`CellInterpreter`][CellInterpreter]s must
+be passed as the third argument. The second argument is a [`ColumnControlFactory`][ColumnControlFactory], and
+is covered in the [next example][next-example].
 ```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper.min.js"></script>
+
 <script src="list-cell-interpreter-fn.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     'use strict';
     
+    // CellInterpreters must be passed as the third argument.
+    // The second argument is a ColumnControlFactory, which is covered in the next example.
     new HTMLTableWrapperListener(document.getElementById('drinks'), null, interpretListCell).init();
 });
 </script>
 ```
 
-The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/examples/drinks.html).
+This results in more meaningful output:
+
+![Ingredients Column](img/special-processing-1.PNG) ![Instructions Column](img/special-processing-2.PNG)
+
+The working webpage can be found [here](https://mschlege1838.github.io/html-table-wrapper/examples/drinks/drinks.html).
 
 
 
@@ -104,4 +129,4 @@ The working webpage can be found [here](https://mschlege1838.github.io/html-tabl
 [ColumnControlFactory]: https://mschlege1838.github.io/html-table-wrapper/ColumnControlFactory.html
 [HTMLTableWrapperControl~populateCellValues]: https://mschlege1838.github.io/html-table-wrapper/HTMLTableWrapperControl.html#~populateCellValues
 
-[next-example]: https://github.com/mschlege1838/html-table-wrapper/examples/temperatures
+[next-example]: https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/temperatures

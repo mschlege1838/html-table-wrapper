@@ -3,7 +3,7 @@
 
 class TemperatureColumnControl {
     
-    static get CLICK_TARGETS_SELECTOR() { return '.temperature-unit, .close-button'; }
+    static get CLICK_TARGETS_SELECTOR() { return '.temperature-unit, .close-button, .sort-option'; }
     
     static getIdBase() {
         return `temperatureControl_${TemperatureColumnControl.idCounter++}_`;
@@ -41,16 +41,22 @@ class TemperatureColumnControl {
         const target = event.target;
         
         switch (event.type) {
+            // First time control is opened.
             case 'create':
                 this.defineContent(target.getControlElement());
                 break;
+                
             case 'click':
-                if (target.classList.contains('temperature-unit')) {
-                    this.temperatureConverter.convertColumn(this.columnIndex, target.value);
-                } else if (target.classList.contains('close-button')) {
+                if (target.classList.contains('temperature-unit')) {     // Unit change.
+                    this.convertTo(target.value);
+                } else if (target.classList.contains('close-button')) {  // Close button.
                     this.close();
+                } else if (target.classList.contains('sort-option')) {   // Sort option.
+                    this.updateParent();
                 }
                 break;
+            
+            // Filter operator or operand change.
             case 'change':
             case 'keyup':
                 this.updateParent();
@@ -69,11 +75,13 @@ class TemperatureColumnControl {
     getFilterDescriptor() {
         const controlElement = this.contextControl.getControlElement();
         if (!controlElement) {
+            // Control has not been opened yet => no filtering needs to be performed.
             return null;
         }
         
         const operand = Number.parseFloat(controlElement.querySelector('.temperature-filter-operand').value);
         if (Number.isNaN(operand)) {
+            // Though SimpleFilterDescriptor can handle it, we're opting not to filter if the entered value is not a number.
             return null;
         }
         
@@ -81,8 +89,31 @@ class TemperatureColumnControl {
     }
     
     getSortDescriptor() {
-        // Not strictly necessary; no return statement implies a return value of undefined.
-        return null;
+        const controlElement = this.contextControl.getControlElement();
+        if (!controlElement) {
+            // Control has not been opened yet => no sorting needs to be performed.
+            return null;
+        }
+        
+        // Find first checked sort option.
+        let checkedOption = null;
+        for (const sortOption of controlElement.getElementsByClassName('sort-option')) {
+            if (sortOption.checked) {
+                checkedOption = sortOption;
+                break;
+            }
+        }
+        
+        // If no option is selected OR the 'none' option is selected, no sorting should be performed.
+        if (!checkedOption || checkedOption.value === 'none') {
+            return null;
+        }
+        
+        return new SimpleSortDescriptor(this.columnIndex, checkedOption.value === 'desc');
+    }
+    
+    convertTo(unit) {
+        this.temperatureConverter.convertColumn(this.columnIndex, unit);
     }
     
     updateParent() {
@@ -96,13 +127,21 @@ class TemperatureColumnControl {
         const builder = new XMLBuilder();
         const idBase = TemperatureColumnControl.getIdBase();
         
+        // Generate ids.
         const fId = idBase + 'fInput';
         const cId = idBase + 'cInput';
         const kId = idBase + 'kInput';
-        const unitInputSetName = idBase + 'temperatureInput';
         const operatorId = idBase + 'operator';
         const operandId = idBase + 'operand';
+        const sortOrderNoneId = idBase + 'sortOrderNone';
+        const sortOrderAscId = idBase + 'sortOrderAsc';
+        const sortOrderDescId = idBase + 'sortOrderDesc';
         
+        // Generate names.
+        const unitInputSetName = idBase + 'temperatureInput';
+        const sortOrderName = idBase + 'sortOrder';
+        
+        // Build content.
         builder.startTag('div').attribute('class', 'control-bar')
             .startTag('span').attribute('class', 'control-button close-button').content('\u00D7').closeTag()
         .closeTag()
@@ -131,11 +170,27 @@ class TemperatureColumnControl {
             .closeTag()
             .startTag('label').attribute('for', operandId).content(' to ').closeTag()
             .startTag('input').attribute('id', operandId).attribute('class', 'temperature-filter-operand')
+        .closeTag()
+        .startTag('div').attribute('class', 'sort-order')
+            .startTag('span').content('Sort Order: ').closeTag()
+            .startTag('span').attribute('class', 'field')
+                .startTag('input').attribute('id', sortOrderNoneId).attribute('class', 'sort-option').attribute('name', sortOrderName).attribute('value', 'none').attribute('type', 'radio').attribute('checked').closeTag()
+                .startTag('label').attribute('for', sortOrderNoneId).content('None').closeTag()
+            .closeTag()
+            .startTag('span').attribute('class', 'field')
+                .startTag('input').attribute('id', sortOrderAscId).attribute('class', 'sort-option').attribute('name', sortOrderName).attribute('value', 'asc').attribute('type', 'radio').closeTag()
+                .startTag('label').attribute('for', sortOrderAscId).content('Ascending').closeTag()
+            .closeTag()
+            .startTag('span').attribute('class', 'field')
+                .startTag('input').attribute('id', sortOrderDescId).attribute('class', 'sort-option').attribute('name', sortOrderName).attribute('value', 'desc').attribute('type', 'radio').closeTag()
+                .startTag('label').attribute('for', sortOrderDescId).content('Descending').closeTag()
+            .closeTag()
         .closeTag();
         
-        
+        // Insert content.
         container.insertAdjacentHTML('afterbegin', builder.toString());
         
+        // Register for events on newly defined content.
         for (const clickTarget of container.querySelectorAll(TemperatureColumnControl.CLICK_TARGETS_SELECTOR)) {
             clickTarget.addEventListener('click', this, false);
         }

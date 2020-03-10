@@ -7,8 +7,8 @@ class TemperatureConversionListener {
     static get ORIGINAL_LTE_ATTRIBUTE() { return 'data-orig-lte'; }
     static get ORIGINAL_READING_ATTRIBUTE() { return 'data-orig-temp'; }
 
-    static get CURRENT_GT_ATTRIBUTE() { return 'data-gt'; }
-    static get CURRENT_LTE_ATTRIBUTE() { return 'data-lte'; }
+    static get CURRENT_GT_ATTRIBUTE() { return 'data-current-gt'; }
+    static get CURRENT_LTE_ATTRIBUTE() { return 'data-current-lte'; }
 
     static get APPLICABLE_INPUT_SELECTOR() { return `.temperature-category[${TemperatureConversionListener.ORIGINAL_UNIT_ATTRIBUTE}]`; }
 

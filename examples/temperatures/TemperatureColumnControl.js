@@ -10,7 +10,7 @@ function TemperatureColumnControl(columnIndex, parent, temperatureConverter) {
 }
 
 // Static fields.
-TemperatureColumnControl.CLICK_TARGETS_SELECTOR = '.temperature-unit, .close-button';
+TemperatureColumnControl.CLICK_TARGETS_SELECTOR = '.temperature-unit, .close-button, .sort-option';
 
 TemperatureColumnControl.idCounter = 0;
 
@@ -18,7 +18,7 @@ TemperatureColumnControl.idCounter = 0;
 TemperatureColumnControl.getIdBase = function () {
     'use strict';
     
-    return 'temperatureControl_ ' + TemperatureColumnControl.idCounter++ + '_';
+    return 'temperatureControl_' + TemperatureColumnControl.idCounter++ + '_';
 };
 
 // Instance methods.
@@ -63,10 +63,12 @@ TemperatureColumnControl.prototype.handleEvent = function (event) {
             break;
             
         case 'click':
-            if (target.classList.contains('temperature-unit')) {    // Unit change.
+            if (target.classList.contains('temperature-unit')) {     // Unit change.
                 this.convertTo(target.value);
-            } else if (target.classList.contains('close-button')) {        // Close button.
+            } else if (target.classList.contains('close-button')) {  // Close button.
                 this.close();
+            } else if (target.classList.contains('sort-option')) {   // Sort option.
+                this.updateParent();
             }
             break;
             
@@ -115,8 +117,30 @@ TemperatureColumnControl.prototype.getFilterDescriptor = function () {
 TemperatureColumnControl.prototype.getSortDescriptor = function () {
     'use strict';
     
-    // Not strictly necessary; no return statement implies a return value of undefined.
-    return null;
+    var controlElement, sortOptions, sortOption, checkedOption, i;
+    
+    controlElement = this.contextControl.getControlElement();
+    if (!controlElement) {
+        // Control has not been opened yet => no sorting needs to be performed.
+        return null;
+    }
+    
+    // Find first checked sort option.
+    sortOptions = controlElement.getElementsByClassName('sort-option');
+    for (i = 0; i < sortOptions.length; ++i) {
+        sortOption = sortOptions[i];
+        if (sortOption.checked) {
+            checkedOption = sortOption;
+            break;
+        }
+    }
+    
+    // If no option is selected OR the 'none' option is selected, no sorting should be performed.
+    if (!checkedOption || checkedOption.value === 'none') {
+        return null;
+    }
+    
+    return new SimpleSortDescriptor(this.columnIndex, checkedOption.value === 'desc');
 };
 
 
@@ -136,7 +160,8 @@ TemperatureColumnControl.prototype.updateParent = function () {
 TemperatureColumnControl.prototype.defineContent = function (container) {
     'use strict';
     
-    var builder, idBase, fId, cId, kId, unitInputSetName, operatorId, operandId, clickTargets, i;
+    var builder, idBase, fId, cId, kId, unitInputSetName, operatorId, operandId, clickTargets, i,
+        sortOrderName, sortOrderNoneId, sortOrderAscId, sortOrderDescId;
     
     builder = new XMLBuilder();
     idBase = TemperatureColumnControl.getIdBase();
@@ -147,9 +172,13 @@ TemperatureColumnControl.prototype.defineContent = function (container) {
     kId = idBase + 'kInput';
     operatorId = idBase + 'operator';
     operandId = idBase + 'operand';
-        
+    sortOrderNoneId = idBase + 'sortOrderNone';
+    sortOrderAscId = idBase + 'sortOrderAsc';
+    sortOrderDescId = idBase + 'sortOrderDesc';
+    
     // Generate names.
     unitInputSetName = idBase + 'temperatureInput';
+    sortOrderName = idBase + 'sortOrder';
     
     // Build content.
     builder.startTag('div').attribute('class', 'control-bar')
@@ -180,6 +209,21 @@ TemperatureColumnControl.prototype.defineContent = function (container) {
         .closeTag()
         .startTag('label').attribute('for', operandId).content(' to ').closeTag()
         .startTag('input').attribute('id', operandId).attribute('class', 'temperature-filter-operand')
+    .closeTag()
+    .startTag('div').attribute('class', 'sort-order')
+        .startTag('span').content('Sort Order: ').closeTag()
+        .startTag('span').attribute('class', 'field')
+            .startTag('input').attribute('id', sortOrderNoneId).attribute('class', 'sort-option').attribute('name', sortOrderName).attribute('value', 'none').attribute('type', 'radio').attribute('checked').closeTag()
+            .startTag('label').attribute('for', sortOrderNoneId).content('None').closeTag()
+        .closeTag()
+        .startTag('span').attribute('class', 'field')
+            .startTag('input').attribute('id', sortOrderAscId).attribute('class', 'sort-option').attribute('name', sortOrderName).attribute('value', 'asc').attribute('type', 'radio').closeTag()
+            .startTag('label').attribute('for', sortOrderAscId).content('Ascending').closeTag()
+        .closeTag()
+        .startTag('span').attribute('class', 'field')
+            .startTag('input').attribute('id', sortOrderDescId).attribute('class', 'sort-option').attribute('name', sortOrderName).attribute('value', 'desc').attribute('type', 'radio').closeTag()
+            .startTag('label').attribute('for', sortOrderDescId).content('Descending').closeTag()
+        .closeTag()
     .closeTag();
     
     // Insert content.

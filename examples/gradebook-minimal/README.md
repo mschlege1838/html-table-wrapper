@@ -1,30 +1,30 @@
-# Using HTMLTableWrapper.js Directly
+# Using [`HTMLTableWrapper`][HTMLTableWrapper] Directly
 
-HTMLTableWrapper.js can be used directly in your own controls. The utility configuration comes with some helper 
-classes that make this a bit easier: [`SimpleSortDescriptor`][SimpleSortDescriptor] and 
-[`SimpleFilterDescriptor`][SimpleFilterDescriptor].
+All examples prior to this made use of the [_full_][configuration-full] HTMLTableWrapper.js libarary through
+[`HTMLTableWrapperListener`][HTMLTableWrapperListener] and some form of [`ColumnControl`][ColumnControl].
+This example uses HTMLTableWrapper.js' core class definition directly: 
+[`HTMLTableWrapper`][HTMLTableWrapper].
 
-Consider the gradebook example from earlier. Say you don't need/want the full functionality of the standard 
-configuration, but just the ability to sort the table, and filter grades by whether they're passing or failing.
-The utility configuration can be effectively used to this end, but there's a little more coding you'll have to do.
-
-First off, the fields for filtering by category need to be defined. In the example, this is inserted just before 
-the table definition:
+Consider the [gradebook][gradebook-example] from earlier, but with a more specialized interface. We define
+option buttons enabling the table to be filtered down to grades that are only passing or failing:
 ``` html
 <body>
     <h1>Gradebook</h1>
     <div>
         <span>Show:</span>
         <span>
-            <input id="gradeCategoryAll" class="grade-category" type="radio" name="gradeCategory" value="all" checked />
+            <input id="gradeCategoryAll" class="grade-category" type="radio" name="gradeCategory" 
+                    value="all" checked />
             <label for="gradeCategoryAll">All</label>
         </span>
         <span>
-            <input id="gradeCategoryPassing" class="grade-category" type="radio" name="gradeCategory" value="passing" />
+            <input id="gradeCategoryPassing" class="grade-category" type="radio" name="gradeCategory" 
+                    value="passing" />
             <label for="gradeCategoryPassing">Passing</label>
         </span>
         <span>
-            <input id="gradeCategoryFailing" class="grade-category" type="radio" name="gradeCategory" value="failing" />
+            <input id="gradeCategoryFailing" class="grade-category" type="radio" name="gradeCategory" 
+                    value="failing" />
             <label for="gradeCategoryFailing">Failing</label>
         </span>
     </div>
@@ -39,20 +39,157 @@ the table definition:
 <!-- ... -->
 ```
 
-Next, we'll define a listener that handles sorting called `ClickSortListener`. Its constructor takes a single 
-[`HTMLTableWrapper`][HTMLTableWrapper], and it adds itself as a listener for click events on the backing table's 
-column headers in the `init` function. The `tableHeaderCache` is used for determining column indexes later on, 
-as well as maintaining references to host objects on which we've added ourselves as listeners, so we can remove 
-ourselves when the `ClickSortListener` is no longer needed (this is done in the `dispose` function, which is 
-not shown here; see [`grade-controls.js`](grade-controls.js) for details):
+We'll also enable sorting by clicking on column headers:
+
+![User Interface](img/failing-asc.PNG)
+
+
+## API Explanation
+
+Communication with [`HTMLTableWrapper`][HTMLTableWrapper] is facilitated through the callback interfaces
+[`FilterDescriptor`][FilterDescriptor] and [`SortDescriptor`][SortDescriptor]. These are covered in detail in
+the next [example][next-example].
+
+This example uses the [_utility_][configuration-utility] implementations of these interfaces:
+
+- [`SimpleFilterDescriptor`][SimpleFilterDescriptor]
+
+   The general-purpose implementation of [`FilterDescriptor`][FilterDescriptor]. Its constructor has the signature:
+   
+   **`constructor`** `(number columnIndex, [any] compareValue, string operator='=', number columnType?)`
+   
+   It instructs [`HTMLTableWrapper`][HTMLTableWrapper] to filter the column `columnIndex` against `compareValue` 
+   using `operator`. `Operator` is a `string` representing  the typical mathematical operators (`=`, 
+   `<`, `>`, `<=`, `>=`), or the not-so-typical string operators:
+   
+   - `~` : contains
+   - `~~`  : contains, ignore case
+   
+   E.g. to [`filter`][HTMLTableWrapper-filter] column index `3` to values less than `2`, use
+   
+   ``` javascript
+   htmlTableWrapper.filter(new SimpleFilterDescriptor(3, 2, '<'));
+   ```
+   
+   See the [documentation][HTMLTableWrapperUtils-COLUMN_TYPE_TEXT] for details on `columnType`.
+   
+- [`SimpleSortDescriptor`][SimpleSortDescriptor]
+
+    The general-purpose implementation of [`SortDescriptor`][SortDescriptor]. Its constructor has the signature:
+    
+    **`constructor`**` (number columnIndex, boolean descending=false)`
+
+    It instructs [`HTMLTableWrapper`][HTMLTableWrapper] to sort the column `columnIndex` in ascending or
+    descending order.
+    
+    E.g. to sort column index `3` in ascending order, use
+    
+    ``` javascript
+    htmlTableWrapper.sort(new SimpleSortDescriptor(3));
+    ```
+
+    Or, to sort in descending order, use
+    
+    ``` javascript
+    htmlTableWrapper.sort(new SimpleSortDescriptor(3, true));
+    ```
+
+
+## Implementation
+
+We define [`GradeCategoryListener`](GradeCategoryListener.js) to handle filtering. Itd constructor takes an 
+[`HTMLTableWrapper`][HTMLTableWrapper], the index of the column containing grades, and the option buttons 
+corresponding to grade categories:
 ``` javascript
-function ClickSortListener(tableWrapper) {
+function GradeCategoryListener(htmlTableWrapper, gradeColumnIndex, gradeCategoryInputs) {
     'use strict';
     
-    this.tableWrapper = tableWrapper;
+    this.htmlTableWrapper = htmlTableWrapper;
+    this.gradeColumnIndex = gradeColumnIndex;
+    this.gradeCategoryInputs = gradeCategoryInputs;
 }
 
-// ...
+GradeCategoryListener.PASSING_CATEGORY_NAME = 'passing';
+GradeCategoryListener.FAILING_CATEGORY_NAME = 'failing';
+GradeCategoryListener.ALL_CATEGORIES_NAME = 'all';
+
+GradeCategoryListener.prototype.init = function () {
+    'use strict';
+    
+    var gradeCategoryInputs, i;
+    
+    gradeCategoryInputs = this.gradeCategoryInputs;
+    for (i = 0; i < gradeCategoryInputs.length; ++i) {
+        gradeCategoryInputs[i].addEventListener('click', this, false);
+    }
+};
+
+GradeCategoryListener.prototype.dispose = function () {
+    'use strict';
+    
+    var gradeCategoryInputs, i;
+    
+    gradeCategoryInputs = this.gradeCategoryInputs;
+    for (i = 0; i < gradeCategoryInputs.length; ++i) {
+        gradeCategoryInputs[i].removeEventListener('click', this, false);
+    }
+};
+```
+
+The `filterByCategory` function calls [`HTMLTableWrapper.filter`][HTMLTableWrapper-filter] with an appropriate
+[`SimpleFilterDescriptor`][SimpleFilterDescriptor] based upon a given `category`:
+``` javascript
+GradeCategoryListener.prototype.filterByCategory = function (category) {
+    'use strict';
+    
+    var htmlTableWrapper, gradeColumnIndex;
+    
+    htmlTableWrapper = this.htmlTableWrapper;
+    gradeColumnIndex = this.gradeColumnIndex;
+    
+    switch (category) {
+        case GradeCategoryListener.PASSING_CATEGORY_NAME:
+            // Passing => filter to grades that are 'C', or occur before it in the alphabet:
+            htmlTableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '<='));
+            break;
+            
+        case GradeCategoryListener.FAILING_CATEGORY_NAME:
+            // Failing => filter to grades that occur after 'C' in the alphabet:
+            htmlTableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '>'));
+            break;
+            
+        case GradeCategoryListener.ALL_CATEGORIES_NAME:
+        default:
+            // Otherwise, show all grades:
+            htmlTableWrapper.clearFilter();
+            break;
+    }
+
+};
+```
+
+With `filterByCategory`, the `handleEvent` function is trivial:
+``` javascript
+GradeCategoryListener.prototype.handleEvent = function (event) {
+    'use strict';
+    
+    this.filterByCategory(event.target.value);
+};
+```
+
+Next, we define [`ClickSortListener`](ClickSortListener.js) to handle sorting. Its constructor takes a single 
+[`HTMLTableWrapper`][HTMLTableWrapper], and uses [`getTableElement`][HTMLTableWrapper-getTableElement] to 
+access its backing table. It adds itself as a click listener on the first row of table headers, and stores 
+them directly for subsequent access:
+``` javascript
+function ClickSortListener(htmlTableWrapper) {
+    'use strict';
+    
+    this.htmlTableWrapper = htmlTableWrapper;
+}
+
+ClickSortListener.ASCENDING_SORT_CLASS_NAME = 'ascending';
+ClickSortListener.DESCENDING_SORT_CLASS_NAME = 'descending';
 
 ClickSortListener.prototype.init = function () {
     'use strict';
@@ -60,36 +197,50 @@ ClickSortListener.prototype.init = function () {
     var tableHeaderCache, tableHeaders, i, tableHeader;
     
     tableHeaderCache = this.tableHeaderCache = [];
-    tableHeaders = this.tableWrapper.getTableElement().tHead.rows[0].cells;
+    tableHeaders = this.htmlTableWrapper.getTableElement().tHead.rows[0].cells;
     for (i = 0; i < tableHeaders.length; ++i) {
         tableHeader = tableHeaders[i];
         tableHeader.addEventListener('click', this, false);
         tableHeaderCache.push(tableHeader);
     }
 };
+
+ClickSortListener.prototype.dispose = function () {
+    'use strict';
+    
+    var tableHeaderCache, i;
+    
+    tableHeaderCache = this.tableHeaderCache;
+    for (i = 0; i < tableHeaderCache.length; ++i) {
+        tableHeaderCache[i].removeEventListener('click', this, false);
+    }
+    
+    this.tableHeaderCache = null;
+};
 ```
 
-After that, we need to declare a `handleEvent` function that calls on the backing [`HTMLTableWrapper`][HTMLTableWrapper]'s 
-[`sort`][HTMLTableWrapper-sort] function in response to click events on the column headers to which we've just added 
-ourselves. For this, we maintain a class name on the table header being sorted, and loop between three column states: 
-not sorted -> sorted ascending -> sorted descending. Based upon the current state, we call [`sort`][HTMLTableWrapper-sort]
-with a [`SimpleSortDescriptor`][SimpleSortDescriptor] each time a column header is clicked. If a different column header 
-is clicked than the one before, the previous column's state is cleared:
+In `handleEvent`, we use the `classList` of the clicked column header to decide how to sort. We rotate between
+the sort orders: ascending, descending, and none, and call [`HTMLTableWrapper.sort`][HTMLTableWrapper-sort] with
+an appropriate [`SimpleSortDescriptor`][SimpleSortDescriptor]. If the clicked column header is different than the 
+previously clicked column header, we clear the state of the previous column.
 ``` javascript
+ClickSortListener.prototype.lastColumnIndex = -1;
+
 ClickSortListener.prototype.handleEvent = function (event) {
     'use strict';
     
-    var header, headerClassList, columnIndex, tableWrapper, lastColumnIndex, tableHeaderCache;
+    var header, headerClassList, columnIndex, htmlTableWrapper, lastColumnIndex, tableHeaderCache;
     
     // Setup.
-    tableWrapper = this.tableWrapper;
+    htmlTableWrapper = this.htmlTableWrapper;
     tableHeaderCache = this.tableHeaderCache;
     header = event.target;
     
     // Error conditions.
     columnIndex = tableHeaderCache.indexOf(header);
     if (columnIndex === -1) {
-        throw new Error('Unrecognized column.');
+        console.warn('Unrecognized column.');
+        return;
     }
     
     // Clear last sorted column.
@@ -103,93 +254,41 @@ ClickSortListener.prototype.handleEvent = function (event) {
     
     // Sort requested column.
     headerClassList = header.classList;
+    
+    // Currently sorted in ascending order => switch to descending.
     if (headerClassList.contains(ClickSortListener.ASCENDING_SORT_CLASS_NAME)) {
         headerClassList.remove(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
         headerClassList.add(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
         
-        tableWrapper.sort(new SimpleSortDescriptor(columnIndex, true));
-    } else if (headerClassList.contains(ClickSortListener.DESCENDING_SORT_CLASS_NAME)) {
+        htmlTableWrapper.sort(new SimpleSortDescriptor(columnIndex, true));
+    } 
+    // Currently sorted in descending order => clear sorting.
+    else if (headerClassList.contains(ClickSortListener.DESCENDING_SORT_CLASS_NAME)) {
         headerClassList.remove(ClickSortListener.DESCENDING_SORT_CLASS_NAME);
         
-        tableWrapper.clearSort();
-    } else {
+        htmlTableWrapper.clearSort();
+    } 
+    // Currently not sorted => switch to ascending.
+    else {
         headerClassList.add(ClickSortListener.ASCENDING_SORT_CLASS_NAME);
         
-        tableWrapper.sort(new SimpleSortDescriptor(columnIndex, false));
+        htmlTableWrapper.sort(new SimpleSortDescriptor(columnIndex, false));
     }
 };
 ```
 
-We also need to declare an event listener that handles filtering grades by category. We'll do this in 
-`GradeCategoryListener`. This constructor will take three arguments: an [`HTMLTableWrapper`][HTMLTableWrapper], 
-the index of the column in the table that holds the grades, and the `HTMLInputElement`s we want to toggle filtering. 
-Similar to the `init` function before, `GradeCategoryListener` adds itself as a click listener on the relevant 
-elements (in this case, the `HTMLInputElement`s that toggle filtering):
-
-``` javascript
-function GradeCategoryListener(tableWrapper, gradeColumnIndex, gradeCategoryInputs) {
-    'use strict';
-    
-    this.tableWrapper = tableWrapper;
-    this.gradeColumnIndex = gradeColumnIndex;
-    this.gradeCategoryInputs = gradeCategoryInputs;
-}
-
-// ...
-
-GradeCategoryListener.prototype.init = function () {
-    'use strict';
-    
-    var gradeCategoryInputs, i;
-    
-    gradeCategoryInputs = this.gradeCategoryInputs;
-    for (i = 0; i < gradeCategoryInputs.length; ++i) {
-        gradeCategoryInputs[i].addEventListener('click', this, false);
-    }
-};
-```
-
-We'll also need to declare a function that handles filtering based upon the different `value`s we expect from 
-the `HTMLInputElement`s passed to the constructor. Based upon the value, we call [`filter`][HTMLTableWrapper-filter] 
-with an appropriately configured [`SimpleFilterDescriptor`][SimpleFilterDescriptor]:
-``` javascript
-GradeCategoryListener.prototype.filterByCategory = function (category) {
-    'use strict';
-    
-    var tableWrapper, gradeColumnIndex;
-    
-    tableWrapper = this.tableWrapper;
-    gradeColumnIndex = this.gradeColumnIndex;
-    
-    switch (category) {
-        case 'passing':
-            tableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '<='));
-            break;
-        case 'failing':
-            tableWrapper.filter(new SimpleFilterDescriptor(gradeColumnIndex, 'C', '>'));
-            break;
-        case 'all':
-        default:
-            tableWrapper.clearFilter();
-            break;
-    }
-
-};
-```
-
-This makes our definition of `handleEvent` event easy:
-``` javascript
-GradeCategoryListener.prototype.handleEvent = function (event) {
-    'use strict';
-    
-    this.filterByCategory(event.target.value);
-};
-```
-
-
-With those two classes implemented, the page initialization script will look like this:
+Page initialization looks like this:
 ``` html
-<script src="grade-controls.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper-util.min.css" />
+<style>
+th {
+    cursor: pointer;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/html-table-wrapper/html-table-wrapper-util.min.js"></script>
+<script src="ClickSortListener.js"></script>
+<script src="GradeCategoryListener.js"></script>
 <script>
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -212,7 +311,18 @@ The working webpage can be found [here](https://mschlege1838.github.io/html-tabl
 
 [SimpleSortDescriptor]: https://mschlege1838.github.io/html-table-wrapper/SimpleSortDescriptor.html
 [SimpleFilterDescriptor]: https://mschlege1838.github.io/html-table-wrapper/SimpleFilterDescriptor.html
+[FilterDescriptor]: https://mschlege1838.github.io/html-table-wrapper/FilterDescriptor.html
 [HTMLTableWrapper]: https://mschlege1838.github.io/html-table-wrapper/HTMLTableWrapper.html
 [HTMLTableWrapper-sort]: https://mschlege1838.github.io/html-table-wrapper/HTMLTableWrapper.html#sort
 [HTMLTableWrapper-filter]: https://mschlege1838.github.io/html-table-wrapper/HTMLTableWrapper.html#filter
+[HTMLTableWrapper-getTableElement]: https://mschlege1838.github.io/html-table-wrapper/HTMLTableWrapper.html#getTableElement
 [SimpleSortDescriptor]: https://mschlege1838.github.io/html-table-wrapper/SimpleSortDescriptor.html
+[SortDescriptor]: https://mschlege1838.github.io/html-table-wrapper/SortDescriptor.html
+[HTMLTableWrapperListener]: https://mschlege1838.github.io/html-table-wrapper/HTMLTableWrapperListener.html
+[ColumnControl]: https://mschlege1838.github.io/html-table-wrapper/ColumnControl.html
+[HTMLTableWrapperUtils-COLUMN_TYPE_TEXT]: https://mschlege1838.github.io/html-table-wrapper/HTMLTableWrapperUtils#COLUMN_TYPE_TEXT
+
+[configuration-full]: https://github.com/mschlege1838/html-table-wrapper#configurationFull
+[configuration-utility]: https://github.com/mschlege1838/html-table-wrapper#configurationUtility
+[gradebook-example]: https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/gradebook
+[next-example]: https://github.com/mschlege1838/html-table-wrapper/tree/master/examples/temperatures-custom
