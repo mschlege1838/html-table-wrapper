@@ -1,6 +1,6 @@
 {
   "name": "html-table-wrapper",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A standalone sort/filter utility for HTMLTableElements.",
   "keywords": ["html", "table", "sort", "filter"],
   "author": {
