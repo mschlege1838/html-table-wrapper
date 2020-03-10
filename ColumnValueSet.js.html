@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ColumnValueSet.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ColumnValueSet.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+ * Copyright 2020 Martin F. Schlegel Jr. | MIT AND BSD-3-Clause
+ */
+
+/**
+ * @constructor
+ * @classdesc
+ *
+ * A 'bridge' API to implement the necessary functionality of the ES6 Set for interpreting cell values. A `ColumnValueSet` is passed
+ * to {@link CellInterpreter} or {@link HTMLTableWrapperControl~populateCellValues} when used in {@link HTMLTableWrapperControl}s. If the `Set`
+ * constructor is defined, a `Set` will be used to back this `ColumnValueSet`, otherwise will fall back to an `Array`.
+ *
+ * The {@link ColumnValueSet#iterator} function of this class implements the ES6 protocol for iterable objects (if the `Symbol` constructor
+ * is defined, this class implements the protocol fully). `ColumnValueSet`s should be iterated via this function, regardless of whether
+ * ES6 semantics are available, as they aren't strictly necessary to consume iterators. E.g., given a `ColumnValueSet` `columnValueSet`:
+ *
+ * ```javascript
+ * var itr, itrVal, currentVal;
+ *
+ * itr = columnValueSet.iterator();
+ * while (!(itrVal = itr.next()).done) {
+ *     currentVal = itrVal.value;
+ * // ...
+ * ```
+ */
+function ColumnValueSet() {
+    'use strict';
+    
+    if (window.Set) {
+        this.values = new Set();
+    } else {
+        this.values = [];
+        this.fallback = true;
+    }
+}
+
+/**
+ * Backing collection containing values added to this set from {@link CellInterpreter} or {@link HTMLTableWrapperControl~populateCellValues}
+ * implementations. If the `Set` constructor is defined, will be a `Set`, otherwise will fall back to an `Array`.
+ *
+ * @member ColumnValueSet#values
+ * @type {Set|Array}
+ * @private
+ */
+ 
+/**
+ * Flag indicating whether this `ColumnValueSet` using an `Array` as its backing store due to the `Set` constructor not being available.
+ *
+ * @type boolean
+ */
+ColumnValueSet.prototype.fallback = false;
+
+
+/**
+ * Adds the given `value` to this set. By default, the value is `trim`med prior to being added, unless the `noTrim` parameter is
+ * passed, and evaluates to `true`.
+ *
+ * @param {string} value Value to add to this set.
+ * @param {boolean} [noTrim] If `true`, `value` will be added to this set, as given, otherwise it will be `trim`med first.
+ */
+ColumnValueSet.prototype.add = function (value, noTrim) {
+    'use strict';
+    
+    var values;
+    
+    values = this.values;
+    if (!noTrim) {
+        value = value.trim();
+    }
+    
+    if (this.fallback) {
+        if (values.indexOf(value) === -1) {
+            values.push(value);
+        }
+    } else {
+        values.add(value);
+    }
+};
+
+/**
+ * Function that the ES6 protocol for iterable objects. Regardless of the backing data store, an ES6 Iterator will be returned.
+ *
+ * @returns {Iterator} An object that implements the ES6 protocol for Iterators. 
+ */
+ColumnValueSet.prototype.iterator = function () {
+    'use strict';
+    
+    return this.fallback ? new ColumnValueSet.FallbackIterator(this.values) : this.values.values();
+};
+
+if (window.Symbol &amp;&amp; Symbol.iterator) {
+    ColumnValueSet.prototype[Symbol.iterator] = ColumnValueSet.prototype.iterator;
+}
+
+/**
+ * Clears all values from this `ColumnValueSet`.
+ */
+ColumnValueSet.prototype.clear = function () {
+    'use strict';
+    
+    var values;
+    
+    values = this.values;
+    if (this.fallback) {
+        values.length = 0;
+    } else {
+        values.clear();
+    }
+};
+
+
+
+/**
+ * @param {Array} values `Array` backing the parent `ColumnValueSet`.
+ * @constructor
+ * @classdesc
+ *
+ * Implentation of the ES6 protocol for Iterators used with {@link ColumnValueSet}s when necessary to fall back to using an `Array` to
+ * back the set.
+ */
+ColumnValueSet.FallbackIterator = function (values) {
+    'use strict';
+    
+    this.values = values;
+    this.i = -1;
+}
+
+/**
+ * Returns the next `IteratorResult` for this iterator.
+ *
+ * @returns {IterationValue} The next `IteratorResult` for this iterator.
+ */
+ColumnValueSet.FallbackIterator.prototype.next = function () {
+    'use strict';
+    
+    var i, values;
+    
+    i = ++this.i;
+    values = this.values;
+    
+    return i &lt; values.length ? new IterationValue(false, values[i]) : new IterationValue(true);
+};
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ColumnValueSet.html">ColumnValueSet</a></li><li><a href="ColumnValueSet.FallbackIterator.html">FallbackIterator</a></li><li><a href="ContextControl.html">ContextControl</a></li><li><a href="ContextControl.OffsetCoordinates.html">OffsetCoordinates</a></li><li><a href="HTMLTableWrapper.html">HTMLTableWrapper</a></li><li><a href="HTMLTableWrapperControl.html">HTMLTableWrapperControl</a></li><li><a href="HTMLTableWrapperControl.ColumnValueFilter.html">ColumnValueFilter</a></li><li><a href="HTMLTableWrapperListener.html">HTMLTableWrapperListener</a></li><li><a href="HTMLTableWrapperUtils.html">HTMLTableWrapperUtils</a></li><li><a href="IE8Compatibility.html">IE8Compatibility</a></li><li><a href="IE8Compatibility.IE8EventHandler.html">IE8EventHandler</a></li><li><a href="IE9Compatibility.html">IE9Compatibility</a></li><li><a href="IEGeneralCompatibility.html">IEGeneralCompatibility</a></li><li><a href="IterationValue.html">IterationValue</a></li><li><a href="SimpleEventDispatcher.html">SimpleEventDispatcher</a></li><li><a href="SimpleEventDispatcher.SimpleEvent.html">SimpleEvent</a></li><li><a href="SimpleFilterDescriptor.html">SimpleFilterDescriptor</a></li><li><a href="SimpleSortDescriptor.html">SimpleSortDescriptor</a></li><li><a href="XMLBuilder.html">XMLBuilder</a></li></ul><h3>Interfaces</h3><ul><li><a href="CellInterpreter.html">CellInterpreter</a></li><li><a href="ColumnControl.html">ColumnControl</a></li><li><a href="ColumnControlFactory.html">ColumnControlFactory</a></li><li><a href="Disposable.html">Disposable</a></li><li><a href="FilterDescriptor.html">FilterDescriptor</a></li><li><a href="MinimalList.html">MinimalList</a></li><li><a href="Nothing.html">Nothing</a></li><li><a href="SimpleEventIntf.html">SimpleEventIntf</a></li><li><a href="SimpleEventListener.html">SimpleEventListener</a></li><li><a href="SortDescriptor.html">SortDescriptor</a></li></ul><h3>Events</h3><ul><li><a href="ContextControl.html#event:event:create">create</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Mar 09 2020 19:49:31 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

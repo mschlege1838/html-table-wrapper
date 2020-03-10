@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: HTMLTableWrapperUtils</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: HTMLTableWrapperUtils</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>HTMLTableWrapperUtils<span class="signature">()</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description"><p>Extended utility functions and constants for the <a href="HTMLTableWrapper.html">HTMLTableWrapper</a> packages.</p></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="HTMLTableWrapperUtils"><span class="type-signature"></span>new HTMLTableWrapperUtils<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Not actually a constructor as there are no instance methods; underlying definition is an empty object.
+Documented as a class for the purposes of this documentation generator only.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line14">line 14</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".COLUMN_TYPE_INFER"><span class="type-signature">(static, constant) </span>COLUMN_TYPE_INFER<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Indicates the values of cells within a column should be inferred, and converted to an appropriate underlying type
+prior to processing.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line31">line 31</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".COLUMN_TYPE_TEXT"><span class="type-signature">(static, constant) </span>COLUMN_TYPE_TEXT<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Indicates the values of cells within a column should be considered to be text only, and can be directly processed.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line22">line 22</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".FILTER_FLAG_IGNORE_CASE"><span class="type-signature">(static, constant) </span>FILTER_FLAG_IGNORE_CASE<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Bit flag indicating string-type comparisons during a filtering operation should ignore case.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line68">line 68</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".FILTER_FLAG_NOT"><span class="type-signature">(static, constant) </span>FILTER_FLAG_NOT<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Bit flag indicating the requested filtering operation should be logically negated.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line75">line 75</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".FILTER_OP_CONTAINS"><span class="type-signature">(static, constant) </span>FILTER_OP_CONTAINS<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Bit flag indicating only cells containing a specified value should remain after a filtering operation.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line40">line 40</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".FILTER_OP_EQUALS"><span class="type-signature">(static, constant) </span>FILTER_OP_EQUALS<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Bit flag indicating only cells with a value equal to a specified value should remain after a filtering operation.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line47">line 47</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".FILTER_OP_GREATER_THAN"><span class="type-signature">(static, constant) </span>FILTER_OP_GREATER_THAN<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Bit flag indicating only cells with a value greater than a specified value should remain after a filtering operation.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line61">line 61</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".FILTER_OP_LESS_THAN"><span class="type-signature">(static, constant) </span>FILTER_OP_LESS_THAN<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Bit flag indicating only cells with a value less than a specified value should remain after a filtering operation.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line54">line 54</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".getNumber"><span class="type-signature">(private, static) </span>getNumber<span class="signature">(val, strict<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Utility function for obtaining a number from the given <code>val</code>. If the given <code>val</code> is, itself, a number, it
+is simply returned. If not, it is treated as a string, and parsed as an integer if it contains only digits,
+or as a float if it contains a decimal point and/or a scientific E-notation exponents. If <code>val</code> is not numeric
+and not parsable as a number, it is returned as-is if strict is <code>false</code>, or <code>NaN</code> is returned if strict is <code>true</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>val</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Value to be converted to a number.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>strict</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether to return <code>NaN</code> if <code>val</code> is not a number, or simply to return <code>val</code> itself.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line88">line 88</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".shouldInclude"><span class="type-signature">(static) </span>shouldInclude<span class="signature">(cellValue, operation, compareValue, columnType)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Utility function to aid in the implementation of <a href="FilterDescriptor.html#include">FilterDescriptor#include</a>. Compares the given <code>cellValue</code> to the given <code>compareValue</code> using
+the given <code>operator</code> and <code>columnType</code>.</p>
+<p>The <code>operator</code> is a combination of the operator and flag bitfield constants defined on this class. Namely, it is a combination of one or more of the
+following operators:</p>
+<ul>
+<li><a href="HTMLTableWrapperUtils.html#.FILTER_OP_EQUALS">HTMLTableWrapperUtils.FILTER_OP_EQUALS</a></li>
+<li><a href="HTMLTableWrapperUtils.html#.FILTER_OP_GREATER_THAN">HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN</a></li>
+<li><a href="HTMLTableWrapperUtils.html#.FILTER_OP_LESS_THAN">HTMLTableWrapperUtils.FILTER_OP_LESS_THAN</a></li>
+<li><a href="HTMLTableWrapperUtils.html#.FILTER_OP_CONTAINS">HTMLTableWrapperUtils.FILTER_OP_CONTAINS</a></li>
+</ul>
+<p>And optionally has zero or more of the following flags set:</p>
+<ul>
+<li><a href="HTMLTableWrapperUtils.html#.FILTER_FLAG_NOT">HTMLTableWrapperUtils.FILTER_FLAG_NOT</a></li>
+<li><a href="HTMLTableWrapperUtils.html#.FILTER_FLAG_IGNORE_CASE">HTMLTableWrapperUtils.FILTER_FLAG_IGNORE_CASE</a></li>
+</ul>
+<p>Comparisons are performed in two distinct steps. The first are the 'simple' comparisons, which correspond to the combination of the relational operator
+bitfields: <a href="HTMLTableWrapperUtils.html#.FILTER_OP_EQUALS">HTMLTableWrapperUtils.FILTER_OP_EQUALS</a>, <a href="HTMLTableWrapperUtils.html#.FILTER_OP_LESS_THAN">HTMLTableWrapperUtils.FILTER_OP_LESS_THAN</a>, and <a href="HTMLTableWrapperUtils.html#.FILTER_OP_GREATER_THAN">HTMLTableWrapperUtils.FILTER_OP_GREATER_THAN</a>.
+The next is the 'contains' comparison (corresponding to the <a href="HTMLTableWrapperUtils.html#.FILTER_OP_CONTAINS">HTMLTableWrapperUtils.FILTER_OP_CONTAINS</a> bitfield). The 'contains' comparison is only performed
+if its corresponding flag is set, and the 'simple' (relational) comparisons fail, and/or none of their flags are set. I.e. this function will
+return <code>true</code> on the first (requested) comparison that succeeds, otherwise <code>false</code>.</p>
+<p>For the 'simple' relational comparisons (outlined above), if <code>columnType</code> is <a href="HTMLTableWrapperUtils.html#.COLUMN_TYPE_INFER">HTMLTableWrapperUtils.COLUMN_TYPE_INFER</a>, the given values will be treated as
+numbers if they are so convertible, otherwise they will be compared as given; if <a href="HTMLTableWrapperUtils.html#.COLUMN_TYPE_TEXT">HTMLTableWrapperUtils.COLUMN_TYPE_TEXT</a>, they will be converted
+to strings prior to comparison. For the 'contains' comparison, the values are always converted to strings; <code>columnType</code> has no effect on the 'contains' comparison.</p>
+<p>If the <a href="HTMLTableWrapperUtils.html#.FILTER_FLAG_IGNORE_CASE">HTMLTableWrapperUtils.FILTER_FLAG_IGNORE_CASE</a> flag is set, it only affects the result of the 'simple' relational comparisons if the given <code>columnType</code>
+is <a href="HTMLTableWrapperUtils.html#.COLUMN_TYPE_TEXT">HTMLTableWrapperUtils.COLUMN_TYPE_TEXT</a>, or the inferred value of a column is a string. The flag will always, however, affect the 'contains' comparison.
+In either case, though, the applicable values are converted to a consistent case prior to comparison.</p>
+<p>If the <a href="HTMLTableWrapperUtils.html#.FILTER_FLAG_NOT">HTMLTableWrapperUtils.FILTER_FLAG_NOT</a> flag is set, it forms the logical negation of the 'simple' relational comparisons. E.g. (in logical terms)
+'equals' becomes 'not equal to', 'less than' becomes 'greater than or equal to', etc. For the 'contains' comparison, it simply causes the logical
+inverse of the result to be returned. Of note, the <a href="HTMLTableWrapperUtils.html#.FILTER_FLAG_NOT">HTMLTableWrapperUtils.FILTER_FLAG_NOT</a> flag <em>only</em> affects the operators, and has no effect on
+the <a href="HTMLTableWrapperUtils.html#.FILTER_FLAG_IGNORE_CASE">HTMLTableWrapperUtils.FILTER_FLAG_IGNORE_CASE</a> flag; if <a href="HTMLTableWrapperUtils.html#.FILTER_FLAG_IGNORE_CASE">HTMLTableWrapperUtils.FILTER_FLAG_IGNORE_CASE</a> is set, case will always be ignored for
+string-type comparisons, regardless of whether <a href="HTMLTableWrapperUtils.html#.FILTER_FLAG_NOT">HTMLTableWrapperUtils.FILTER_FLAG_NOT</a> is set.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>cellValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Value of the current cell being tested.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>operation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Bitfield representing the combination of one or more <code>FILTER_OP_</code>* fields, and zero or more <code>FILTER_FLAG_</code>* fields.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>compareValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Value against which to test the given <code>cellValue</code>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>columnType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>One of the <code>COLUMN_TYPE_</code>* constants representing how the given <code>cellValue</code> and <code>compareValue</code> are to be treated.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="HTMLTableWrapperUtils.js.html">HTMLTableWrapperUtils.js</a>, <a href="HTMLTableWrapperUtils.js.html#line147">line 147</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p><code>true</code> if any of the requested comparisons succeed, otherwise <code>false</code>.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ColumnValueSet.html">ColumnValueSet</a></li><li><a href="ColumnValueSet.FallbackIterator.html">FallbackIterator</a></li><li><a href="ContextControl.html">ContextControl</a></li><li><a href="ContextControl.OffsetCoordinates.html">OffsetCoordinates</a></li><li><a href="HTMLTableWrapper.html">HTMLTableWrapper</a></li><li><a href="HTMLTableWrapperControl.html">HTMLTableWrapperControl</a></li><li><a href="HTMLTableWrapperControl.ColumnValueFilter.html">ColumnValueFilter</a></li><li><a href="HTMLTableWrapperListener.html">HTMLTableWrapperListener</a></li><li><a href="HTMLTableWrapperUtils.html">HTMLTableWrapperUtils</a></li><li><a href="IE8Compatibility.html">IE8Compatibility</a></li><li><a href="IE8Compatibility.IE8EventHandler.html">IE8EventHandler</a></li><li><a href="IE9Compatibility.html">IE9Compatibility</a></li><li><a href="IEGeneralCompatibility.html">IEGeneralCompatibility</a></li><li><a href="IterationValue.html">IterationValue</a></li><li><a href="SimpleEventDispatcher.html">SimpleEventDispatcher</a></li><li><a href="SimpleEventDispatcher.SimpleEvent.html">SimpleEvent</a></li><li><a href="SimpleFilterDescriptor.html">SimpleFilterDescriptor</a></li><li><a href="SimpleSortDescriptor.html">SimpleSortDescriptor</a></li><li><a href="XMLBuilder.html">XMLBuilder</a></li></ul><h3>Interfaces</h3><ul><li><a href="CellInterpreter.html">CellInterpreter</a></li><li><a href="ColumnControl.html">ColumnControl</a></li><li><a href="ColumnControlFactory.html">ColumnControlFactory</a></li><li><a href="Disposable.html">Disposable</a></li><li><a href="FilterDescriptor.html">FilterDescriptor</a></li><li><a href="MinimalList.html">MinimalList</a></li><li><a href="Nothing.html">Nothing</a></li><li><a href="SimpleEventIntf.html">SimpleEventIntf</a></li><li><a href="SimpleEventListener.html">SimpleEventListener</a></li><li><a href="SortDescriptor.html">SortDescriptor</a></li></ul><h3>Events</h3><ul><li><a href="ContextControl.html#event:event:create">create</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Mar 09 2020 19:49:31 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
