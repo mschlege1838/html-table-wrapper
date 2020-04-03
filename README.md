@@ -171,7 +171,7 @@ Gulp installed on your machine, you can do so through NPM (distributed with [nod
 Development dependencies are also installed with NPM. From your cloned repository's root directory, run:
 
 ```
-> npm i
+> npm i -D
 ```
 
 The distribution package can then be built using the `default` Gulp task:
